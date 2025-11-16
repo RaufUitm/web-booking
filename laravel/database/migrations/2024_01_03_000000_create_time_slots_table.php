@@ -12,12 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('time_slots', function (Blueprint $table) {
-    $table->id();
-    $table->date('date');
-    $table->time('start_time');
-    $table->time('end_time');
-    $table->boolean('is_available')->default(true);
-    $table->timestamps();
+            $table->id();
+            $table->foreignId('facility_id')->constrained()->onDelete('cascade');
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->timestamps();
         });
     }
 

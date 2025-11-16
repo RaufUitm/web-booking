@@ -42,10 +42,11 @@ export const useBookingStore = defineStore('booking', {
       this.loading = true
       try {
         const response = await api.post('/bookings', bookingData)
-        this.bookings.push(response.data)
-        return response.data
+        const booking = response.data.data || response.data
+        this.bookings.push(booking)
+        return booking
       } catch (error) {
-        this.error = error.message
+        this.error = error.response?.data?.message || error.message
         throw error
       } finally {
         this.loading = false
@@ -56,9 +57,36 @@ export const useBookingStore = defineStore('booking', {
       this.loading = true
       try {
         const response = await api.get('/bookings')
-        this.bookings = response.data
+        const data = response.data.data || response.data
+        // Handle pagination
+        if (data.data && Array.isArray(data.data)) {
+          this.bookings = data.data
+        } else if (Array.isArray(data)) {
+          this.bookings = data
+        } else {
+          this.bookings = []
+        }
       } catch (error) {
-        this.error = error.message
+        this.error = error.response?.data?.message || error.message
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async cancelBooking(id) {
+      this.loading = true
+      try {
+        const response = await api.post(`/bookings/${id}/cancel`)
+        const cancelledBooking = response.data.data || response.data
+        // Update the booking in the bookings array
+        const index = this.bookings.findIndex(b => b.id === id)
+        if (index !== -1) {
+          this.bookings[index] = cancelledBooking
+        }
+        return cancelledBooking
+      } catch (error) {
+        this.error = error.response?.data?.message || error.message
+        throw error
       } finally {
         this.loading = false
       }

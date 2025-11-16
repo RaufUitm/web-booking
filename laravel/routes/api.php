@@ -1,10 +1,78 @@
 <?php
 
+use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookingController;
-use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\FacilityController;
 use App\Http\Controllers\Api\TimeSlotController;
+use Illuminate\Support\Facades\Route;
 
-Route::apiResource('bookings', BookingController::class);
-Route::apiResource('services', ServiceController::class)->only(['index', 'show']);
-Route::get('time-slots', [TimeSlotController::class, 'index']);
+// Public routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+
+// Public facility and category browsing
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/categories/{id}', [CategoryController::class, 'show']);
+Route::get('/facilities', [FacilityController::class, 'index']);
+Route::get('/facilities/{id}', [FacilityController::class, 'show']);
+Route::get('/facilities/{id}/bookings', [FacilityController::class, 'bookings']);
+
+// Protected routes
+Route::middleware('auth:sanctum')->group(function () {
+    // Auth routes
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+
+    // Time slots
+    Route::get('/time-slots', [TimeSlotController::class, 'index']);
+    Route::get('/time-slots/available', [TimeSlotController::class, 'available']);
+
+    // Bookings - User routes
+    Route::get('/bookings', [BookingController::class, 'index']);
+    Route::get('/bookings/{id}', [BookingController::class, 'show']);
+    Route::post('/bookings', [BookingController::class, 'store']);
+    Route::put('/bookings/{id}', [BookingController::class, 'update']);
+    Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
+
+    // Admin routes
+    Route::middleware('check.role:admin')->prefix('admin')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [AdminController::class, 'dashboard']);
+
+        // User management
+        Route::get('/users', [AdminController::class, 'getUsers']);
+        Route::post('/users', [AdminController::class, 'createUser']);
+        Route::put('/users/{id}', [AdminController::class, 'updateUser']);
+        Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+
+        // Booking management
+        Route::get('/bookings', [AdminController::class, 'getBookings']);
+        Route::put('/bookings/{id}/status', [AdminController::class, 'updateBookingStatus']);
+
+        // Reports
+        Route::get('/reports', [AdminController::class, 'getReports']);
+
+        // Category management
+        Route::get('/categories', [AdminController::class, 'getCategories']);
+        Route::post('/categories', [AdminController::class, 'createCategory']);
+        Route::put('/categories/{id}', [AdminController::class, 'updateCategory']);
+        Route::delete('/categories/{id}', [AdminController::class, 'deleteCategory']);
+
+        // Facility management
+        Route::post('/facilities', [FacilityController::class, 'store']);
+        Route::put('/facilities/{id}', [FacilityController::class, 'update']);
+        Route::delete('/facilities/{id}', [FacilityController::class, 'destroy']);
+
+        // Time slot management
+        Route::post('/time-slots', [TimeSlotController::class, 'store']);
+        Route::put('/time-slots/{id}', [TimeSlotController::class, 'update']);
+        Route::delete('/time-slots/{id}', [TimeSlotController::class, 'destroy']);
+
+        // Booking deletion
+        Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
+    });
+});
 

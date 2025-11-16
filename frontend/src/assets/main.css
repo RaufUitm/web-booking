@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* Custom MDHT Theme Colors */
+:root {
+  --mdht-blue: #1e40af;
+  --mdht-green: #059669;
+  --mdht-gold: #d97706;
+}

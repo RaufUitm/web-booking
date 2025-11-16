@@ -7,17 +7,36 @@ use Illuminate\Database\Eloquent\Model;
 class Booking extends Model
 {
     protected $fillable = [
-        'service_id', 'time_slot_id', 'customer_name',
-        'customer_email', 'customer_phone', 'notes', 'status'
+        'user_id',
+        'facility_id',
+        'time_slot_id',
+        'booking_date',
+        'number_of_people',
+        'status',
+        'notes',
     ];
 
-    public function service()
+    protected $casts = [
+        'booking_date' => 'date',
+    ];
+
+    public function user()
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function facility()
+    {
+        return $this->belongsTo(Facility::class);
     }
 
     public function timeSlot()
     {
         return $this->belongsTo(TimeSlot::class);
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
     }
 }

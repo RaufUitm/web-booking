@@ -6,15 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class TimeSlot extends Model
 {
-    protected $fillable = ['date', 'start_time', 'end_time', 'is_available'];
-
-    protected $casts = [
-        'date' => 'date',
-        'is_available' => 'boolean'
+    protected $fillable = [
+        'facility_id',
+        'start_time',
+        'end_time',
     ];
 
-    public function booking()
+    public function facility()
     {
-        return $this->hasOne(Booking::class);
+        return $this->belongsTo(Facility::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
     }
 }

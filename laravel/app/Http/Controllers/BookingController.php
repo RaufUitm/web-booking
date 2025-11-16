@@ -9,9 +9,18 @@ use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Booking::with(['service', 'timeSlot'])->latest()->get();
+        // Get bookings for authenticated user
+        $bookings = Booking::with(['facility', 'timeSlot'])
+            ->where('user_id', $request->user()->id)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $bookings
+        ]);
     }
 
     public function store(Request $request)
@@ -59,6 +68,25 @@ class BookingController extends Controller
         }
 
         return response()->json($booking->load(['service', 'timeSlot']));
+    }
+
+    public function cancel($id)
+    {
+        $booking = Booking::with(['facility', 'timeSlot'])->findOrFail($id);
+
+        // Update booking status to cancelled
+        $booking->update(['status' => 'cancelled']);
+
+        // Make time slot available again
+        if ($booking->timeSlot) {
+            $booking->timeSlot->update(['is_available' => true]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Booking cancelled successfully',
+            'data' => $booking->fresh(['facility', 'timeSlot'])
+        ]);
     }
 
     public function destroy(Booking $booking)

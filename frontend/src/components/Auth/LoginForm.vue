@@ -33,9 +33,9 @@
       </button>
 
       <div class="form-links">
-        <router-link to="/forgot-password">Forgot Password?</router-link>
+        <router-link to="/mdht/forgot-password">Forgot Password?</router-link>
         <span>|</span>
-        <router-link to="/register">Create Account</router-link>
+        <router-link to="/mdht/register">Create Account</router-link>
       </div>
     </form>
   </div>
@@ -66,9 +66,9 @@ const handleSubmit = async () => {
 
     // Redirect based on user role
     if (authStore.isAdmin) {
-      router.push('/admin')
+      router.push('/mdht/admin')
     } else {
-      router.push('/')
+      router.push('/mdht')
     }
   } catch (err) {
     error.value = err.response?.data?.message || 'Login failed. Please try again.'
@@ -115,7 +115,7 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #2d5f2e;
+  border-color: #FF8C00;
 }
 
 .error-message {
@@ -130,7 +130,7 @@ input:focus {
 .btn-primary {
   width: 100%;
   padding: 12px;
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
   border: none;
   border-radius: 4px;
@@ -140,7 +140,7 @@ input:focus {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #244d25;
+  background-color: #E67E00;
 }
 
 .btn-primary:disabled {
@@ -155,7 +155,7 @@ input:focus {
 }
 
 .form-links a {
-  color: #2d5f2e;
+  color: #FF8C00;
   text-decoration: none;
 }
 

@@ -90,7 +90,7 @@ const currentYear = computed(() => new Date().getFullYear())
 }
 
 .footer-section h3 {
-  color: #6ba86e;
+  color: #FFB84D;
   margin: 0 0 15px 0;
   font-size: 24px;
 }
@@ -124,7 +124,7 @@ const currentYear = computed(() => new Date().getFullYear())
 }
 
 .footer-section ul li a:hover {
-  color: #6ba86e;
+  color: #FFB84D;
 }
 
 .social-links {
@@ -175,7 +175,7 @@ const currentYear = computed(() => new Date().getFullYear())
 }
 
 .footer-links a:hover {
-  color: #6ba86e;
+  color: #FFB84D;
 }
 
 .footer-links span {

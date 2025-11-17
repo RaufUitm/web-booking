@@ -196,8 +196,8 @@ const nextMonth = () => {
 }
 
 .calendar-day:hover:not(.past):not(.other-month) {
-  background-color: #e8f5e9;
-  border-color: #2d5f2e;
+  background-color: #fff5e6;
+  border-color: #FF8C00;
 }
 
 .calendar-day.other-month {
@@ -206,14 +206,14 @@ const nextMonth = () => {
 }
 
 .calendar-day.today {
-  border-color: #2d5f2e;
+  border-color: #FF8C00;
   font-weight: bold;
 }
 
 .calendar-day.selected {
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
-  border-color: #2d5f2e;
+  border-color: #FF8C00;
 }
 
 .calendar-day.past {

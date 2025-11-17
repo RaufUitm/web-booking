@@ -92,7 +92,10 @@ const loadBookings = async () => {
   loading.value = true
   try {
     await bookingStore.fetchBookings()
+    // The backend already filters by user_id for non-admin users
+    // So we can directly use the bookings from the store
     bookings.value = bookingStore.bookings
+    console.log('Loaded bookings:', bookings.value.length)
   } catch (error) {
     console.error('Failed to load bookings:', error)
   } finally {
@@ -184,7 +187,7 @@ h1 {
   display: inline-block;
   margin-top: 20px;
   padding: 12px 30px;
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
   text-decoration: none;
   border-radius: 4px;
@@ -192,9 +195,9 @@ h1 {
 }
 
 .btn-browse:hover {
-  background-color: #244d25;
+  background-color: #E67E00;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(45, 95, 46, 0.3);
+  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.3);
 }
 
 .bookings-list {

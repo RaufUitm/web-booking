@@ -96,7 +96,7 @@ const handleLogin = async () => {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: linear-gradient(135deg, #4a8b4d 0%, #2d5f2e 100%);
+  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
 }
 
 .auth-card {
@@ -152,8 +152,8 @@ const handleLogin = async () => {
 
 .form-group input:focus {
   outline: none;
-  border-color: #2d5f2e;
-  box-shadow: 0 0 0 3px rgba(45, 95, 46, 0.1);
+  border-color: #D77800;
+  box-shadow: 0 0 0 3px rgba(215, 120, 0, 0.1);
 }
 
 .form-group input:disabled {
@@ -181,7 +181,7 @@ const handleLogin = async () => {
 }
 
 .forgot-link {
-  color: #2d5f2e;
+  color: #D77800;
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
@@ -192,7 +192,7 @@ const handleLogin = async () => {
 }
 
 .btn-submit {
-  background: linear-gradient(135deg, #4a8b4d 0%, #2d5f2e 100%);
+  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
   color: white;
   padding: 1rem;
   border: none;
@@ -205,7 +205,7 @@ const handleLogin = async () => {
 
 .btn-submit:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(45, 95, 46, 0.4);
+  box-shadow: 0 4px 12px rgba(215, 120, 0, 0.4);
 }
 
 .btn-submit:disabled {
@@ -229,7 +229,7 @@ const handleLogin = async () => {
 }
 
 .auth-footer a {
-  color: #2d5f2e;
+  color: #D77800;
   text-decoration: none;
   font-weight: 600;
 }

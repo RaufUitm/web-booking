@@ -96,7 +96,7 @@ h3 {
 }
 
 .category {
-  color: #2d5f2e;
+  color: #FF8C00;
   font-size: 14px;
   margin: 0 0 12px 0;
   font-weight: 500;
@@ -128,12 +128,12 @@ h3 {
 .price {
   font-size: 20px;
   font-weight: bold;
-  color: #2d5f2e;
+  color: #FF8C00;
 }
 
 .btn-book {
   padding: 8px 20px;
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
   border: none;
   border-radius: 4px;
@@ -143,6 +143,6 @@ h3 {
 }
 
 .btn-book:hover {
-  background-color: #244d25;
+  background-color: #E67E00;
 }
 </style>

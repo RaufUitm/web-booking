@@ -104,7 +104,7 @@ h1 {
 }
 
 .category {
-  color: #2d5f2e;
+  color: #FF8C00;
   font-size: 16px;
   margin: 0 0 20px 0;
   font-weight: 500;
@@ -194,7 +194,7 @@ p {
 
 .btn-book {
   padding: 15px 50px;
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
   border: none;
   border-radius: 4px;
@@ -204,7 +204,7 @@ p {
 }
 
 .btn-book:hover:not(:disabled) {
-  background-color: #244d25;
+  background-color: #E67E00;
 }
 
 .btn-book:disabled {

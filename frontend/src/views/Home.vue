@@ -4,9 +4,9 @@
     <!-- Hero Section -->
     <section class="hero">
       <div class="hero-content">
-        <h1>Majlis Daerah Hulu Terengganu</h1>
+        <h1>{{ districtStore.pbtName }}</h1>
         <h2 style="font-size: 1.8rem; margin: 1rem 0; color: #2c3e50;">Sistem Tempahan Kemudahan Awam</h2>
-        <p class="subtitle">Tempah kemudahan awam dengan mudah dan pantas di Kuala Berang, Terengganu</p>
+        <p class="subtitle">Tempah kemudahan awam dengan mudah dan pantas di {{ districtStore.districtName }}, Terengganu</p>
         <div class="hero-buttons">
           <router-link to="/facilities" class="btn btn-primary">
             Lihat Kemudahan
@@ -114,14 +114,17 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useFacilityStore } from '@/stores/facility'
+import { useDistrictStore } from '@/stores/district'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 const facilityStore = useFacilityStore()
+const districtStore = useDistrictStore()
 
 const { isAuthenticated } = storeToRefs(authStore)
 const { categories } = storeToRefs(facilityStore)
@@ -165,6 +168,11 @@ const displayCategories = computed(() => {
 const popularFacilities = ref([])
 
 onMounted(async () => {
+  // Check if district parameter is passed in URL
+  if (route.query.district) {
+    districtStore.setDistrict(route.query.district)
+  }
+
   await facilityStore.fetchCategories()
   // Fetch facilities to show popular ones
   try {
@@ -189,7 +197,7 @@ const goToFacilities = (categoryId) => {
 }
 
 .hero {
-  background: linear-gradient(135deg, #4a8b4d 0%, #2d5f2e 100%);
+  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
   color: white;
   padding: 6rem 2rem;
   text-align: center;
@@ -226,12 +234,12 @@ const goToFacilities = (categoryId) => {
 
 .btn-primary {
   background-color: white;
-  color: #2d5f2e;
+  color: #D77800;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(45, 95, 46, 0.3);
+  box-shadow: 0 4px 12px rgba(215, 120, 0, 0.3);
 }
 
 .btn-secondary {
@@ -242,18 +250,18 @@ const goToFacilities = (categoryId) => {
 
 .btn-secondary:hover {
   background-color: white;
-  color: #2d5f2e;
+  color: #D77800;
 }
 
 .btn-large {
   padding: 1.2rem 3rem;
   font-size: 1.2rem;
-  background-color: #2d5f2e;
+  background-color: #D77800;
   color: white;
 }
 
 .btn-large:hover {
-  background-color: #244d25;
+  background-color: #C66900;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(45, 95, 46, 0.3);
 }
@@ -318,8 +326,8 @@ section h2 {
 
 .facility-count {
   display: inline-block;
-  background-color: rgba(45, 95, 46, 0.1);
-  color: #2d5f2e;
+  background-color: rgba(215, 120, 0, 0.1);
+  color: #D77800;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -375,7 +383,7 @@ section h2 {
 .step-number {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #4a8b4d 0%, #2d5f2e 100%);
+  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -399,12 +407,12 @@ section h2 {
 
 .step-arrow {
   font-size: 2rem;
-  color: #4a8b4d;
+  color: #FF8C00;
   font-weight: bold;
 }
 
 .cta {
-  background: linear-gradient(135deg, #4a8b4d 0%, #2d5f2e 100%);
+  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
   color: white;
   text-align: center;
 }

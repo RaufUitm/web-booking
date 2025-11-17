@@ -90,7 +90,7 @@ const toggleCollapse = () => {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
   border: none;
   cursor: pointer;
@@ -125,15 +125,15 @@ const toggleCollapse = () => {
 
 .sidebar-link:hover {
   background-color: #34495e;
-  border-left: 4px solid #2d5f2e;
+  border-left: 4px solid #FF8C00;
   padding-left: 16px;
 }
 
 .sidebar-link.router-link-active {
   background-color: #34495e;
-  border-left: 4px solid #2d5f2e;
+  border-left: 4px solid #FF8C00;
   padding-left: 16px;
-  color: #2d5f2e;
+  color: #FF8C00;
 }
 
 .sidebar.collapsed .sidebar-link {

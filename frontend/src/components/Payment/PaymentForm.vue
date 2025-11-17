@@ -219,7 +219,7 @@ h2 {
   padding-top: 15px;
   border-top: 2px solid #ddd;
   font-size: 18px;
-  color: #2d5f2e;
+  color: #FF8C00;
 }
 
 .form-group {
@@ -251,13 +251,13 @@ label {
 }
 
 .payment-method:hover {
-  border-color: #2d5f2e;
-  background-color: #f1f8f4;
+  border-color: #FF8C00;
+  background-color: #fff5e6;
 }
 
 .payment-method.selected {
-  border-color: #2d5f2e;
-  background-color: #e8f5e9;
+  border-color: #FF8C00;
+  background-color: #ffe6cc;
 }
 
 .payment-method input[type="radio"] {
@@ -292,7 +292,7 @@ input[type="text"] {
 
 input:focus {
   outline: none;
-  border-color: #2d5f2e;
+  border-color: #FF8C00;
 }
 
 .form-row {
@@ -337,12 +337,12 @@ input:focus {
 }
 
 .btn-submit {
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
 }
 
 .btn-submit:hover:not(:disabled) {
-  background-color: #244d25;
+  background-color: #E67E00;
 }
 
 .btn-submit:disabled {

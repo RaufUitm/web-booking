@@ -10,6 +10,7 @@ class Facility extends Model
     use HasFactory;
 
     protected $fillable = [
+        'district',
         'category_id',
         'name',
         'description',

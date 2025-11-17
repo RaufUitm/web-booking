@@ -109,7 +109,7 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #2d5f2e;
+  border-color: #FF8C00;
 }
 
 .error-message {
@@ -158,7 +158,7 @@ input:focus {
 }
 
 .form-links a {
-  color: #2d5f2e;
+  color: #FF8C00;
   text-decoration: none;
 }
 

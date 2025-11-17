@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <div class="navbar-container">
-      <router-link to="/" class="navbar-brand">
+      <router-link to="/mdht" class="navbar-brand">
         <span class="logo">🏛️</span>
         <span class="brand-name">MDHT Booking</span>
       </router-link>
@@ -16,34 +16,34 @@
         <div class="navbar-links">
           <!-- Admin Navigation -->
           <template v-if="isAdmin">
-            <router-link to="/admin" class="nav-link" @click="closeMobileMenu">
+            <router-link to="/mdht/admin" class="nav-link" @click="closeMobileMenu">
               Dashboard
             </router-link>
-            <router-link to="/admin/bookings" class="nav-link" @click="closeMobileMenu">
+            <router-link to="/mdht/admin/bookings" class="nav-link" @click="closeMobileMenu">
               Tempahan
             </router-link>
-            <router-link to="/admin/facilities" class="nav-link" @click="closeMobileMenu">
+            <router-link to="/mdht/admin/facilities" class="nav-link" @click="closeMobileMenu">
               Kemudahan
             </router-link>
-            <router-link to="/admin/users" class="nav-link" @click="closeMobileMenu">
+            <router-link to="/mdht/admin/users" class="nav-link" @click="closeMobileMenu">
               Pengguna
             </router-link>
-            <router-link to="/admin/categories" class="nav-link" @click="closeMobileMenu">
+            <router-link to="/mdht/admin/categories" class="nav-link" @click="closeMobileMenu">
               Kategori
             </router-link>
-            <router-link to="/admin/reports" class="nav-link" @click="closeMobileMenu">
+            <router-link to="/mdht/admin/reports" class="nav-link" @click="closeMobileMenu">
               Laporan
             </router-link>
           </template>
           <!-- Regular User Navigation -->
           <template v-else>
-            <router-link to="/" class="nav-link" @click="closeMobileMenu">
+            <router-link to="/mdht" class="nav-link" @click="closeMobileMenu">
               Home
             </router-link>
-            <router-link to="/facilities" class="nav-link" @click="closeMobileMenu">
+            <router-link to="/mdht/facilities" class="nav-link" @click="closeMobileMenu">
               Facilities
             </router-link>
-            <router-link v-if="isAuthenticated" to="/my-bookings" class="nav-link" @click="closeMobileMenu">
+            <router-link v-if="isAuthenticated" to="/mdht/my-bookings" class="nav-link" @click="closeMobileMenu">
               My Bookings
             </router-link>
           </template>
@@ -57,10 +57,10 @@
                 <span class="user-name">{{ user?.name }}</span>
               </button>
               <div v-if="userMenuOpen" class="user-dropdown">
-                <router-link to="/profile" class="dropdown-item" @click="closeUserMenu">
+                <router-link to="/mdht/profile" class="dropdown-item" @click="closeUserMenu">
                   Profile
                 </router-link>
-                <router-link to="/my-bookings" class="dropdown-item" @click="closeUserMenu">
+                <router-link to="/mdht/my-bookings" class="dropdown-item" @click="closeUserMenu">
                   My Bookings
                 </router-link>
                 <button @click="handleLogout" class="dropdown-item logout">
@@ -70,10 +70,10 @@
             </div>
           </template>
           <template v-else>
-            <router-link to="/login" class="btn-login" @click="closeMobileMenu">
+            <router-link to="/mdht/login" class="btn-login" @click="closeMobileMenu">
               Login
             </router-link>
-            <router-link to="/register" class="btn-register" @click="closeMobileMenu">
+            <router-link to="/mdht/register" class="btn-register" @click="closeMobileMenu">
               Register
             </router-link>
           </template>
@@ -175,7 +175,7 @@ onUnmounted(() => {
 }
 
 .brand-name {
-  color: #2d5f2e;
+  color: #FF8C00;
 }
 
 .mobile-menu-toggle {
@@ -217,8 +217,8 @@ onUnmounted(() => {
 
 .nav-link:hover,
 .nav-link.router-link-active {
-  color: #2d5f2e;
-  background-color: rgba(45, 95, 46, 0.08);
+  color: #FF8C00;
+  background-color: rgba(255, 140, 0, 0.08);
 }
 
 .navbar-actions {
@@ -301,24 +301,24 @@ onUnmounted(() => {
 }
 
 .btn-login {
-  color: #2d5f2e;
-  border: 2px solid #2d5f2e;
+  color: #FF8C00;
+  border: 2px solid #FF8C00;
 }
 
 .btn-login:hover {
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
 }
 
 .btn-register {
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
 }
 
 .btn-register:hover {
-  background-color: #244d25;
+  background-color: #E67E00;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(45, 95, 46, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
 }
 
 @media (max-width: 768px) {

@@ -240,8 +240,8 @@ input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: #2d5f2e;
-  box-shadow: 0 0 0 3px rgba(45, 95, 46, 0.1);
+  border-color: #FF8C00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
 }
 
 select:disabled {
@@ -258,7 +258,7 @@ small {
 
 .loading-text {
   margin-top: 5px;
-  color: #2d5f2e;
+  color: #FF8C00;
   font-size: 12px;
 }
 
@@ -287,7 +287,7 @@ small {
   padding-top: 15px;
   border-top: 2px solid #ddd;
   font-size: 18px;
-  color: #2d5f2e;
+  color: #FF8C00;
 }
 
 .error-message {
@@ -326,14 +326,14 @@ small {
 }
 
 .btn-submit {
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
 }
 
 .btn-submit:hover:not(:disabled) {
-  background-color: #244d25;
+  background-color: #E67E00;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(45, 95, 46, 0.3);
+  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.3);
 }
 
 .btn-submit:disabled {

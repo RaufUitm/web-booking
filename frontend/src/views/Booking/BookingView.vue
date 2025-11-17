@@ -129,7 +129,7 @@ h1 {
   width: 80px;
   height: 80px;
   margin: 0 auto 20px;
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -166,14 +166,14 @@ h1 {
 }
 
 .btn-primary {
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #244d25;
+  background-color: #E67E00;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(45, 95, 46, 0.3);
+  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.3);
 }
 
 .btn-secondary {

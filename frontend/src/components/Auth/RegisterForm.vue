@@ -160,7 +160,7 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #2d5f2e;
+  border-color: #FF8C00;
 }
 
 .error-message {
@@ -175,7 +175,7 @@ input:focus {
 .btn-primary {
   width: 100%;
   padding: 12px;
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
   border: none;
   border-radius: 4px;
@@ -185,7 +185,7 @@ input:focus {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #244d25;
+  background-color: #E67E00;
 }
 
 .btn-primary:disabled {
@@ -200,7 +200,7 @@ input:focus {
 }
 
 .form-links a {
-  color: #2d5f2e;
+  color: #FF8C00;
   text-decoration: none;
   margin-left: 5px;
 }

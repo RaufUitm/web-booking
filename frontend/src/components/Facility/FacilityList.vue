@@ -89,7 +89,7 @@ const loadMore = () => {
 
 .btn-load-more {
   padding: 12px 30px;
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
   border: none;
   border-radius: 4px;
@@ -99,7 +99,7 @@ const loadMore = () => {
 }
 
 .btn-load-more:hover {
-  background-color: #244d25;
+  background-color: #E67E00;
 }
 
 @media (max-width: 768px) {

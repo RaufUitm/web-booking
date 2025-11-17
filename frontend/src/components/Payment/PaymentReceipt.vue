@@ -133,7 +133,7 @@ const printReceipt = () => {
   width: 80px;
   height: 80px;
   margin: 0 auto 20px;
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -198,7 +198,7 @@ h3 {
 
 .value.status {
   text-transform: capitalize;
-  color: #2d5f2e;
+  color: #FF8C00;
   font-weight: 600;
 }
 
@@ -211,7 +211,7 @@ h3 {
 
 .detail-row.total {
   font-size: 24px;
-  color: #2d5f2e;
+  color: #FF8C00;
   font-weight: 700;
 }
 
@@ -242,12 +242,12 @@ h3 {
 }
 
 .btn-done {
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
 }
 
 .btn-done:hover {
-  background-color: #244d25;
+  background-color: #E67E00;
 }
 
 @media print {

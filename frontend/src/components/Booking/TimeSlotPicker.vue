@@ -109,15 +109,15 @@ h3 {
 }
 
 .time-slot.available:hover {
-  border-color: #2d5f2e;
-  background-color: rgba(45, 95, 46, 0.05);
+  border-color: #FF8C00;
+  background-color: rgba(255, 140, 0, 0.05);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(45, 95, 46, 0.2);
+  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.2);
 }
 
 .time-slot.selected {
-  border-color: #2d5f2e;
-  background-color: #2d5f2e;
+  border-color: #FF8C00;
+  background-color: #FF8C00;
   color: white;
 }
 

@@ -273,14 +273,14 @@ const clearFilters = () => {
 }
 
 const viewDetails = (facilityId) => {
-  router.push({ name: 'facility-detail', params: { id: facilityId } })
+  router.push({ name: 'mdht-facility-detail', params: { id: facilityId } })
 }
 
 const bookNow = (facilityId) => {
   if (!isAuthenticated.value) {
-    router.push({ name: 'login', query: { redirect: `/booking/${facilityId}` } })
+    router.push({ name: 'mdht-login', query: { redirect: `/mdht/booking/${facilityId}` } })
   } else {
-    router.push({ name: 'booking', params: { facilityId } })
+    router.push({ name: 'mdht-booking', params: { facilityId } })
   }
 }
 </script>
@@ -292,7 +292,7 @@ const bookNow = (facilityId) => {
 }
 
 .page-header {
-  background: linear-gradient(135deg, #4a8b4d 0%, #2d5f2e 100%);
+  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
   color: white;
   padding: 3rem 2rem;
   text-align: center;
@@ -338,7 +338,7 @@ const bookNow = (facilityId) => {
 
 .search-box input:focus {
   outline: none;
-  border-color: #2d5f2e;
+  border-color: #D77800;
 }
 
 .search-icon {
@@ -372,7 +372,7 @@ const bookNow = (facilityId) => {
 
 .filter-group select:focus {
   outline: none;
-  border-color: #2d5f2e;
+  border-color: #D77800;
 }
 
 .btn-clear {
@@ -419,7 +419,7 @@ const bookNow = (facilityId) => {
 
 .btn-secondary {
   padding: 0.75rem 1.5rem;
-  background-color: #2d5f2e;
+  background-color: #D77800;
   color: white;
   border: none;
   border-radius: 8px;
@@ -457,7 +457,7 @@ const bookNow = (facilityId) => {
 .facility-image {
   position: relative;
   height: 200px;
-  background: linear-gradient(135deg, #4a8b4d 0%, #2d5f2e 100%);
+  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -483,7 +483,7 @@ const bookNow = (facilityId) => {
 }
 
 .badge-available {
-  background-color: #2d5f2e;
+  background-color: #D77800;
   color: white;
 }
 
@@ -498,8 +498,8 @@ const bookNow = (facilityId) => {
 
 .facility-category {
   display: inline-block;
-  background-color: rgba(45, 95, 46, 0.1);
-  color: #2d5f2e;
+  background-color: rgba(215, 120, 0, 0.1);
+  color: #D77800;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.85rem;
@@ -562,14 +562,14 @@ const bookNow = (facilityId) => {
 }
 
 .price-amount {
-  color: #2d5f2e;
+  color: #D77800;
   font-size: 1.5rem;
   font-weight: bold;
 }
 
 .btn-book {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #4a8b4d 0%, #2d5f2e 100%);
+  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
   color: white;
   border: none;
   border-radius: 8px;

@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <nav class="navbar">
+    <nav class="navbar" v-if="!isLandingPage">
       <div class="nav-container">
-        <router-link to="/" class="logo">
-          <span class="logo-icon">🏛️</span>
+        <router-link to="/mdht" class="logo">
+          <img src="/images/MDHT.png" alt="Logo MDHT" class="logo-img">
           <span class="logo-text">MDHT Booking System</span>
         </router-link>
 
@@ -12,8 +12,8 @@
         </button>
 
         <div class="nav-links" :class="{ 'mobile-open': mobileMenuOpen }">
-          <router-link to="/" @click="closeMobileMenu">Laman Utama</router-link>
-          <router-link to="/facilities" @click="closeMobileMenu">Kemudahan</router-link>
+          <router-link to="/mdht" @click="closeMobileMenu">Laman Utama</router-link>
+          <router-link to="/mdht/facilities" @click="closeMobileMenu">Kemudahan</router-link>
 
           <template v-if="isAuthenticated">
             <router-link to="/my-bookings" @click="closeMobileMenu">Tempahan Saya</router-link>
@@ -62,7 +62,7 @@
       <router-view />
     </main>
 
-    <footer class="footer">
+    <footer class="footer" v-if="!isLandingPage">
       <div class="footer-container">
         <div class="footer-content">
           <div class="footer-section">
@@ -108,17 +108,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 const { isAuthenticated, isAdmin, userName, user } = storeToRefs(authStore)
 
 const mobileMenuOpen = ref(false)
 const userMenuOpen = ref(false)
+
+const isLandingPage = computed(() => route.path === '/')
 
 onMounted(() => {
   // Initialize auth from localStorage
@@ -175,7 +178,7 @@ main {
 
 /* Navbar */
 .navbar {
-  background-color: #2d5f2e;
+  background-color: #D77800;
   padding: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -201,6 +204,12 @@ main {
   text-decoration: none;
   font-weight: 700;
   font-size: 1.2rem;
+}
+
+.logo-img {
+  height: 50px;
+  width: 50px;
+  object-fit: contain;
 }
 
 .logo-icon {
@@ -247,12 +256,12 @@ main {
 }
 
 .btn-register {
-  background: linear-gradient(135deg, #4a8b4d 0%, #2d5f2e 100%);
+  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
   border: none;
 }
 
 .btn-register:hover {
-  background: linear-gradient(135deg, #6ba86e 0%, #4a8b4d 100%);
+  background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
   transform: translateY(-1px);
 }
 
@@ -357,7 +366,7 @@ main {
 
 /* Footer */
 .footer {
-  background-color: #1a3a1b;
+  background-color: #B36200;
   color: white;
   padding: 3rem 0 1rem;
   margin-top: 4rem;

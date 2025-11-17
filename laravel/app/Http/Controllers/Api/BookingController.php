@@ -16,10 +16,9 @@ class BookingController extends Controller
     {
         $query = Booking::with(['user', 'facility', 'timeSlot']);
 
-        // Filter by user (for regular users to see their own bookings)
-        if ($request->user()->role !== 'admin') {
-            $query->where('user_id', $request->user()->id);
-        }
+        // Always filter by user_id - users (including admin) only see their own bookings
+        // Admins can see all bookings through the admin/bookings endpoint
+        $query->where('user_id', $request->user()->id);
 
         // Filter by status
         if ($request->has('status')) {

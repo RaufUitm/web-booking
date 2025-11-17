@@ -246,7 +246,7 @@ h3 {
 }
 
 .detail-row.total .value {
-  color: #2d5f2e;
+  color: #FF8C00;
   font-weight: 700;
 }
 

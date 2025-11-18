@@ -25,6 +25,7 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 const props = defineProps({
   facility: {
@@ -41,8 +42,10 @@ const truncateText = (text, length) => {
   return text.length > length ? text.substring(0, length) + '...' : text
 }
 
+const { facilityDetailPath } = useDistrictRoutes()
+
 const handleClick = () => {
-  router.push(`/facilities/${props.facility.id}`)
+  router.push(facilityDetailPath(props.facility.id))
 }
 </script>
 

@@ -33,9 +33,9 @@
       </button>
 
       <div class="form-links">
-        <router-link to="/mdht/forgot-password">Forgot Password?</router-link>
+        <router-link :to="prefixPath('/forgot-password')">Forgot Password?</router-link>
         <span>|</span>
-        <router-link to="/mdht/register">Create Account</router-link>
+        <router-link :to="prefixPath('/register')">Create Account</router-link>
       </div>
     </form>
   </div>
@@ -45,9 +45,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { prefixPath } = useDistrictRoutes()
 
 const form = ref({
   email: '',
@@ -66,9 +68,9 @@ const handleSubmit = async () => {
 
     // Redirect based on user role
     if (authStore.isAdmin) {
-      router.push('/mdht/admin')
+      router.push(prefixPath('/admin'))
     } else {
-      router.push('/mdht')
+      router.push('/')
     }
   } catch (err) {
     error.value = err.response?.data?.message || 'Login failed. Please try again.'

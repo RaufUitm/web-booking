@@ -1,6 +1,26 @@
 <template>
   <div class="admin-dashboard">
-    <h1>Admin Dashboard</h1>
+    <div class="dashboard-header">
+      <div>
+        <h1>Admin Dashboard</h1>
+        <p class="role-badge" :class="authStore.userRole">
+          {{ getRoleDisplay(authStore.userRole) }}
+          <span v-if="authStore.userDistrict"> - {{ authStore.userDistrict }}</span>
+        </p>
+      </div>
+
+      <!-- District Filter for Master/State Admins -->
+      <div v-if="authStore.canManageAllDistricts" class="district-filter">
+        <label>Filter Daerah:</label>
+        <select v-model="selectedDistrict" @change="loadDashboardData">
+          <option value="">Semua Daerah</option>
+          <option value="Besut">Besut</option>
+          <option value="Marang">Marang</option>
+          <option value="Setiu">Setiu</option>
+          <option value="Hulu Terengganu">Hulu Terengganu</option>
+        </select>
+      </div>
+    </div>
 
     <div v-if="loading" class="loading">Memuatkan...</div>
 
@@ -56,25 +76,40 @@
       <div class="section">
         <h2>Quick Actions</h2>
         <div class="quick-actions">
-          <router-link to="/admin/facilities" class="action-btn">
+          <router-link :to="prefixPath('/admin/facilities')" class="action-btn">
             <span class="icon">🏢</span>
-            <span>Manage Facilities</span>
+            <span>Urus Kemudahan</span>
           </router-link>
-          <router-link to="/admin/bookings" class="action-btn">
+          <router-link :to="prefixPath('/admin/bookings')" class="action-btn">
             <span class="icon">📅</span>
-            <span>Manage Bookings</span>
+            <span>Urus Tempahan</span>
           </router-link>
-          <router-link to="/admin/users" class="action-btn">
+
+          <!-- User Management - Only for Master/State Admins -->
+          <router-link v-if="authStore.canManageAllDistricts" :to="prefixPath('/admin/users')" class="action-btn">
             <span class="icon">👥</span>
             <span>Urus Pengguna</span>
           </router-link>
-          <router-link to="/admin/categories" class="action-btn">
+
+          <!-- Admin Management - Only for Master/State Admins -->
+          <router-link v-if="authStore.canAssignRoles" :to="prefixPath('/admin/admins')" class="action-btn">
+            <span class="icon">👑</span>
+            <span>Urus Admin</span>
+          </router-link>
+
+          <router-link :to="prefixPath('/admin/categories')" class="action-btn">
             <span class="icon">📁</span>
             <span>Urus Kategori</span>
           </router-link>
-          <router-link to="/admin/reports" class="action-btn">
+          <router-link :to="prefixPath('/admin/reports')" class="action-btn">
             <span class="icon">📈</span>
             <span>Lihat Laporan</span>
+          </router-link>
+
+          <!-- System Settings - Only for Master Admin -->
+          <router-link v-if="authStore.isMasterAdmin" :to="prefixPath('/admin/settings')" class="action-btn master-only">
+            <span class="icon">⚙️</span>
+            <span>Tetapan Sistem</span>
           </router-link>
         </div>
       </div>
@@ -84,11 +119,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import api from '@/api/axios'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 defineOptions({
   name: 'AdminDashboard'
 })
+
+const authStore = useAuthStore()
+
+const { prefixPath } = useDistrictRoutes()
 
 const stats = ref({
   total_users: 0,
@@ -102,15 +143,39 @@ const stats = ref({
 
 const recentBookings = ref([])
 const loading = ref(false)
+const selectedDistrict = ref('')
 
 onMounted(() => {
+  // Auto-select district for district admins
+  if (authStore.isDistrictAdmin) {
+    selectedDistrict.value = authStore.userDistrict
+  }
   loadDashboardData()
 })
+
+const getRoleDisplay = (role) => {
+  const roleMap = {
+    'master_admin': 'Master Admin - Full System Access',
+    'state_admin': 'State Admin - All Districts',
+    'district_admin': 'District Admin',
+    'user': 'User'
+  }
+  return roleMap[role] || role
+}
 
 const loadDashboardData = async () => {
   loading.value = true
   try {
-    const response = await api.get('/admin/dashboard')
+    const params = {}
+
+    // Apply district filter based on role
+    if (authStore.isDistrictAdmin) {
+      params.district = authStore.userDistrict
+    } else if (selectedDistrict.value) {
+      params.district = selectedDistrict.value
+    }
+
+    const response = await api.get('/admin/dashboard', { params })
     const data = response.data.data
 
     stats.value = data.stats
@@ -137,10 +202,69 @@ const formatDate = (date) => {
   padding: 30px;
 }
 
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
 h1 {
-  margin: 0 0 30px 0;
+  margin: 0 0 10px 0;
   color: #333;
   font-size: 32px;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.role-badge.master_admin {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.role-badge.state_admin {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.role-badge.district_admin {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.district-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.district-filter label {
+  font-weight: 600;
+  color: #555;
+}
+
+.district-filter select {
+  padding: 10px 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  background: white;
+  min-width: 200px;
+}
+
+.district-filter select:focus {
+  outline: none;
+  border-color: #FF8C00;
 }
 
 .stats-grid {
@@ -258,12 +382,24 @@ h1 {
   text-decoration: none;
   color: #333;
   transition: all 0.3s;
+  position: relative;
 }
 
 .action-btn:hover {
-  background-color: #2d5f2e;
+  background-color: #FF8C00;
   color: white;
   transform: translateX(5px);
+}
+
+.action-btn.master-only {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 2px solid #5568d3;
+}
+
+.action-btn.master-only:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #6a4199 100%);
+  transform: translateX(5px) scale(1.02);
 }
 
 .action-btn .icon {

@@ -22,13 +22,13 @@ const router = createRouter({
       path: '/mdht/login',
       name: 'mdht-login',
       component: () => import('../views/Auth/Login.vue'),
-      meta: { requiresAuth: false, guestOnly: true }
+      meta: { requiresAuth: false, guestOnly: true, hideNav: true }
     },
     {
       path: '/mdht/register',
       name: 'mdht-register',
       component: () => import('../views/Auth/Register.vue'),
-      meta: { requiresAuth: false, guestOnly: true }
+      meta: { requiresAuth: false, guestOnly: true, hideNav: true }
     },
     {
       path: '/mdht/facilities',
@@ -60,22 +60,73 @@ const router = createRouter({
       component: () => import('../views/Booking/BookingConfirmationView.vue'),
       meta: { requiresAuth: true }
     },
+    // Generic district-prefixed routes (multi-tenancy)
+    {
+      path: '/:district',
+      name: 'district-home',
+      component: () => import('../views/Home.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/:district/login',
+      name: 'district-login',
+      component: () => import('../views/Auth/Login.vue'),
+      meta: { requiresAuth: false, guestOnly: true, hideNav: true }
+    },
+    {
+      path: '/:district/register',
+      name: 'district-register',
+      component: () => import('../views/Auth/Register.vue'),
+      meta: { requiresAuth: false, guestOnly: true, hideNav: true }
+    },
+    {
+      path: '/:district/facilities',
+      name: 'district-facilities',
+      component: () => import('../views/Facilities/FacilitiesView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/:district/facilities/:id',
+      name: 'district-facility-detail',
+      component: () => import('../views/Facilities/FacilityDetailView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/:district/booking/:facilityId',
+      name: 'district-booking',
+      component: () => import('../views/Booking/BookingView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/:district/my-bookings',
+      name: 'district-my-bookings',
+      component: () => import('../views/Booking/MyBookingsView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/:district/booking-confirmation/:id',
+      name: 'district-booking-confirmation',
+      component: () => import('../views/Booking/BookingConfirmationView.vue'),
+      meta: { requiresAuth: true }
+    },
     // Legacy routes (redirect to MDHT for backward compatibility)
     {
       path: '/login',
-      redirect: '/mdht/login'
+      name: 'login',
+      redirect: { name: 'mdht-login' }
     },
     {
       path: '/register',
-      redirect: '/mdht/register'
+      name: 'register',
+      redirect: { name: 'mdht-register' }
     },
     {
       path: '/facilities',
-      redirect: '/mdht/facilities'
+      redirect: { name: 'mdht-facilities' }
     },
     {
       path: '/my-bookings',
-      redirect: '/mdht/my-bookings'
+      redirect: { name: 'mdht-my-bookings' }
     },
     // MDHT Admin Routes
     {
@@ -114,30 +165,40 @@ const router = createRouter({
       component: () => import('../views/Admin/ManageCategories.vue'),
       meta: { requiresAuth: true, requiresAdmin: true }
     },
+    {
+      path: '/mdht/admin/admins',
+      name: 'mdht-admin-admins',
+      component: () => import('../views/Admin/ManageAdmins.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
     // Legacy admin routes (redirect to MDHT admin)
     {
       path: '/admin',
-      redirect: '/mdht/admin'
+      redirect: { name: 'mdht-admin' }
     },
     {
       path: '/admin/facilities',
-      redirect: '/mdht/admin/facilities'
+      redirect: { name: 'mdht-admin-facilities' }
     },
     {
       path: '/admin/bookings',
-      redirect: '/mdht/admin/bookings'
+      redirect: { name: 'mdht-admin-bookings' }
     },
     {
       path: '/admin/users',
-      redirect: '/mdht/admin/users'
+      redirect: { name: 'mdht-admin-users' }
     },
     {
       path: '/admin/reports',
-      redirect: '/mdht/admin/reports'
+      redirect: { name: 'mdht-admin-reports' }
     },
     {
       path: '/admin/categories',
-      redirect: '/mdht/admin/categories'
+      redirect: { name: 'mdht-admin-categories' }
+    },
+    {
+      path: '/admin/admins',
+      redirect: { name: 'mdht-admin-admins' }
     }
   ]
 })
@@ -151,13 +212,13 @@ router.beforeEach((to, from, next) => {
   // Redirect authenticated users away from guest-only pages
   if (to.meta.guestOnly && isAuthenticated) {
     // Admins go to admin dashboard, regular users go to home
-    return next(isAdmin ? '/mdht/admin' : '/mdht')
+    return next(isAdmin ? { name: 'mdht-admin' } : { name: 'mdht-home' })
   }
 
   // Redirect admins trying to access regular user pages to admin dashboard
   // (except public pages like facilities browsing and main landing page)
   if (isAdmin && to.meta.requiresAuth && !to.meta.requiresAdmin && to.path !== '/' && !to.path.startsWith('/mdht')) {
-    return next('/mdht/admin')
+    return next({ name: 'mdht-admin' })
   }
 
   // Check if route requires authentication

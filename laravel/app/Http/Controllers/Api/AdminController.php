@@ -17,23 +17,50 @@ class AdminController extends Controller
     /**
      * Get dashboard statistics
      */
-    public function dashboard()
+    public function dashboard(Request $request)
     {
         try {
+            $user = $request->user();
+            $district = $request->query('district');
+
+            // Apply district filter based on role
+            $districtFilter = null;
+            if ($user->role === 'district_admin') {
+                // District admin can only see their district
+                $districtFilter = $user->district;
+            } elseif (in_array($user->role, ['state_admin', 'master_admin']) && $district) {
+                // State/Master admin can filter by selected district
+                $districtFilter = $district;
+            }
+
+            // Build queries with district filter
+            $userQuery = User::query();
+            $bookingQuery = Booking::query();
+            $facilityQuery = Service::query();
+
+            if ($districtFilter) {
+                $userQuery->where('district', $districtFilter);
+                $facilityQuery->where('district', $districtFilter);
+                // Filter bookings by facilities in the district
+                $facilityIds = Service::where('district', $districtFilter)->pluck('id');
+                $bookingQuery->whereIn('facility_id', $facilityIds);
+            }
+
             $stats = [
-                'total_users' => User::count(),
-                'total_bookings' => Booking::count(),
-                'total_facilities' => Service::count(),
-                'pending_bookings' => Booking::where('status', 'pending')->count(),
-                'confirmed_bookings' => Booking::where('status', 'confirmed')->count(),
-                'total_revenue' => Booking::whereIn('status', ['confirmed', 'completed'])
+                'total_users' => $userQuery->count(),
+                'total_bookings' => (clone $bookingQuery)->count(),
+                'total_facilities' => $facilityQuery->count(),
+                'pending_bookings' => (clone $bookingQuery)->where('status', 'pending')->count(),
+                'confirmed_bookings' => (clone $bookingQuery)->where('status', 'confirmed')->count(),
+                'total_revenue' => (clone $bookingQuery)->whereIn('status', ['confirmed', 'completed'])
                     ->sum('total_price'),
-                'monthly_revenue' => Booking::whereIn('status', ['confirmed', 'completed'])
+                'monthly_revenue' => (clone $bookingQuery)->whereIn('status', ['confirmed', 'completed'])
                     ->whereMonth('created_at', now()->month)
                     ->sum('total_price'),
             ];
 
-            $recent_bookings = Booking::with(['user', 'facility', 'timeSlot'])
+            $recent_bookings = (clone $bookingQuery)
+                ->with(['user', 'facility', 'timeSlot'])
                 ->latest()
                 ->take(10)
                 ->get();
@@ -42,7 +69,8 @@ class AdminController extends Controller
                 'success' => true,
                 'data' => [
                     'stats' => $stats,
-                    'recent_bookings' => $recent_bookings
+                    'recent_bookings' => $recent_bookings,
+                    'filtered_district' => $districtFilter
                 ]
             ]);
         } catch (\Exception $e) {
@@ -104,7 +132,8 @@ class AdminController extends Controller
             'password' => 'required|string|min:8',
             'phone' => 'nullable|string|max:20',
             'ic_number' => 'nullable|string|max:20',
-            'role' => 'required|in:user,admin'
+            'role' => 'required|in:user,district_admin,state_admin,master_admin',
+            'district' => 'required_if:role,district_admin|nullable|string|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -123,6 +152,7 @@ class AdminController extends Controller
                 'phone' => $request->phone,
                 'ic_number' => $request->ic_number,
                 'role' => $request->role,
+                'district' => $request->role === 'district_admin' ? $request->district : null,
             ]);
 
             return response()->json([
@@ -158,7 +188,8 @@ class AdminController extends Controller
             'email' => 'sometimes|required|email|unique:users,email,' . $id,
             'phone' => 'nullable|string|max:20',
             'ic_number' => 'nullable|string|max:20',
-            'role' => 'sometimes|required|in:user,admin',
+            'role' => 'sometimes|required|in:user,district_admin,state_admin,master_admin',
+            'district' => 'required_if:role,district_admin|nullable|string|max:255',
             'password' => 'nullable|string|min:8'
         ]);
 
@@ -172,6 +203,13 @@ class AdminController extends Controller
 
         try {
             $data = $request->only(['name', 'email', 'phone', 'ic_number', 'role']);
+
+            // Handle district field
+            if ($request->role === 'district_admin') {
+                $data['district'] = $request->district;
+            } else {
+                $data['district'] = null;
+            }
 
             if ($request->filled('password')) {
                 $data['password'] = Hash::make($request->password);

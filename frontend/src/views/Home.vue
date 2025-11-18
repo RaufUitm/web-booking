@@ -2,16 +2,16 @@
 <template>
   <div class="home">
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" :style="{ background: currentDistrictColor.gradient }">
       <div class="hero-content">
         <h1>{{ districtStore.pbtName }}</h1>
         <h2 style="font-size: 1.8rem; margin: 1rem 0; color: #2c3e50;">Sistem Tempahan Kemudahan Awam</h2>
         <p class="subtitle">Tempah kemudahan awam dengan mudah dan pantas di {{ districtStore.districtName }}, Terengganu</p>
         <div class="hero-buttons">
-          <router-link to="/facilities" class="btn btn-primary">
+          <router-link :to="prefixPath('/facilities')" class="btn btn-primary" :style="{ color: currentDistrictColor.main, borderColor: currentDistrictColor.main }">
             Lihat Kemudahan
           </router-link>
-          <router-link v-if="!isAuthenticated" to="/register" class="btn btn-secondary">
+          <router-link v-if="!isAuthenticated" :to="prefixPath('/register')" class="btn btn-secondary" :style="{ borderColor: currentDistrictColor.main, color: currentDistrictColor.main }">
             Daftar Sekarang
           </router-link>
         </div>
@@ -32,7 +32,7 @@
             <div class="category-icon">{{ category.icon }}</div>
             <h3>{{ category.name }}</h3>
             <p>{{ category.description }}</p>
-            <span class="facility-count">{{ category.facility_count || 0 }} kemudahan</span>
+            <span class="facility-count" :style="{ backgroundColor: currentDistrictColor.main + '20', color: currentDistrictColor.main }">{{ category.facility_count || 0 }} kemudahan</span>
           </div>
         </div>
       </div>
@@ -100,11 +100,11 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="cta">
+    <section class="cta" :style="{ background: currentDistrictColor.gradient }">
       <div class="container">
         <h2>Bersedia Untuk Membuat Tempahan?</h2>
         <p>Mulakan tempahan anda hari ini dan nikmati kemudahan awam dengan lebih mudah</p>
-        <router-link to="/facilities" class="btn btn-large">
+        <router-link :to="prefixPath('/facilities')" class="btn btn-large" :style="{ background: currentDistrictColor.main, color: '#fff' }">
           Tempah Sekarang
         </router-link>
       </div>
@@ -113,18 +113,30 @@
 </template>
 
 <script setup>
+// District color mapping for dynamic theme
+const districtColors = {
+  'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
+  'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
+  'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
+  'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
+}
+const currentDistrictColor = computed(() => {
+  return districtColors[districtStore.districtName] || districtColors['Hulu Terengganu']
+})
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useFacilityStore } from '@/stores/facility'
 import { useDistrictStore } from '@/stores/district'
 import { storeToRefs } from 'pinia'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const facilityStore = useFacilityStore()
 const districtStore = useDistrictStore()
+const { prefixPath } = useDistrictRoutes()
 
 const { isAuthenticated } = storeToRefs(authStore)
 const { categories } = storeToRefs(facilityStore)
@@ -185,7 +197,7 @@ onMounted(async () => {
 
 const goToFacilities = (categoryId) => {
   router.push({
-    name: 'facilities',
+    path: prefixPath('/facilities'),
     query: { category: categoryId }
   })
 }

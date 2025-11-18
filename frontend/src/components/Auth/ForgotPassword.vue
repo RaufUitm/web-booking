@@ -28,7 +28,7 @@
       </button>
 
       <div class="form-links">
-        <router-link to="/login">Back to Login</router-link>
+        <router-link :to="prefixPath('/login')">Back to Login</router-link>
       </div>
     </form>
   </div>
@@ -37,8 +37,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 const authStore = useAuthStore()
+const { prefixPath } = useDistrictRoutes()
 
 const form = ref({
   email: ''

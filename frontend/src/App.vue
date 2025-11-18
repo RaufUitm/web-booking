@@ -1,10 +1,23 @@
 <template>
   <div id="app">
-    <nav class="navbar" v-if="!isLandingPage">
+    <nav class="navbar" v-if="!isLandingPage && !$route.meta.hideNav" :style="navbarStyle">
       <div class="nav-container">
-        <router-link to="/mdht" class="logo">
-          <img src="/images/MDHT.png" alt="Logo MDHT" class="logo-img">
-          <span class="logo-text">MDHT Booking System</span>
+        <router-link to="/" class="logo">
+          <template v-if="districtStore.currentDistrict">
+            <img :src="`/images/${districtStore.districtAbbreviation}.png`"
+                 :alt="`Logo ${districtStore.districtAbbreviation}`"
+                 class="logo-img">
+            <div>
+              <span class="logo-text">{{ districtStore.pbtName }}</span>
+              <div class="logo-sub">({{ districtStore.districtAbbreviation }} Booking)</div>
+            </div>
+          </template>
+          <template v-else>
+            <div>
+              <span class="logo-text">T-Smart Booking</span>
+              <div class="logo-sub">Sistem Tempahan Negeri</div>
+            </div>
+          </template>
         </router-link>
 
         <button class="mobile-menu-btn" @click="mobileMenuOpen = !mobileMenuOpen">
@@ -12,12 +25,12 @@
         </button>
 
         <div class="nav-links" :class="{ 'mobile-open': mobileMenuOpen }">
-          <router-link to="/mdht" @click="closeMobileMenu">Laman Utama</router-link>
-          <router-link to="/mdht/facilities" @click="closeMobileMenu">Kemudahan</router-link>
+          <router-link to="/" @click="closeMobileMenu">Laman Utama</router-link>
+          <router-link :to="prefixPath('/facilities')" @click="closeMobileMenu">Kemudahan</router-link>
 
           <template v-if="isAuthenticated">
-            <router-link to="/my-bookings" @click="closeMobileMenu">Tempahan Saya</router-link>
-            <router-link v-if="isAdmin" to="/admin" @click="closeMobileMenu">Admin</router-link>
+            <router-link v-if="districtStore.currentDistrict" :to="prefixPath('/my-bookings')" @click="closeMobileMenu">Tempahan Saya</router-link>
+            <router-link v-if="isAdmin" :to="prefixPath('/admin')" @click="closeMobileMenu">Admin</router-link>
 
             <div class="user-menu">
               <button class="user-btn" @click="userMenuOpen = !userMenuOpen">
@@ -32,10 +45,10 @@
                   <p class="user-email">{{ user?.email }}</p>
                 </div>
                 <div class="dropdown-divider"></div>
-                <router-link to="/my-bookings" class="dropdown-item" @click="closeUserMenu">
+                <router-link v-if="districtStore.currentDistrict" :to="prefixPath('/my-bookings')" class="dropdown-item" @click="closeUserMenu">
                   📋 Tempahan Saya
                 </router-link>
-                <router-link to="/profile" class="dropdown-item" @click="closeUserMenu">
+                <router-link :to="prefixPath('/profile')" class="dropdown-item" @click="closeUserMenu">
                   ⚙️ Tetapan Profil
                 </router-link>
                 <div class="dropdown-divider"></div>
@@ -47,10 +60,10 @@
           </template>
 
           <template v-else>
-            <router-link to="/login" class="btn-login" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/login')" class="btn-login" @click="closeMobileMenu">
               Log Masuk
             </router-link>
-            <router-link to="/register" class="btn-register" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/register')" class="btn-register" @click="closeMobileMenu">
               Daftar
             </router-link>
           </template>
@@ -62,7 +75,7 @@
       <router-view />
     </main>
 
-    <footer class="footer" v-if="!isLandingPage">
+    <footer class="footer" v-if="!$route.meta.hideNav" :style="footerStyle">
       <div class="footer-container">
         <div class="footer-content">
           <div class="footer-section">
@@ -73,34 +86,33 @@
           <div class="footer-section">
             <h4>Pautan Pantas</h4>
             <ul>
-              <li><router-link to="/">Laman Utama</router-link></li>
-              <li><router-link to="/facilities">Kemudahan</router-link></li>
-              <li><router-link to="/my-bookings">Tempahan Saya</router-link></li>
-              <li><a href="https://mdht.gov.my" target="_blank">Portal MDHT</a></li>
+              <li><router-link :to="{ name: 'landing' }">Laman Utama</router-link></li>
+              <li><router-link :to="prefixPath('/my-bookings')">Tempahan Saya</router-link></li>
+              <li><a :href="districtStore.districtWebsite" target="_blank">Portal {{ districtStore.districtAbbreviation }}</a></li>
             </ul>
           </div>
 
           <div class="footer-section">
             <h4>Hubungi Kami</h4>
             <ul class="contact-info">
-              <li>📞 +60 9-626 1333</li>
-              <li>✉️ info@mdht.terengganu.gov.my</li>
-              <li>📍 Majlis Daerah Hulu Terengganu, 21700 Kuala Berang, Terengganu</li>
+              <li>📞 {{ districtStore.districtPhone }}</li>
+              <li>✉️ {{ districtStore.districtEmail }}</li>
+              <li>📍 {{ districtStore.districtAddress }}</li>
             </ul>
           </div>
 
           <div class="footer-section">
             <h4>Ikuti Kami</h4>
             <div class="social-links">
-              <a href="https://www.facebook.com/MDHuluTerengganu" target="_blank" class="social-icon" title="Facebook">📘</a>
-              <a href="https://www.instagram.com/mdhuluterengganu" target="_blank" class="social-icon" title="Instagram">📸</a>
-              <a href="https://mdht.terengganu.gov.my" target="_blank" class="social-icon" title="Portal Rasmi">🌐</a>
+              <a :href="districtStore.districtFacebook" target="_blank" class="social-icon" title="Facebook">📘</a>
+              <a :href="districtStore.districtInstagram" target="_blank" class="social-icon" title="Instagram">📸</a>
+              <a :href="districtStore.districtWebsite" target="_blank" class="social-icon" title="Portal Rasmi">🌐</a>
             </div>
           </div>
         </div>
 
         <div class="footer-bottom">
-          <p>&copy; {{ currentYear }} Majlis Daerah Hulu Terengganu. Hak Cipta Terpelihara.</p>
+          <p>&copy; {{ currentYear }} {{ districtStore.pbtName }}. Hak Cipta Terpelihara.</p>
         </div>
       </div>
     </footer>
@@ -111,21 +123,58 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useDistrictStore } from '@/stores/district'
 import { storeToRefs } from 'pinia'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const districtStore = useDistrictStore()
 const { isAuthenticated, isAdmin, userName, user } = storeToRefs(authStore)
+const { prefixPath } = useDistrictRoutes()
+
+// const baseUrl = import.meta.env.BASE_URL || '/'
 
 const mobileMenuOpen = ref(false)
 const userMenuOpen = ref(false)
 
+const currentYear = computed(() => new Date().getFullYear())
 const isLandingPage = computed(() => route.path === '/')
+
+// Dynamic navbar and footer color based on district
+const navbarStyle = computed(() => ({
+  backgroundColor: districtStore.districtColor || '#D77800'
+}))
+
+const footerStyle = computed(() => {
+  const color = districtStore.districtColor || '#D77800'
+  // Darken the color for footer
+  return {
+    backgroundColor: darkenColor(color, 30)
+  }
+})
+
+// Helper function to darken a hex color
+const darkenColor = (color, percent) => {
+  const num = parseInt(color.replace('#', ''), 16)
+  const amt = Math.round(2.55 * percent)
+  const R = (num >> 16) - amt
+  const G = (num >> 8 & 0x00FF) - amt
+  const B = (num & 0x0000FF) - amt
+  return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1).toUpperCase()
+}
 
 onMounted(() => {
   // Initialize auth from localStorage
   authStore.initializeAuth()
+
+  // Check if district parameter is in URL
+  if (route.query.district) {
+    districtStore.setDistrict(route.query.district)
+  }
 })
 
 const handleLogout = async () => {
@@ -142,6 +191,8 @@ const closeUserMenu = () => {
   userMenuOpen.value = false
   closeMobileMenu()
 }
+
+// landing navigation uses plain anchors (full page navigation) via `baseUrl`
 
 // Close dropdowns when clicking outside
 if (typeof window !== 'undefined') {

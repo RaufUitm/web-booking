@@ -7,6 +7,8 @@
         <p>Isikan maklumat untuk membuat akaun</p>
       </div>
 
+
+
       <form @submit.prevent="handleRegister" class="auth-form">
         <div class="form-group">
           <label for="name">Nama Penuh <span class="required">*</span></label>
@@ -105,7 +107,7 @@
       </form>
 
       <div class="auth-footer">
-        <p>Sudah ada akaun? <router-link to="/login">Log masuk di sini</router-link></p>
+        <p>Sudah ada akaun? <router-link :to="prefixPath('/login')">Log masuk di sini</router-link></p>
       </div>
     </div>
   </div>
@@ -116,10 +118,12 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const { loading, error } = storeToRefs(authStore)
+const { prefixPath } = useDistrictRoutes()
 
 const formData = ref({
   name: '',
@@ -164,7 +168,7 @@ const handleRegister = async () => {
 
   try {
     await authStore.register(formData.value)
-    router.push('/facilities')
+    router.push('/')
   } catch (err) {
     console.error('Registration failed:', err)
   }
@@ -178,11 +182,11 @@ const handleRegister = async () => {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
+  background: #f5f5f5;
 }
 
 .auth-card {
-  background: white;
+  background: #f7f7f7;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   padding: 3rem;
@@ -190,6 +194,7 @@ const handleRegister = async () => {
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
+  border: 2px solid #222;
 }
 
 .auth-header {
@@ -206,6 +211,21 @@ const handleRegister = async () => {
 .auth-header p {
   color: #7f8c8d;
   font-size: 0.95rem;
+}
+
+.flag-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.flag-img {
+  width: 110px;
+  height: auto;
+  filter: grayscale(1) contrast(1.2);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .auth-form {
@@ -283,8 +303,8 @@ const handleRegister = async () => {
 }
 
 .btn-submit {
-  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
-  color: white;
+  background: #111;
+  color: #fff;
   padding: 1rem;
   border: none;
   border-radius: 8px;
@@ -293,11 +313,14 @@ const handleRegister = async () => {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   margin-top: 0.5rem;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
 }
 
 .btn-submit:hover:not(:disabled) {
+  background: #222;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(215, 120, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
 }
 
 .btn-submit:disabled {

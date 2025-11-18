@@ -17,8 +17,8 @@
           <h4>Pautan Pantas</h4>
           <ul>
             <li><router-link to="/">Laman Utama</router-link></li>
-            <li><router-link to="/facilities">Kemudahan</router-link></li>
-            <li><router-link to="/my-bookings">Tempahan Saya</router-link></li>
+            <li><router-link :to="prefixPath('/facilities')">Kemudahan</router-link></li>
+            <li><router-link :to="prefixPath('/my-bookings')">Tempahan Saya</router-link></li>
             <li><a href="https://mdht.terengganu.gov.my" target="_blank">Portal MDHT</a></li>
           </ul>
         </div>
@@ -61,12 +61,14 @@
 
 <script setup>
 import { computed } from 'vue'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 defineOptions({
   name: 'AppFooter'
 })
 
 const currentYear = computed(() => new Date().getFullYear())
+const { prefixPath } = useDistrictRoutes()
 </script>
 
 <style scoped>

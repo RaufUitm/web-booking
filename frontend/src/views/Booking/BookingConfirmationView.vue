@@ -13,7 +13,7 @@
 
       <div v-else class="error">
         <p>Booking not found.</p>
-        <router-link to="/my-bookings" class="btn-back">
+        <router-link :to="prefixPath('/my-bookings')" class="btn-back">
           Back to My Bookings
         </router-link>
       </div>
@@ -24,11 +24,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import useDistrictRoutes from '@/utils/districtRoutes'
 import { useBookingStore } from '@/stores/booking'
 import BookingSummary from '@/components/Booking/BookingSummary.vue'
 
 const route = useRoute()
 const router = useRouter()
+const { prefixPath } = useDistrictRoutes()
 const bookingStore = useBookingStore()
 
 const booking = ref(null)
@@ -62,7 +64,7 @@ const handleCancel = async () => {
 }
 
 const handleEdit = () => {
-  router.push(`/booking/${booking.value.facility_id}`)
+  router.push(prefixPath(`/booking/${booking.value.facility_id}`))
 }
 </script>
 

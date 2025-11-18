@@ -22,7 +22,9 @@
       <select v-model="roleFilter" @change="loadUsers">
         <option value="">Semua Peranan</option>
         <option value="user">Pengguna</option>
-        <option value="admin">Admin</option>
+        <option value="master_admin">Master Admin</option>
+        <option value="state_admin">State Admin</option>
+        <option value="district_admin">District Admin</option>
       </select>
     </div>
 
@@ -39,6 +41,7 @@
             <th>No. Telefon</th>
             <th>No. Kad Pengenalan</th>
             <th>Peranan</th>
+            <th>Daerah</th>
             <th>Tarikh Daftar</th>
             <th>Tindakan</th>
           </tr>
@@ -52,9 +55,10 @@
             <td>{{ user.ic_number || '-' }}</td>
             <td>
               <span :class="['role-badge', user.role]">
-                {{ user.role === 'admin' ? 'Admin' : 'Pengguna' }}
+                {{ getRoleDisplay(user.role) }}
               </span>
             </td>
+            <td>{{ user.district || '-' }}</td>
             <td>{{ formatDate(user.created_at) }}</td>
             <td class="actions">
               <button @click="editUser(user)" class="btn-icon" title="Edit">
@@ -104,9 +108,22 @@
 
           <div class="form-group">
             <label>Peranan <span class="required">*</span></label>
-            <select v-model="formData.role" required>
+            <select v-model="formData.role" required @change="handleRoleChange">
               <option value="user">Pengguna</option>
-              <option value="admin">Admin</option>
+              <option value="district_admin">District Admin</option>
+              <option value="state_admin">State Admin</option>
+              <option value="master_admin">Master Admin</option>
+            </select>
+          </div>
+
+          <div v-if="formData.role === 'district_admin'" class="form-group">
+            <label>Daerah <span class="required">*</span></label>
+            <select v-model="formData.district" required>
+              <option value="">Pilih Daerah</option>
+              <option value="Besut">Besut</option>
+              <option value="Marang">Marang</option>
+              <option value="Setiu">Setiu</option>
+              <option value="Hulu Terengganu">Hulu Terengganu</option>
             </select>
           </div>
 
@@ -178,6 +195,7 @@ const formData = ref({
   phone: '',
   ic_number: '',
   role: 'user',
+  district: '',
   password: ''
 })
 
@@ -226,6 +244,24 @@ const handleSearch = () => {
   // Search is handled by computed property
 }
 
+const getRoleDisplay = (role) => {
+  const roleMap = {
+    'user': 'Pengguna',
+    'district_admin': 'District Admin',
+    'state_admin': 'State Admin',
+    'master_admin': 'Master Admin',
+    'admin': 'Admin'
+  }
+  return roleMap[role] || role
+}
+
+const handleRoleChange = () => {
+  // Clear district if not district admin
+  if (formData.value.role !== 'district_admin') {
+    formData.value.district = ''
+  }
+}
+
 const editUser = (user) => {
   editingUserId.value = user.id
   formData.value = {
@@ -233,7 +269,8 @@ const editUser = (user) => {
     email: user.email,
     phone: user.phone || '',
     ic_number: user.ic_number || '',
-    role: user.role
+    role: user.role,
+    district: user.district || ''
   }
   showEditModal.value = true
 }
@@ -436,6 +473,21 @@ select:focus {
 .role-badge.admin {
   background: #fef3c7;
   color: #92400e;
+}
+
+.role-badge.master_admin {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.role-badge.state_admin {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.role-badge.district_admin {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
 }
 
 .role-badge.user {

@@ -17,7 +17,7 @@
 
       <div v-else-if="filteredBookings.length === 0" class="no-bookings">
         <p>Tiada tempahan dijumpai.</p>
-        <router-link to="/facilities" class="btn-browse">
+        <router-link :to="prefixPath('/facilities')" class="btn-browse">
           Lihat Kemudahan
         </router-link>
       </div>
@@ -75,9 +75,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import useDistrictRoutes from '@/utils/districtRoutes'
 import { useBookingStore } from '@/stores/booking'
 
 const router = useRouter()
+const { prefixPath } = useDistrictRoutes()
 const bookingStore = useBookingStore()
 
 const bookings = ref([])
@@ -127,7 +129,7 @@ const canCancel = (booking) => {
 }
 
 const viewBooking = (id) => {
-  router.push(`/booking-confirmation/${id}`)
+  router.push(prefixPath(`/booking-confirmation/${id}`))
 }
 
 const cancelBooking = async (id) => {

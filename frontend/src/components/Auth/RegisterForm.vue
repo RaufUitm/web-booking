@@ -77,7 +77,7 @@
 
       <div class="form-links">
         <span>Already have an account?</span>
-        <router-link to="/login">Login</router-link>
+        <router-link :to="prefixPath('/login')">Login</router-link>
       </div>
     </form>
   </div>
@@ -87,9 +87,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { prefixPath } = useDistrictRoutes()
 
 const form = ref({
   name: '',

@@ -22,6 +22,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFacilityStore } from '@/stores/facility'
+import useDistrictRoutes from '@/utils/districtRoutes'
 import FacilityDetails from '@/components/Facility/FacilityDetails.vue'
 
 const route = useRoute()
@@ -38,7 +39,7 @@ onMounted(async () => {
 const loadFacility = async () => {
   loading.value = true
   try {
-    facility.value = await facilityStore.fetchFacilityById(route.params.id)
+    facility.value = await facilityStore.fetchFacility(route.params.id)
   } catch (error) {
     console.error('Failed to load facility:', error)
   } finally {
@@ -46,8 +47,11 @@ const loadFacility = async () => {
   }
 }
 
+const { bookingPath } = useDistrictRoutes()
+
 const handleBook = () => {
-  router.push(`/booking/${facility.value.id}`)
+  const bp = bookingPath(facility.value.id)
+  router.push(bp)
 }
 
 const goBack = () => {

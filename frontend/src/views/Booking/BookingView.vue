@@ -25,10 +25,10 @@
         <h2>Tempahan Berjaya!</h2>
         <p>Tempahan anda telah disahkan. Sila tunggu pengesahan daripada admin.</p>
         <div class="actions">
-          <router-link to="/my-bookings" class="btn-primary">
+          <router-link :to="prefixPath('/my-bookings')" class="btn-primary">
             Lihat Tempahan Saya
           </router-link>
-          <router-link to="/facilities" class="btn-secondary">
+          <router-link :to="prefixPath('/facilities')" class="btn-secondary">
             Lihat Kemudahan Lain
           </router-link>
         </div>
@@ -40,6 +40,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import useDistrictRoutes from '@/utils/districtRoutes'
 import { useFacilityStore } from '@/stores/facility'
 import CalendarAvailability from '@/components/Booking/CalendarAvailability.vue'
 import BookingForm from '@/components/Booking/BookingForm.vue'
@@ -53,6 +54,7 @@ const loading = ref(false)
 const bookingComplete = ref(false)
 const showCalendar = ref(true)
 const selectedDate = ref(null)
+const { prefixPath } = useDistrictRoutes()
 
 onMounted(async () => {
   await loadFacility()
@@ -65,7 +67,7 @@ const loadFacility = async () => {
     facility.value = await facilityStore.fetchFacility(facilityId)
   } catch (error) {
     console.error('Failed to load facility:', error)
-    router.push('/facilities')
+    router.push(prefixPath('/facilities'))
   } finally {
     loading.value = false
   }

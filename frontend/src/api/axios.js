@@ -26,11 +26,19 @@ api.interceptors.request.use(
 // Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      router.push('/login')
+      try {
+        // Resolve district-aware login path at runtime (Pinia should be initialized by then)
+        const useDistrictRoutes = (await import('@/utils/districtRoutes')).default
+        const { prefixPath } = useDistrictRoutes()
+        router.push(prefixPath('/login'))
+      } catch {
+        // If something goes wrong (Pinia not ready), fall back to plain login route
+        router.push('/login')
+      }
     }
     return Promise.reject(error)
   }

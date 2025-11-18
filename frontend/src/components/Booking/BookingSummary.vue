@@ -36,7 +36,7 @@
       </div>
       <div class="detail-row">
         <span class="label">Status:</span>
-        <span :class="['value', 'status', booking.status]">
+        <span :class="['value', 'status', booking.status]" :style="{ color: districtColor, borderColor: districtColor }">
           {{ formatStatus(booking.status) }}
         </span>
       </div>
@@ -58,7 +58,7 @@
       </div>
       <div class="detail-row total">
         <span class="label">Total Amount:</span>
-        <span class="value">${{ totalPrice }}</span>
+        <span class="value" :style="{ color: districtColor }">${{ totalPrice }}</span>
       </div>
     </div>
 
@@ -67,6 +67,7 @@
         v-if="canCancel"
         @click="$emit('cancel')"
         class="btn-cancel"
+        :style="{ backgroundColor: districtColor, borderColor: districtColor }"
       >
         Cancel Booking
       </button>
@@ -74,6 +75,7 @@
         v-if="canEdit"
         @click="$emit('edit')"
         class="btn-edit"
+        :style="{ backgroundColor: districtColor, borderColor: districtColor }"
       >
         Edit Booking
       </button>
@@ -83,6 +85,7 @@
 
 <script setup>
 import { computed, defineProps, defineEmits } from 'vue'
+import { useDistrictStore } from '@/stores/district'
 
 const props = defineProps({
   booking: {
@@ -96,6 +99,9 @@ const props = defineProps({
 })
 
 defineEmits(['cancel', 'edit'])
+
+const districtStore = useDistrictStore()
+const districtColor = computed(() => districtStore.districtColor)
 
 const duration = computed(() => {
   if (!props.booking.timeSlot) return 0

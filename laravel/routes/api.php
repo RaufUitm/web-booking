@@ -37,42 +37,48 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/bookings/{id}', [BookingController::class, 'update']);
     Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
 
-    // Admin routes
-    Route::middleware('check.role:admin')->prefix('admin')->group(function () {
-        // Dashboard
+    // Admin routes - All admin roles can access
+    Route::middleware('admin.role')->prefix('admin')->group(function () {
+        // Dashboard - All admins
         Route::get('/dashboard', [AdminController::class, 'dashboard']);
 
-        // User management
-        Route::get('/users', [AdminController::class, 'getUsers']);
-        Route::post('/users', [AdminController::class, 'createUser']);
-        Route::put('/users/{id}', [AdminController::class, 'updateUser']);
-        Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
-
-        // Booking management
+        // Booking management - All admins
         Route::get('/bookings', [AdminController::class, 'getBookings']);
         Route::put('/bookings/{id}/status', [AdminController::class, 'updateBookingStatus']);
+        Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
 
-        // Reports
+        // Reports - All admins
         Route::get('/reports', [AdminController::class, 'getReports']);
 
-        // Category management
+        // Category management - All admins
         Route::get('/categories', [AdminController::class, 'getCategories']);
         Route::post('/categories', [AdminController::class, 'createCategory']);
         Route::put('/categories/{id}', [AdminController::class, 'updateCategory']);
         Route::delete('/categories/{id}', [AdminController::class, 'deleteCategory']);
 
-        // Facility management
+        // Facility management - All admins
         Route::post('/facilities', [FacilityController::class, 'store']);
         Route::put('/facilities/{id}', [FacilityController::class, 'update']);
         Route::delete('/facilities/{id}', [FacilityController::class, 'destroy']);
 
-        // Time slot management
+        // Time slot management - All admins
         Route::post('/time-slots', [TimeSlotController::class, 'store']);
         Route::put('/time-slots/{id}', [TimeSlotController::class, 'update']);
         Route::delete('/time-slots/{id}', [TimeSlotController::class, 'destroy']);
 
-        // Booking deletion
-        Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
+        // User management - Only Master/State admins
+        Route::middleware('admin.role:master_admin,state_admin')->group(function () {
+            Route::get('/users', [AdminController::class, 'getUsers']);
+            Route::post('/users', [AdminController::class, 'createUser']);
+            Route::put('/users/{id}', [AdminController::class, 'updateUser']);
+            Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+        });
+
+        // System settings - Only Master admin
+        Route::middleware('admin.role:master_admin')->group(function () {
+            Route::get('/settings', [AdminController::class, 'getSettings']);
+            Route::put('/settings', [AdminController::class, 'updateSettings']);
+        });
     });
 });
 

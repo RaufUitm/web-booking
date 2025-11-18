@@ -5,37 +5,37 @@
     </button>
 
     <nav class="sidebar-nav">
-      <router-link to="/admin" class="sidebar-link">
+      <router-link :to="prefixPath('/admin')" class="sidebar-link">
         <span class="icon">📊</span>
         <span v-if="!isCollapsed" class="text">Dashboard</span>
       </router-link>
 
-      <router-link to="/admin/facilities" class="sidebar-link">
+      <router-link :to="prefixPath('/admin/facilities')" class="sidebar-link">
         <span class="icon">🏢</span>
         <span v-if="!isCollapsed" class="text">Manage Facilities</span>
       </router-link>
 
-      <router-link to="/admin/bookings" class="sidebar-link">
+      <router-link :to="prefixPath('/admin/bookings')" class="sidebar-link">
         <span class="icon">📅</span>
         <span v-if="!isCollapsed" class="text">Manage Bookings</span>
       </router-link>
 
-      <router-link to="/admin/categories" class="sidebar-link">
+      <router-link :to="prefixPath('/admin/categories')" class="sidebar-link">
         <span class="icon">📁</span>
         <span v-if="!isCollapsed" class="text">Categories</span>
       </router-link>
 
-      <router-link to="/admin/users" class="sidebar-link">
+      <router-link :to="prefixPath('/admin/users')" class="sidebar-link">
         <span class="icon">👥</span>
         <span v-if="!isCollapsed" class="text">Users</span>
       </router-link>
 
-      <router-link to="/admin/reports" class="sidebar-link">
+      <router-link :to="prefixPath('/admin/reports')" class="sidebar-link">
         <span class="icon">📈</span>
         <span v-if="!isCollapsed" class="text">Reports</span>
       </router-link>
 
-      <router-link to="/admin/settings" class="sidebar-link">
+      <router-link :to="prefixPath('/admin/settings')" class="sidebar-link">
         <span class="icon">⚙️</span>
         <span v-if="!isCollapsed" class="text">Settings</span>
       </router-link>
@@ -52,6 +52,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 defineOptions({
   name: 'AdminSidebar'
@@ -62,6 +63,7 @@ const isCollapsed = ref(false)
 const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value
 }
+const { prefixPath } = useDistrictRoutes()
 </script>
 
 <style scoped>

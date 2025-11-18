@@ -7,6 +7,8 @@
         <p>Masukkan email dan kata laluan anda</p>
       </div>
 
+
+
       <form @submit.prevent="handleLogin" class="auth-form">
         <div class="form-group">
           <label for="email">Email</label>
@@ -37,7 +39,7 @@
             <input type="checkbox" v-model="rememberMe" />
             <span>Ingat saya</span>
           </label>
-          <router-link to="/forgot-password" class="forgot-link">
+          <router-link :to="prefixPath('/forgot-password')" class="forgot-link">
             Lupa kata laluan?
           </router-link>
         </div>
@@ -52,7 +54,7 @@
       </form>
 
       <div class="auth-footer">
-        <p>Belum ada akaun? <router-link to="/register">Daftar sekarang</router-link></p>
+        <p>Belum ada akaun? <router-link :to="prefixPath('/register')">Daftar sekarang</router-link></p>
       </div>
     </div>
   </div>
@@ -63,11 +65,13 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const { loading, error } = storeToRefs(authStore)
+const { prefixPath } = useDistrictRoutes()
 
 const formData = ref({
   email: '',
@@ -80,8 +84,8 @@ const handleLogin = async () => {
   try {
     await authStore.login(formData.value)
 
-    // Redirect to intended page or facilities
-    const redirect = route.query.redirect || '/facilities'
+    // Redirect to intended page or landing page
+    const redirect = route.query.redirect || '/'
     router.push(redirect)
   } catch (err) {
     console.error('Login failed:', err)
@@ -96,16 +100,17 @@ const handleLogin = async () => {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
+  background: #f5f5f5;
 }
 
 .auth-card {
-  background: white;
+  background: #f7f7f7;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   padding: 3rem;
   width: 100%;
   max-width: 450px;
+  border: 2px solid #222;
 }
 
 .auth-header {
@@ -122,6 +127,21 @@ const handleLogin = async () => {
 .auth-header p {
   color: #7f8c8d;
   font-size: 1rem;
+}
+
+.flag-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.flag-img {
+  width: 110px;
+  height: auto;
+  filter: grayscale(1) contrast(1.2);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 
 .auth-form {
@@ -192,8 +212,8 @@ const handleLogin = async () => {
 }
 
 .btn-submit {
-  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
-  color: white;
+  background: #111;
+  color: #fff;
   padding: 1rem;
   border: none;
   border-radius: 8px;
@@ -201,11 +221,14 @@ const handleLogin = async () => {
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
 }
 
 .btn-submit:hover:not(:disabled) {
+  background: #222;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(215, 120, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
 }
 
 .btn-submit:disabled {

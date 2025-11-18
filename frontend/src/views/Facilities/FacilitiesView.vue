@@ -97,7 +97,7 @@
                 <span class="price-label">Harga:</span>
                 <span class="price-amount">RM {{ facility.price_per_hour }}/jam</span>
               </div>
-              <button class="btn-book" @click.stop="bookNow(facility.id)">
+              <button class="btn-book" @click.stop="bookNow(facility.id)" :style="{ background: currentDistrictColor.main, color: '#fff' }">
                 {{ isAuthenticated ? 'Tempah' : 'Lihat' }}
               </button>
             </div>
@@ -114,11 +114,14 @@ import { useRouter, useRoute } from 'vue-router'
 import { useFacilityStore } from '@/stores/facility'
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
+import { useDistrictStore } from '@/stores/district'
+import useDistrictRoutes from '@/utils/districtRoutes'
 
 const router = useRouter()
 const route = useRoute()
 const facilityStore = useFacilityStore()
 const authStore = useAuthStore()
+const districtStore = useDistrictStore()
 
 const { loading, error, categories } = storeToRefs(facilityStore)
 const { isAuthenticated } = storeToRefs(authStore)
@@ -222,6 +225,16 @@ const displayFacilities = computed(() => {
     filtered = filtered.filter(f => f.is_available === availabilityFilter.value)
   }
 
+  // Filter by selected district (multi-tenancy)
+  const currentDistrict = districtStore.districtName || ''
+  const currentDistrictSlug = districtStore.districts.find(d => d.name === currentDistrict)?.slug || ''
+  filtered = filtered.filter(f => {
+    // facility may store district in different fields; normalize
+    const fd = (f.district || f.district_name || f.district_slug || (f.district && f.district.name) || '').toString().toLowerCase()
+    const fs = (f.district_slug || f.district || '').toString().toLowerCase()
+    return fd === currentDistrict.toString().toLowerCase() || fs === currentDistrictSlug.toString().toLowerCase() || !currentDistrict
+  })
+
   return filtered
 })
 
@@ -247,9 +260,12 @@ onMounted(async () => {
 })
 
 const getCategoryName = (categoryId) => {
-  const category = categories.value.find(c => c.id === categoryId) ||
-                   mockFacilities.value.find(c => c.id === categoryId)
-  return category ? category.name : 'Lain-lain'
+  // Try real categories first
+  const category = categories.value.find(c => c.id === categoryId)
+  if (category) return category.name
+  // Fallback: try mock facility categories
+  const mock = mockFacilities.value.find(f => f.category_id === categoryId)
+  return mock ? mock.name : 'Lain-lain'
 }
 
 const handleSearch = () => {
@@ -272,17 +288,29 @@ const clearFilters = () => {
   router.push({ query: {} })
 }
 
+const { bookingPath, facilityDetailPath, loginPath } = useDistrictRoutes()
+
 const viewDetails = (facilityId) => {
-  router.push({ name: 'mdht-facility-detail', params: { id: facilityId } })
+  router.push(facilityDetailPath(facilityId))
 }
 
 const bookNow = (facilityId) => {
+  const bp = bookingPath(facilityId)
+  const lp = loginPath(bp)
   if (!isAuthenticated.value) {
-    router.push({ name: 'mdht-login', query: { redirect: `/mdht/booking/${facilityId}` } })
+    router.push({ path: lp })
   } else {
-    router.push({ name: 'mdht-booking', params: { facilityId } })
+    router.push(bp)
   }
 }
+
+const districtColors = {
+  'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
+  'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
+  'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
+  'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
+}
+const currentDistrictColor = computed(() => districtColors[districtStore.districtName] || districtColors['Hulu Terengganu'])
 </script>
 
 <style scoped>

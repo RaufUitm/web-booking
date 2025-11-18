@@ -76,7 +76,7 @@
         </div>
         <div class="summary-row total">
           <span>Jumlah:</span>
-          <strong>RM {{ totalPrice }}</strong>
+          <strong :style="{ color: currentDistrictColor.main }">RM {{ totalPrice }}</strong>
         </div>
       </div>
 
@@ -88,7 +88,12 @@
         <button type="button" @click="$emit('cancel')" class="btn-cancel">
           Batal
         </button>
-        <button type="submit" :disabled="loading" class="btn-submit">
+        <button
+          type="submit"
+          :disabled="loading"
+          class="btn-submit"
+          :style="{ background: currentDistrictColor.main, color: '#fff' }"
+        >
           {{ loading ? 'Memproses...' : 'Sahkan Tempahan' }}
         </button>
       </div>
@@ -98,7 +103,10 @@
 
 <script setup>
 import { ref, computed, defineProps, defineEmits, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useBookingStore } from '@/stores/booking'
+import { useDistrictStore } from '@/stores/district'
+import useDistrictRoutes from '@/utils/districtRoutes'
 import axios from '@/api/axios'
 
 const props = defineProps({
@@ -114,6 +122,9 @@ const props = defineProps({
 
 const emit = defineEmits(['cancel', 'success'])
 const bookingStore = useBookingStore()
+const districtStore = useDistrictStore()
+const router = useRouter()
+const { prefixPath } = useDistrictRoutes()
 
 const form = ref({
   booking_date: '',
@@ -185,10 +196,14 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
-    await bookingStore.createBooking({
+    const booking = await bookingStore.createBooking({
       facility_id: props.facility.id,
       ...form.value
     })
+
+    // Navigate to booking confirmation page for the current district
+    const confPath = prefixPath(`/booking-confirmation/${booking.id}`)
+    router.push(confPath)
     emit('success')
   } catch (err) {
     error.value = err.response?.data?.message || 'Booking failed. Please try again.'
@@ -196,6 +211,14 @@ const handleSubmit = async () => {
     loading.value = false
   }
 }
+
+const districtColors = {
+  'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
+  'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
+  'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
+  'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
+}
+const currentDistrictColor = computed(() => districtColors[districtStore.districtName] || districtColors['Hulu Terengganu'])
 </script>
 
 <style scoped>

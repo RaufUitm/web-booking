@@ -1,12 +1,14 @@
 <template>
   <div class="min-h-screen flex flex-col bg-white" style="margin: 0 !important; padding: 0 !important; width: 100vw !important; position: relative; left: 50%; right: 50%; margin-left: -50vw !important; margin-right: -50vw !important;">
+    <!-- Nav is provided by App.vue to avoid duplication -->
+
     <!-- Header -->
     <header class="w-full bg-white shadow-sm border-b-4 border-yellow-400 py-6" style="width: 100% !important; margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important;">
       <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem; text-align: center;">
         <h1 style="font-size: 2.5rem; font-weight: 700; color: #111827; margin-bottom: 0.5rem; text-align: center;">T-Smart Booking</h1>
         <p style="font-size: 1.125rem; color: #4b5563; margin-bottom: 1rem; text-align: center;">Sistem Tempahan Kemudahan Negeri Terengganu</p>
         <p style="font-size: 0.875rem; color: #4b5563; max-width: 48rem; margin: 0 auto; line-height: 1.625; text-align: center;">
-          T-Smart Booking adalah sistem tempahan kemudahan dalam talian yang memudahkan penduduk dan organisasi untuk menempah kemudahan awam di seluruh negeri Terengganu. Pilih daerah anda untuk melihat senarai kemudahan yang tersedia dan buat tempahan dengan mudah.
+          T-Smart Booking adalah sistem tempahan kemudahan dalam talian yang memudahkan orang ramai dan organisasi untuk menempah kemudahan awam di seluruh negeri Terengganu. Pilih daerah anda untuk melihat senarai kemudahan yang tersedia dan buat tempahan dengan mudah.
         </p>
       </div>
     </header>
@@ -15,10 +17,7 @@
     <main class="flex-1 flex flex-col items-center justify-center py-8 px-4">
       <!-- Introduction -->
       <div class="text-center mb-8 max-w-3xl">
-        <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-3">Pilih Daerah Anda</h2>
-        <p class="text-sm md:text-base text-gray-600">
-          Pilih daerah untuk mengakses sistem tempahan kemudahan yang tersedia di kawasan anda
-        </p>
+        <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-3">Daerah Pilihan Anda</h2>
       </div>
 
       <!-- Daerah Cards Grid (4 columns) -->
@@ -29,14 +28,18 @@
             @click="navigateToDaerah('besut')"
             class="w-full bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
           >
-            <div class="h-80 bg-[#DC143C] flex items-center justify-center relative">
-              <div class="text-center w-full px-4">
+            <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-besut">
+              <div class="absolute top-3 left-3 z-10">
+                <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
+              </div>
+              <div class="text-center w-full px-4 relative z-10">
                 <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Besut</h3>
                 <div class="flex justify-center mb-2">
                   <img src="/images/MDB.png" alt="Logo Majlis Daerah Besut" class="w-32 h-32 object-contain">
                 </div>
                 <p class="text-base md:text-lg font-semibold text-white">Majlis Daerah Besut</p>
               </div>
+              <div class="absolute inset-0 bg-black/40 z-0"></div>
             </div>
             <div class="p-6 bg-white">
               <p class="text-sm text-gray-600 text-center mb-2">
@@ -53,14 +56,18 @@
             @click="navigateToDaerah('marang')"
             class="w-full bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
           >
-            <div class="h-80 bg-[#8B008B] flex items-center justify-center relative">
-              <div class="text-center w-full px-4">
+            <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-marang">
+              <div class="absolute top-3 left-3 z-10">
+                <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
+              </div>
+              <div class="text-center w-full px-4 relative z-10">
                 <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Marang</h3>
                 <div class="flex justify-center mb-2">
                   <img src="/images/MDM.png" alt="Logo Majlis Daerah Marang" class="w-32 h-32 object-contain">
                 </div>
                 <p class="text-base md:text-lg font-semibold text-white">Majlis Daerah Marang</p>
               </div>
+              <div class="absolute inset-0 bg-black/40 z-0"></div>
             </div>
             <div class="p-6 bg-white">
               <p class="text-sm text-gray-600 text-center mb-2">
@@ -77,14 +84,18 @@
             @click="navigateToDaerah('setiu')"
             class="w-full bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
           >
-            <div class="h-80 bg-[#8B7355] flex items-center justify-center relative">
-              <div class="text-center w-full px-4">
+            <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-setiu">
+              <div class="absolute top-3 left-3 z-10">
+                <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
+              </div>
+              <div class="text-center w-full px-4 relative z-10">
                 <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Setiu</h3>
                 <div class="flex justify-center mb-2">
                   <img src="/images/MDS.png" alt="Logo Majlis Daerah Setiu" class="w-32 h-32 object-contain">
                 </div>
                 <p class="text-base md:text-lg font-semibold text-white">Majlis Daerah Setiu</p>
               </div>
+              <div class="absolute inset-0 bg-black/40 z-0"></div>
             </div>
             <div class="p-6 bg-white">
               <p class="text-sm text-gray-600 text-center mb-2">
@@ -101,14 +112,18 @@
             @click="navigateToDaerah('hulu-terengganu')"
             class="w-full bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
           >
-            <div class="h-80 bg-[#FF8C00] flex items-center justify-center relative">
-              <div class="text-center w-full px-4">
+            <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-hulu-terengganu">
+              <div class="absolute top-3 left-3 z-10">
+                <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
+              </div>
+              <div class="text-center w-full px-4 relative z-10">
                 <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Hulu Terengganu</h3>
                 <div class="flex justify-center mb-2">
                   <img src="/images/MDHT.png" alt="Logo Majlis Daerah Hulu Terengganu" class="w-32 h-32 object-contain">
                 </div>
                 <p class="text-base md:text-lg font-semibold text-white">Majlis Daerah Hulu Terengganu</p>
               </div>
+              <div class="absolute inset-0 bg-black/40 z-0"></div>
             </div>
             <div class="p-6 bg-white">
               <p class="text-sm text-gray-600 text-center mb-2">
@@ -132,11 +147,24 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-
+import { onMounted } from 'vue'
+import useDistrictRoutes from '@/utils/districtRoutes'
 const router = useRouter()
+const { prefixPath } = useDistrictRoutes()
+
+import { useDistrictStore } from '@/stores/district'
+
+const districtStore = useDistrictStore()
+
+// Clear previously selected district when showing landing page
+onMounted(() => {
+  // only clear if a district was stored — user wants to re-select
+  if (districtStore.currentDistrict) {
+    districtStore.clearDistrict()
+  }
+})
 
 const navigateToDaerah = (daerah) => {
-  // Map district slug to actual district names for API
   const districtMap = {
     'besut': 'Besut',
     'marang': 'Marang',
@@ -146,14 +174,129 @@ const navigateToDaerah = (daerah) => {
 
   const districtName = districtMap[daerah]
 
-  // Navigate to the booking system with district parameter
+  // persist selection immediately so navbar can react
+  districtStore.setDistrict(districtName)
+
   router.push({
-    path: '/mdht',
+    path: prefixPath('/'),
     query: { district: districtName }
   })
 }
+
+// no logout here; navbar in App.vue handles auth actions
 </script>
 
 <style scoped>
+/* Register Button - Outline Style */
+.register-btn {
+  background: transparent;
+  color: #FF8C00;
+  font-weight: 600;
+  padding: 0.7rem 2rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  border: 2px solid #FF8C00;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
 
+.register-btn:hover {
+  background: #FF8C00;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.2);
+}
+
+/* Login Button - Solid Style */
+.login-btn {
+  background: #111;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.7rem 2rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #222;
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.login-btn:hover::before {
+  left: 0;
+}
+
+.login-btn:hover {
+  background: #222;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+}
+
+.login-btn:active,
+.register-btn:active {
+  transform: translateY(0);
+}
+
+/* Icon Styling */
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke-width: 2.5;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .register-btn,
+  .login-btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .icon {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+}
+/* Daerah Card Backgrounds */
+.daerah-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+.daerah-bg-besut {
+  background-image: url('/image/daerah/besut.jpg');
+}
+.daerah-bg-marang {
+  background-image: url('/image/daerah/marang.jpg');
+}
+.daerah-bg-setiu {
+  background-image: url('/image/daerah/setiu.jpg');
+}
+.daerah-bg-hulu-terengganu {
+  background-image: url('/image/daerah/hulu-terengganu.jpg');
+}
 </style>

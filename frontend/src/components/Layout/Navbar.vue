@@ -1,9 +1,9 @@
 <template>
   <nav class="navbar">
     <div class="navbar-container">
-      <router-link to="/mdht" class="navbar-brand">
+      <router-link to="/" class="navbar-brand">
         <span class="logo">🏛️</span>
-        <span class="brand-name">MDHT Booking</span>
+        <span class="brand-name">{{ districtStore.pbtName }}</span>
       </router-link>
 
       <button class="mobile-menu-toggle" @click="toggleMobileMenu">
@@ -16,34 +16,34 @@
         <div class="navbar-links">
           <!-- Admin Navigation -->
           <template v-if="isAdmin">
-            <router-link to="/mdht/admin" class="nav-link" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/admin')" class="nav-link" @click="closeMobileMenu">
               Dashboard
             </router-link>
-            <router-link to="/mdht/admin/bookings" class="nav-link" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/admin/bookings')" class="nav-link" @click="closeMobileMenu">
               Tempahan
             </router-link>
-            <router-link to="/mdht/admin/facilities" class="nav-link" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/admin/facilities')" class="nav-link" @click="closeMobileMenu">
               Kemudahan
             </router-link>
-            <router-link to="/mdht/admin/users" class="nav-link" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/admin/users')" class="nav-link" @click="closeMobileMenu">
               Pengguna
             </router-link>
-            <router-link to="/mdht/admin/categories" class="nav-link" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/admin/categories')" class="nav-link" @click="closeMobileMenu">
               Kategori
             </router-link>
-            <router-link to="/mdht/admin/reports" class="nav-link" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/admin/reports')" class="nav-link" @click="closeMobileMenu">
               Laporan
             </router-link>
           </template>
           <!-- Regular User Navigation -->
           <template v-else>
-            <router-link to="/mdht" class="nav-link" @click="closeMobileMenu">
-              Home
+            <router-link to="/" class="nav-link" @click="closeMobileMenu">
+              Laman Utama
             </router-link>
-            <router-link to="/mdht/facilities" class="nav-link" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/facilities')" class="nav-link" @click="closeMobileMenu">
               Facilities
             </router-link>
-            <router-link v-if="isAuthenticated" to="/mdht/my-bookings" class="nav-link" @click="closeMobileMenu">
+            <router-link v-if="isAuthenticated" :to="prefixPath('/my-bookings')" class="nav-link" @click="closeMobileMenu">
               My Bookings
             </router-link>
           </template>
@@ -57,10 +57,10 @@
                 <span class="user-name">{{ user?.name }}</span>
               </button>
               <div v-if="userMenuOpen" class="user-dropdown">
-                <router-link to="/mdht/profile" class="dropdown-item" @click="closeUserMenu">
+                <router-link :to="prefixPath('/profile')" class="dropdown-item" @click="closeUserMenu">
                   Profile
                 </router-link>
-                <router-link to="/mdht/my-bookings" class="dropdown-item" @click="closeUserMenu">
+                <router-link :to="prefixPath('/my-bookings')" class="dropdown-item" @click="closeUserMenu">
                   My Bookings
                 </router-link>
                 <button @click="handleLogout" class="dropdown-item logout">
@@ -70,10 +70,10 @@
             </div>
           </template>
           <template v-else>
-            <router-link to="/mdht/login" class="btn-login" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/login')" class="btn-login" @click="closeMobileMenu">
               Login
             </router-link>
-            <router-link to="/mdht/register" class="btn-register" @click="closeMobileMenu">
+            <router-link :to="prefixPath('/register')" class="btn-register" @click="closeMobileMenu">
               Register
             </router-link>
           </template>
@@ -87,6 +87,8 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import useDistrictRoutes from '@/utils/districtRoutes'
+import { useDistrictStore } from '@/stores/district'
 
 defineOptions({
   name: 'AppNavbar'
@@ -94,6 +96,8 @@ defineOptions({
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { prefixPath } = useDistrictRoutes()
+const districtStore = useDistrictStore()
 
 const mobileMenuOpen = ref(false)
 const userMenuOpen = ref(false)

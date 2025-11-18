@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <nav class="navbar" v-if="!isLandingPage && !$route.meta.hideNav" :style="navbarStyle">
+    <nav class="navbar" v-if="!$route.meta.hideNav" :style="navbarStyle">
       <div class="nav-container">
         <router-link to="/" class="logo">
           <template v-if="districtStore.currentDistrict">
@@ -13,6 +13,7 @@
             </div>
           </template>
           <template v-else>
+            <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="logo-img" style="height:40px; width:auto; object-fit:contain;" />
             <div>
               <span class="logo-text">T-Smart Booking</span>
               <div class="logo-sub">Sistem Tempahan Negeri</div>
@@ -26,11 +27,11 @@
 
         <div class="nav-links" :class="{ 'mobile-open': mobileMenuOpen }">
           <router-link to="/" @click="closeMobileMenu">Laman Utama</router-link>
-          <router-link :to="prefixPath('/facilities')" @click="closeMobileMenu">Kemudahan</router-link>
+          <router-link v-if="districtStore.currentDistrict" :to="prefixPath('/facilities')" @click="closeMobileMenu">Kemudahan</router-link>
 
           <template v-if="isAuthenticated">
             <router-link v-if="districtStore.currentDistrict" :to="prefixPath('/my-bookings')" @click="closeMobileMenu">Tempahan Saya</router-link>
-            <router-link v-if="isAdmin" :to="prefixPath('/admin')" @click="closeMobileMenu">Admin</router-link>
+            <router-link v-if="isAdmin" :to="isDistrictAdmin ? prefixPath('/admin') : { name: 'mdht-admin' }" @click="closeMobileMenu">Admin</router-link>
 
             <div class="user-menu">
               <button class="user-btn" @click="userMenuOpen = !userMenuOpen">
@@ -75,7 +76,7 @@
       <router-view />
     </main>
 
-    <footer class="footer" v-if="!$route.meta.hideNav" :style="footerStyle">
+    <footer class="footer" v-if="districtStore.currentDistrict && !$route.meta.hideNav" :style="footerStyle">
       <div class="footer-container">
         <div class="footer-content">
           <div class="footer-section">
@@ -131,7 +132,7 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const districtStore = useDistrictStore()
-const { isAuthenticated, isAdmin, userName, user } = storeToRefs(authStore)
+const { isAuthenticated, isAdmin, isDistrictAdmin, userName, user } = storeToRefs(authStore)
 const { prefixPath } = useDistrictRoutes()
 
 // const baseUrl = import.meta.env.BASE_URL || '/'
@@ -140,11 +141,11 @@ const mobileMenuOpen = ref(false)
 const userMenuOpen = ref(false)
 
 const currentYear = computed(() => new Date().getFullYear())
-const isLandingPage = computed(() => route.path === '/')
 
-// Dynamic navbar and footer color based on district
+// Use a consistent black/white navbar theme
 const navbarStyle = computed(() => ({
-  backgroundColor: districtStore.districtColor || '#D77800'
+  backgroundColor: '#111',
+  color: '#fff'
 }))
 
 const footerStyle = computed(() => {
@@ -229,12 +230,13 @@ main {
 
 /* Navbar */
 .navbar {
-  background-color: #D77800;
+  background-color: #111;
   padding: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   position: sticky;
   top: 0;
   z-index: 1000;
+  color: #fff;
 }
 
 .nav-container {
@@ -251,7 +253,7 @@ main {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: white;
+  color: #fff;
   text-decoration: none;
   font-weight: 700;
   font-size: 1.2rem;
@@ -284,7 +286,7 @@ main {
 }
 
 .nav-links a {
-  color: white;
+  color: #fff;
   text-decoration: none;
   padding: 0.75rem 1.25rem;
   border-radius: 6px;
@@ -302,17 +304,26 @@ main {
 
 .btn-login {
   background-color: transparent;
-  border: 2px solid white;
+  border: 2px solid #fff;
+  color: #fff;
   margin-left: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
 }
 
 .btn-register {
-  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
-  border: none;
+  /* Match login button: white outline, transparent background */
+  background-color: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  margin-left: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  font-weight: 600;
 }
 
 .btn-register:hover {
-  background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+  background-color: rgba(255,255,255,0.08);
   transform: translateY(-1px);
 }
 
@@ -404,6 +415,7 @@ main {
   cursor: pointer;
   transition: background-color 0.2s ease;
   font-size: 0.95rem;
+  color: rgba(255,255,255,0.85);
 }
 
 .dropdown-item:hover {

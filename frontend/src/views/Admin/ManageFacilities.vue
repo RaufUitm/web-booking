@@ -181,6 +181,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
+import { useAuthStore } from '@/stores/auth'
 
 const facilities = ref([])
 const categories = ref([])
@@ -243,6 +244,12 @@ const loadFacilities = async () => {
     const params = {}
     if (categoryFilter.value) {
       params.category_id = categoryFilter.value
+    }
+
+    // If district admin, restrict facilities to their district
+    const authStore = useAuthStore()
+    if (authStore.isDistrictAdmin) {
+      params.district = authStore.userDistrict
     }
 
     const response = await api.get('/facilities', { params })

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Booking;
 use App\Models\Service;
 use App\Models\Category;
+use App\Models\Facility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -275,7 +276,19 @@ class AdminController extends Controller
     public function getBookings(Request $request)
     {
         try {
+            $user = $request->user();
+
             $query = Booking::with(['user', 'facility', 'timeSlot']);
+
+            // If requester is a district admin, restrict bookings to facilities in their district
+            if ($user && $user->role === 'district_admin') {
+                $facilityIds = Facility::where('district', $user->district)->pluck('id');
+                $query->whereIn('facility_id', $facilityIds);
+            } elseif ($request->has('district') && $request->district) {
+                // Allow filtering by district for state/master admins
+                $facilityIds = Facility::where('district', $request->district)->pluck('id');
+                $query->whereIn('facility_id', $facilityIds);
+            }
 
             // Filter by status
             if ($request->has('status')) {
@@ -335,13 +348,24 @@ class AdminController extends Controller
         }
 
         try {
-            $booking = Booking::find($id);
+            $booking = Booking::with('facility')->find($id);
 
             if (!$booking) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Booking not found'
                 ], 404);
+            }
+
+            // If district admin, ensure the booking belongs to a facility in their district
+            $user = $request->user();
+            if ($user && $user->role === 'district_admin') {
+                if (!$booking->facility || $booking->facility->district !== $user->district) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Forbidden: cannot modify booking outside your district'
+                    ], 403);
+                }
             }
 
             $booking->update([

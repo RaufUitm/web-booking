@@ -76,38 +76,38 @@
       <div class="section">
         <h2>Quick Actions</h2>
         <div class="quick-actions">
-          <router-link :to="prefixPath('/admin/facilities')" class="action-btn">
-            <span class="icon">🏢</span>
-            <span>Urus Kemudahan</span>
-          </router-link>
-          <router-link :to="prefixPath('/admin/bookings')" class="action-btn">
-            <span class="icon">📅</span>
-            <span>Urus Tempahan</span>
-          </router-link>
+                <router-link :to="adminRoute('facilities')" class="action-btn">
+                  <span class="icon">🏢</span>
+                  <span>Urus Kemudahan</span>
+                </router-link>
+                <router-link :to="adminRoute('bookings')" class="action-btn">
+                  <span class="icon">📅</span>
+                  <span>Urus Tempahan</span>
+                </router-link>
 
           <!-- User Management - Only for Master/State Admins -->
-          <router-link v-if="authStore.canManageAllDistricts" :to="prefixPath('/admin/users')" class="action-btn">
+          <router-link v-if="authStore.canManageAllDistricts" :to="adminRoute('users')" class="action-btn">
             <span class="icon">👥</span>
             <span>Urus Pengguna</span>
           </router-link>
 
           <!-- Admin Management - Only for Master/State Admins -->
-          <router-link v-if="authStore.canAssignRoles" :to="prefixPath('/admin/admins')" class="action-btn">
+          <router-link v-if="authStore.canAssignRoles" :to="adminRoute('admins')" class="action-btn">
             <span class="icon">👑</span>
             <span>Urus Admin</span>
           </router-link>
 
-          <router-link :to="prefixPath('/admin/categories')" class="action-btn">
+          <router-link :to="adminRoute('categories')" class="action-btn">
             <span class="icon">📁</span>
             <span>Urus Kategori</span>
           </router-link>
-          <router-link :to="prefixPath('/admin/reports')" class="action-btn">
+          <router-link :to="adminRoute('reports')" class="action-btn">
             <span class="icon">📈</span>
             <span>Lihat Laporan</span>
           </router-link>
 
           <!-- System Settings - Only for Master Admin -->
-          <router-link v-if="authStore.isMasterAdmin" :to="prefixPath('/admin/settings')" class="action-btn master-only">
+          <router-link v-if="authStore.isMasterAdmin" :to="adminRoute('')" class="action-btn master-only">
             <span class="icon">⚙️</span>
             <span>Tetapan Sistem</span>
           </router-link>
@@ -121,7 +121,6 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/api/axios'
-import useDistrictRoutes from '@/utils/districtRoutes'
 
 defineOptions({
   name: 'AdminDashboard'
@@ -129,7 +128,7 @@ defineOptions({
 
 const authStore = useAuthStore()
 
-const { prefixPath } = useDistrictRoutes()
+// no prefixPath needed here; building named routes directly
 
 const stats = ref({
   total_users: 0,
@@ -194,6 +193,24 @@ const formatDate = (date) => {
     day: 'numeric',
     year: 'numeric'
   })
+}
+
+// Helper to return the appropriate admin route for the current user
+const adminRoute = (section) => {
+  // section: '', 'facilities', 'bookings', 'users', 'reports', 'categories', 'admins'
+  if (authStore.isDistrictAdmin) {
+    // route under district prefix
+    const slug = (authStore.userDistrict || selectedDistrict.value || '').toLowerCase().replace(/\s+/g, '-')
+    if (!slug) {
+      return { name: 'district-home' }
+    }
+    if (!section) return { name: 'district-admin', params: { district: slug } }
+    return { name: `district-admin-${section}`, params: { district: slug } }
+  }
+
+  // Default to MDHT/system admin routes
+  if (!section) return { name: 'mdht-admin' }
+  return { name: `mdht-admin-${section}` }
 }
 </script>
 

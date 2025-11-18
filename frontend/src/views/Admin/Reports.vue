@@ -140,13 +140,22 @@ onMounted(() => {
 const loadReport = async () => {
   loading.value = true
   try {
-    const response = await api.get('/admin/reports', {
-      params: {
-        type: reportType.value,
-        year: selectedYear.value,
-        month: selectedMonth.value
+    const params = {
+      type: reportType.value,
+      year: selectedYear.value,
+      month: selectedMonth.value
+    }
+    // If district admin, restrict reports to their district
+    try {
+      const authStore = (await import('@/stores/auth')).useAuthStore()
+      if (authStore.isDistrictAdmin) {
+        params.district = authStore.userDistrict
       }
-    })
+    } catch {
+      // ignore import errors; auth filter is best-effort in frontend
+    }
+
+    const response = await api.get('/admin/reports', { params })
     reportData.value = response.data.data
   } catch (error) {
     console.error('Failed to load report:', error)

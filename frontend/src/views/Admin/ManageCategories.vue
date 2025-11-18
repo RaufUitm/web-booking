@@ -200,6 +200,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
+import { useAuthStore } from '@/stores/auth'
 
 const categories = ref([])
 const loading = ref(false)
@@ -242,7 +243,12 @@ onMounted(() => {
 const loadCategories = async () => {
   loading.value = true
   try {
-    const response = await api.get('/admin/categories')
+    const params = {}
+    const authStore = useAuthStore()
+    if (authStore.isDistrictAdmin) {
+      params.district = authStore.userDistrict
+    }
+    const response = await api.get('/admin/categories', { params })
     categories.value = response.data.data || []
   } catch (error) {
     console.error('Failed to load categories:', error)

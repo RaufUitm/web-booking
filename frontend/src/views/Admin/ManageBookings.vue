@@ -179,6 +179,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
+import { useAuthStore } from '@/stores/auth'
 
 const bookings = ref([])
 const loading = ref(false)
@@ -218,6 +219,11 @@ const loadBookings = async () => {
     }
     if (dateFilter.value) {
       params.date = dateFilter.value
+    }
+    // Restrict to district for district admins
+    const authStore = useAuthStore()
+    if (authStore.isDistrictAdmin) {
+      params.district = authStore.userDistrict
     }
 
     const response = await api.get('/admin/bookings', { params })

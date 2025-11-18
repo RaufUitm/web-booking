@@ -11,7 +11,17 @@ class FacilityController extends Controller
 {
     public function index(Request $request)
     {
+        $user = $request->user();
+
         $query = Facility::with('category');
+
+        // If the requester is a district admin, force district filter to their district
+        if ($user && $user->role === 'district_admin') {
+            $query->where('district', $user->district);
+        } elseif ($request->has('district') && $request->district) {
+            // Allow district filtering via query param for master/state admins or public listing
+            $query->where('district', $request->district);
+        }
 
         // Filter by category
         if ($request->has('category_id')) {
@@ -73,7 +83,15 @@ class FacilityController extends Controller
             ], 422);
         }
 
-        $facility = Facility::create($request->all());
+        $data = $request->all();
+
+        // If the authenticated user is a district admin, always assign their district
+        $user = $request->user();
+        if ($user && $user->role === 'district_admin') {
+            $data['district'] = $user->district;
+        }
+
+        $facility = Facility::create($data);
 
         return response()->json([
             'success' => true,
@@ -111,7 +129,23 @@ class FacilityController extends Controller
             ], 422);
         }
 
-        $facility->update($request->all());
+        $user = $request->user();
+
+        // If district admin, ensure they can only update facilities in their district
+        if ($user && $user->role === 'district_admin' && $facility->district !== $user->district) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Forbidden: cannot modify facility outside your district'
+            ], 403);
+        }
+
+        $data = $request->all();
+        // Prevent district admin from changing the district field
+        if ($user && $user->role === 'district_admin') {
+            unset($data['district']);
+        }
+
+        $facility->update($data);
 
         return response()->json([
             'success' => true,
@@ -129,6 +163,14 @@ class FacilityController extends Controller
                 'success' => false,
                 'message' => 'Facility not found'
             ], 404);
+        }
+
+        $user = request()->user();
+        if ($user && $user->role === 'district_admin' && $facility->district !== $user->district) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Forbidden: cannot delete facility outside your district'
+            ], 403);
         }
 
         $facility->delete();

@@ -200,6 +200,50 @@ const router = createRouter({
       path: '/admin/admins',
       redirect: { name: 'mdht-admin-admins' }
     }
+    ,
+    // District-prefixed admin routes (allow district admins to manage their own district)
+    {
+      path: '/:district/admin',
+      name: 'district-admin',
+      component: () => import('../views/Admin/Dashboard.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/:district/admin/facilities',
+      name: 'district-admin-facilities',
+      component: () => import('../views/Admin/ManageFacilities.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/:district/admin/bookings',
+      name: 'district-admin-bookings',
+      component: () => import('../views/Admin/ManageBookings.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/:district/admin/users',
+      name: 'district-admin-users',
+      component: () => import('../views/Admin/ManageUsers.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/:district/admin/reports',
+      name: 'district-admin-reports',
+      component: () => import('../views/Admin/Reports.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/:district/admin/categories',
+      name: 'district-admin-categories',
+      component: () => import('../views/Admin/ManageCategories.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/:district/admin/admins',
+      name: 'district-admin-admins',
+      component: () => import('../views/Admin/ManageAdmins.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    }
   ]
 })
 
@@ -208,6 +252,7 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const isAuthenticated = authStore.isAuthenticated
   const isAdmin = authStore.isAdmin
+  const isDistrictAdmin = authStore.isDistrictAdmin
 
   // Redirect authenticated users away from guest-only pages
   if (to.meta.guestOnly && isAuthenticated) {
@@ -215,11 +260,21 @@ router.beforeEach((to, from, next) => {
     return next(isAdmin ? { name: 'mdht-admin' } : { name: 'mdht-home' })
   }
 
-  // Redirect admins trying to access regular user pages to admin dashboard
-  // (except public pages like facilities browsing and main landing page)
-  if (isAdmin && to.meta.requiresAuth && !to.meta.requiresAdmin && to.path !== '/' && !to.path.startsWith('/mdht')) {
-    return next({ name: 'mdht-admin' })
+  // Prevent district admins from accessing MDHT/global admin pages
+  // MDHT admin routes are the system/global admin panel; district admins should not use them.
+  if (isAuthenticated && isDistrictAdmin && to.meta.requiresAdmin && to.path.startsWith('/mdht')) {
+    // Redirect district admin to their district home if available, otherwise landing
+    const userDistrict = authStore.userDistrict
+    if (userDistrict) {
+      const slug = userDistrict.toLowerCase().replace(/\s+/g, '-')
+      return next({ name: 'district-home', params: { district: slug } })
+    }
+    return next({ name: 'landing' })
   }
+
+    // Previously we redirected admins away from regular user pages to the admin dashboard.
+    // That prevented admins from accessing their own bookings. We no longer perform that redirect,
+    // so admins can view regular authenticated pages like 'my-bookings'.
 
   // Check if route requires authentication
   if (to.meta.requiresAuth && !isAuthenticated) {

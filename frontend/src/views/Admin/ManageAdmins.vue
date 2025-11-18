@@ -150,6 +150,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
+import { useAuthStore } from '@/stores/auth'
 
 const admins = ref([])
 const loading = ref(false)
@@ -195,6 +196,11 @@ const loadAdmins = async () => {
       params.role = roleFilter.value
     } else {
       params.role = 'district_admin,state_admin,master_admin'
+    }
+    // If district admin, restrict results to their district
+    const authStore = useAuthStore()
+    if (authStore.isDistrictAdmin) {
+      params.district = authStore.userDistrict
     }
     const response = await api.get('/admin/users', { params })
     admins.value = (response.data.data || response.data).filter(u => u.role !== 'user')

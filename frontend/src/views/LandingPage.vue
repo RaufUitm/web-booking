@@ -3,22 +3,23 @@
     <!-- Nav is provided by App.vue to avoid duplication -->
 
     <!-- Header -->
-    <header class="w-full bg-white shadow-sm border-b-4 border-yellow-400 py-6" style="width: 100% !important; margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important;">
-      <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem; text-align: center;">
+    <header class="w-full bg-white shadow-sm border-b-4 border-yellow-400 py-6" style="width: 100% !important; margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important; position: relative;">
+      <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem; text-align: center; position: relative;">
         <h1 style="font-size: 2.5rem; font-weight: 700; color: #111827; margin-bottom: 0.5rem; text-align: center;">T-Smart Booking</h1>
         <p style="font-size: 1.125rem; color: #4b5563; margin-bottom: 1rem; text-align: center;">Sistem Tempahan Kemudahan Negeri Terengganu</p>
         <p style="font-size: 0.875rem; color: #4b5563; max-width: 48rem; margin: 0 auto; line-height: 1.625; text-align: center;">
           T-Smart Booking adalah sistem tempahan kemudahan dalam talian yang memudahkan orang ramai dan organisasi untuk menempah kemudahan awam di seluruh negeri Terengganu. Pilih daerah anda untuk melihat senarai kemudahan yang tersedia dan buat tempahan dengan mudah.
         </p>
+
       </div>
     </header>
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col items-center justify-center py-8 px-4">
       <!-- Introduction -->
-      <div class="text-center mb-8 max-w-3xl">
-        <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-3">Daerah Pilihan Anda</h2>
-      </div>
+        <div class="text-center mb-8 max-w-3xl">
+          <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-3">Daerah Pilihan Anda</h2>
+        </div>
 
       <!-- Daerah Cards Grid (4 columns) -->
       <div class="w-full max-w-7xl px-4">
@@ -155,6 +156,8 @@ const { prefixPath } = useDistrictRoutes()
 import { useDistrictStore } from '@/stores/district'
 
 const districtStore = useDistrictStore()
+
+// auth state is handled in the navbar; landing page no longer needs auth store
 
 // Clear previously selected district when showing landing page
 onMounted(() => {
@@ -299,4 +302,7 @@ const navigateToDaerah = (daerah) => {
 .daerah-bg-hulu-terengganu {
   background-image: url('/image/daerah/hulu-terengganu.jpg');
 }
+
+/* Top-right auth CTAs */
+/* top-right auth removed — navbar provides auth buttons */
 </style>

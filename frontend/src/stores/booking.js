@@ -30,7 +30,9 @@ export const useBookingStore = defineStore('booking', {
       try {
         const params = date ? { date } : {}
         const response = await api.get('/time-slots', { params })
-        this.timeSlots = response.data
+        const data = response.data.data || response.data
+        // API returns { success, data } or plain array
+        this.timeSlots = Array.isArray(data) ? data : (data.data || [])
       } catch (error) {
         this.error = error.message
       } finally {

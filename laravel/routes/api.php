@@ -19,6 +19,8 @@ Route::get('/categories/{id}', [CategoryController::class, 'show']);
 Route::get('/facilities', [FacilityController::class, 'index']);
 Route::get('/facilities/{id}', [FacilityController::class, 'show']);
 Route::get('/facilities/{id}/bookings', [FacilityController::class, 'bookings']);
+// Allow public access to available time slots so guests can view slot availability
+Route::get('/time-slots/available', [TimeSlotController::class, 'available']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -28,7 +30,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Time slots
     Route::get('/time-slots', [TimeSlotController::class, 'index']);
-    Route::get('/time-slots/available', [TimeSlotController::class, 'available']);
 
     // Bookings - User routes
     Route::get('/bookings', [BookingController::class, 'index']);

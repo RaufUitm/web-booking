@@ -27,7 +27,8 @@
       <div class="detail-row">
         <span class="label">Time:</span>
         <span class="value">
-          {{ booking.timeSlot?.start_time }} - {{ booking.timeSlot?.end_time }}
+          <template v-if="booking.booking_type === 'per_day'">Sepanjang Hari</template>
+          <template v-else>{{ booking.start_time || '' }} - {{ booking.end_time || '' }}</template>
         </span>
       </div>
       <div class="detail-row">
@@ -104,15 +105,23 @@ const districtStore = useDistrictStore()
 const districtColor = computed(() => districtStore.districtColor)
 
 const duration = computed(() => {
-  if (!props.booking.timeSlot) return 0
+  if (props.booking.booking_type === 'per_day') return 24
 
-  const start = new Date(`2000-01-01 ${props.booking.timeSlot.start_time}`)
-  const end = new Date(`2000-01-01 ${props.booking.timeSlot.end_time}`)
+  const startStr = props.booking.start_time || ''
+  const endStr = props.booking.end_time || ''
+  if (!startStr || !endStr) return 0
+
+  const start = new Date(`2000-01-01 ${startStr}`)
+  const end = new Date(`2000-01-01 ${endStr}`)
   return (end - start) / (1000 * 60 * 60)
 })
 
 const totalPrice = computed(() => {
-  if (!props.booking.facility || !duration.value) return 0
+  if (!props.booking.facility) return 0
+  if (props.booking.booking_type === 'per_day') {
+    return (props.booking.facility.price_per_day ?? 0).toFixed(2)
+  }
+  if (!duration.value) return 0
   return (props.booking.facility.price_per_hour * duration.value).toFixed(2)
 })
 

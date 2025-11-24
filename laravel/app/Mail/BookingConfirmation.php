@@ -20,7 +20,7 @@ class BookingConfirmation extends Mailable
      */
     public function __construct(Booking $booking)
     {
-        $this->booking = $booking->load(['facility', 'timeSlot', 'user']);
+        $this->booking = $booking->load(['facility', 'user']);
     }
 
     /**
@@ -44,7 +44,7 @@ class BookingConfirmation extends Mailable
                 'booking' => $this->booking,
                 'facilityName' => $this->booking->facility->name,
                 'bookingDate' => $this->booking->booking_date,
-                'timeSlot' => $this->booking->timeSlot->start_time . ' - ' . $this->booking->timeSlot->end_time,
+                'timeSlot' => ($this->booking->booking_type === 'per_day') ? 'Sepanjang Hari' : (($this->booking->start_time ?? '') . ' - ' . ($this->booking->end_time ?? '')),
             ],
         );
     }

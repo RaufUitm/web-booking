@@ -1,6 +1,7 @@
 // src/stores/facility.js
 import { defineStore } from 'pinia'
 import api from '@/api/axios'
+import { useDistrictStore } from '@/stores/district'
 
 export const useFacilityStore = defineStore('facility', {
   state: () => ({
@@ -56,8 +57,21 @@ export const useFacilityStore = defineStore('facility', {
       this.loading = true
       this.error = null
       try {
-        const response = await api.get('/facilities')
+        // include current district as query param when available so the
+        // backend returns facilities for the selected PBT (more reliable)
+        const districtStore = useDistrictStore()
+        const params = {}
+        if (districtStore.currentDistrict) {
+          params.district = districtStore.currentDistrict
+        }
+
+        const response = await api.get('/facilities', { params })
         const data = response.data.data || response.data
+        // Debug: log response shape and sample fields to help diagnose
+        // why Setiu facilities may not appear in the frontend.
+        /* eslint-disable no-console */
+        console.debug('fetchFacilities response', { raw: response.data, sample: Array.isArray(data) ? data.slice(0,5) : data })
+        /* eslint-enable no-console */
         // Handle pagination - extract data array from paginated response
         if (data.data && Array.isArray(data.data)) {
           this.facilities = data.data

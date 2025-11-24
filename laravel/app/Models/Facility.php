@@ -17,6 +17,7 @@ class Facility extends Model
         'location',
         'capacity',
         'price_per_hour',
+        'price_per_day',
         'image',
         'is_available',
     ];
@@ -24,6 +25,7 @@ class Facility extends Model
     protected $casts = [
         'is_available' => 'boolean',
         'price_per_hour' => 'decimal:2',
+        'price_per_day' => 'decimal:2',
     ];
 
     public function category()

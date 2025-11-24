@@ -58,7 +58,10 @@
             </td>
             <td>{{ booking.facility?.name || 'N/A' }}</td>
             <td>{{ formatDate(booking.booking_date) }}</td>
-            <td>{{ booking.time_slot?.start_time || '-' }} - {{ booking.time_slot?.end_time || '-' }}</td>
+            <td>
+              <template v-if="booking.booking_type === 'per_day'">Sepanjang Hari</template>
+              <template v-else>{{ booking.start_time || '-' }} - {{ booking.end_time || '-' }}</template>
+            </td>
             <td>{{ booking.number_of_people }}</td>
             <td>
               <span :class="['status-badge', getStatusClass(booking.status)]">
@@ -145,7 +148,8 @@
             <div class="detail-row">
               <span class="label">Masa:</span>
               <span class="value">
-                {{ selectedBooking?.time_slot?.start_time }} - {{ selectedBooking?.time_slot?.end_time }}
+                <template v-if="selectedBooking?.booking_type === 'per_day'">Sepanjang Hari</template>
+                <template v-else>{{ selectedBooking?.start_time || '-' }} - {{ selectedBooking?.end_time || '-' }}</template>
               </span>
             </div>
             <div class="detail-row">

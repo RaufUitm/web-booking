@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Booking;
-use App\Models\Service;
 use App\Models\Category;
 use App\Models\Facility;
 use Illuminate\Http\Request;
@@ -37,13 +36,14 @@ class AdminController extends Controller
             // Build queries with district filter
             $userQuery = User::query();
             $bookingQuery = Booking::query();
-            $facilityQuery = Service::query();
+            // facility query should use the Facility model
+            $facilityQuery = Facility::query();
 
             if ($districtFilter) {
                 $userQuery->where('district', $districtFilter);
                 $facilityQuery->where('district', $districtFilter);
                 // Filter bookings by facilities in the district
-                $facilityIds = Service::where('district', $districtFilter)->pluck('id');
+                $facilityIds = Facility::where('district', $districtFilter)->pluck('id');
                 $bookingQuery->whereIn('facility_id', $facilityIds);
             }
 
@@ -61,7 +61,7 @@ class AdminController extends Controller
             ];
 
             $recent_bookings = (clone $bookingQuery)
-                ->with(['user', 'facility', 'timeSlot'])
+                ->with(['user', 'facility'])
                 ->latest()
                 ->take(10)
                 ->get();
@@ -278,7 +278,7 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            $query = Booking::with(['user', 'facility', 'timeSlot']);
+            $query = Booking::with(['user', 'facility']);
 
             // If requester is a district admin, restrict bookings to facilities in their district
             if ($user && $user->role === 'district_admin') {
@@ -375,7 +375,7 @@ class AdminController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Booking status updated successfully',
-                'data' => $booking->load(['user', 'facility', 'timeSlot'])
+                'data' => $booking->load(['user', 'facility'])
             ]);
         } catch (\Exception $e) {
             return response()->json([

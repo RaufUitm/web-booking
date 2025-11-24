@@ -72,6 +72,7 @@ class FacilityController extends Controller
             'location' => 'required|string|max:255',
             'capacity' => 'required|integer|min:1',
             'price_per_hour' => 'required|numeric|min:0',
+            'price_per_day' => 'nullable|numeric|min:0',
             'image' => 'nullable|string',
             'is_available' => 'boolean',
         ]);
@@ -118,6 +119,7 @@ class FacilityController extends Controller
             'location' => 'sometimes|string|max:255',
             'capacity' => 'sometimes|integer|min:1',
             'price_per_hour' => 'sometimes|numeric|min:0',
+            'price_per_day' => 'nullable|numeric|min:0',
             'image' => 'nullable|string',
             'is_available' => 'boolean',
         ]);
@@ -192,7 +194,7 @@ class FacilityController extends Controller
             ], 404);
         }
 
-        $query = $facility->bookings()->with(['timeSlot', 'user']);
+        $query = $facility->bookings()->with(['user']);
 
         // Filter by year and month
         if ($request->has('year') && $request->has('month')) {
@@ -211,8 +213,8 @@ class FacilityController extends Controller
         $query->whereIn('status', ['pending', 'confirmed', 'completed']);
 
         $bookings = $query->orderBy('booking_date', 'asc')
-                          ->orderBy('time_slot_id', 'asc')
-                          ->get();
+                  ->orderBy('start_time', 'asc')
+                  ->get();
 
         return response()->json([
             'success' => true,

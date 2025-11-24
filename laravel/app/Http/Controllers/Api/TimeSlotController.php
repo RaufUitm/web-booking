@@ -43,16 +43,18 @@ class TimeSlotController extends Controller
 
         $timeSlots = TimeSlot::where('facility_id', $request->facility_id)->get();
 
-        // Get booked time slots for the date
-        $bookedSlots = Booking::where('facility_id', $request->facility_id)
-            ->where('booking_date', $request->date)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->pluck('time_slot_id')
-            ->toArray();
+        // For the new per_hour/per_day model we detect overlaps between per_hour bookings
+        // and defined time slots. A slot is considered booked if any per_hour booking
+        // on the same date overlaps the slot's time range.
+        $availableSlots = $timeSlots->map(function ($slot) use ($request) {
+            $isBooked = Booking::where('facility_id', $request->facility_id)
+                ->where('booking_date', $request->date)
+                ->where('booking_type', 'per_hour')
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->whereRaw('start_time < ? AND end_time > ?', [$slot->end_time, $slot->start_time])
+                ->exists();
 
-        // Mark slots as available or not
-        $availableSlots = $timeSlots->map(function ($slot) use ($bookedSlots) {
-            $slot->is_booked = in_array($slot->id, $bookedSlots);
+            $slot->is_booked = $isBooked;
             return $slot;
         });
 

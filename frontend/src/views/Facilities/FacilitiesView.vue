@@ -226,13 +226,63 @@ const displayFacilities = computed(() => {
   }
 
   // Filter by selected district (multi-tenancy)
-  const currentDistrict = districtStore.districtName || ''
+  // If a facility has no district information treat it as "global" and
+  // show it for all PBTs. This prevents mock or legacy items without a
+  // district field from being hidden when a district is selected.
+  const currentDistrict = (districtStore.districtName || '').toString()
+  const currentDistrictLower = currentDistrict.toLowerCase()
   const currentDistrictSlug = districtStore.districts.find(d => d.name === currentDistrict)?.slug || ''
+  const currentDistrictSlugLower = currentDistrictSlug.toLowerCase()
+
   filtered = filtered.filter(f => {
-    // facility may store district in different fields; normalize
-    const fd = (f.district || f.district_name || f.district_slug || (f.district && f.district.name) || '').toString().toLowerCase()
-    const fs = (f.district_slug || f.district || '').toString().toLowerCase()
-    return fd === currentDistrict.toString().toLowerCase() || fs === currentDistrictSlug.toString().toLowerCase() || !currentDistrict
+    // facility may store district in many different forms. Collect all
+    // potential values and normalize to trimmed lowercase strings for
+    // flexible comparison.
+    const values = []
+    if (f == null) return false
+    // common string fields
+    ;['district', 'district_name', 'district_slug', 'pbt', 'council'].forEach(k => {
+      if (f[k] !== undefined && f[k] !== null) values.push(String(f[k]))
+    })
+    // nested object forms
+    if (f.district && typeof f.district === 'object') {
+      if (f.district.name) values.push(String(f.district.name))
+      if (f.district.slug) values.push(String(f.district.slug))
+      if (f.district.id) values.push(String(f.district.id))
+    }
+    // numeric id fields
+    if (f.district_id !== undefined && f.district_id !== null) values.push(String(f.district_id))
+    if (f.districtId !== undefined && f.districtId !== null) values.push(String(f.districtId))
+
+    const norm = values.map(v => v.toString().trim().toLowerCase()).filter(Boolean)
+    const hasDistrictInfo = norm.length > 0
+
+    // If no district selected, show all. If facility has no district info,
+    // treat it as global and show it. Otherwise match name/slug/id.
+    if (!currentDistrict) return true
+    if (!hasDistrictInfo) return true
+
+    // exact match against name or slug
+    if (norm.includes(currentDistrictLower) || norm.includes(currentDistrictSlugLower)) return true
+
+    // also allow numeric id matches if district entries carry numeric ids
+    // (try matching against any district.id in store)
+    const numericMatch = districtStore.districts.some(d => {
+      if (d.id && norm.includes(String(d.id))) return d.name === currentDistrict
+      return false
+    })
+    if (numericMatch) return true
+
+    // not a match — facility will be excluded. Log one example to help debug.
+    // (kept minimal to avoid noisy output)
+    try {
+      /* eslint-disable no-console */
+      if (typeof console !== 'undefined' && console.debug) console.debug('Excluded facility by district filter', { id: f.id, districts: norm })
+      /* eslint-enable no-console */
+    } catch (e) {
+      // ignore logging errors
+    }
+    return false
   })
 
   return filtered

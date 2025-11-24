@@ -42,7 +42,10 @@
             </div>
             <div class="detail">
               <span class="label">⏰ Masa:</span>
-              <span>{{ booking.time_slot?.start_time }} - {{ booking.time_slot?.end_time }}</span>
+              <span>
+                <template v-if="booking.booking_type === 'per_day'">Sepanjang Hari</template>
+                <template v-else>{{ booking.start_time || '' }} - {{ booking.end_time || '' }}</template>
+              </span>
             </div>
             <div class="detail">
               <span class="label">👥 Bilangan:</span>

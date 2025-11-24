@@ -60,7 +60,8 @@
           :class="'status-' + booking.status"
         >
           <div class="col-time">
-            {{ (booking.time_slot || booking.timeSlot)?.start_time }} - {{ (booking.time_slot || booking.timeSlot)?.end_time }}
+            <template v-if="booking.booking_type === 'per_day'">Sepanjang Hari</template>
+            <template v-else>{{ booking.start_time || '' }} - {{ booking.end_time || '' }}</template>
           </div>
           <div class="col-status">
             <span class="status-badge" :class="booking.status">

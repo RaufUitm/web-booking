@@ -44,7 +44,8 @@
         <div class="detail-row">
           <span class="label">Time:</span>
           <span class="value">
-            {{ booking.timeSlot?.start_time }} - {{ booking.timeSlot?.end_time }}
+            <template v-if="booking.booking_type === 'per_day'">Sepanjang Hari</template>
+            <template v-else>{{ booking.start_time || '' }} - {{ booking.end_time || '' }}</template>
           </span>
         </div>
       </div>

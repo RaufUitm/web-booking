@@ -9,7 +9,9 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'facility_id',
-        'time_slot_id',
+        'booking_type',
+        'start_time',
+        'end_time',
         'booking_date',
         'number_of_people',
         'status',
@@ -28,11 +30,6 @@ class Booking extends Model
     public function facility()
     {
         return $this->belongsTo(Facility::class);
-    }
-
-    public function timeSlot()
-    {
-        return $this->belongsTo(TimeSlot::class);
     }
 
     public function payment()

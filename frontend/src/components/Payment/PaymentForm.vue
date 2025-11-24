@@ -14,7 +14,10 @@
       </div>
       <div class="summary-row">
         <span>Time:</span>
-        <strong>{{ booking.timeSlot?.start_time }} - {{ booking.timeSlot?.end_time }}</strong>
+        <strong>
+          <template v-if="booking.booking_type === 'per_day'">Sepanjang Hari</template>
+          <template v-else>{{ booking.start_time || '' }} - {{ booking.end_time || '' }}</template>
+        </strong>
       </div>
       <div class="summary-row total">
         <span>Total Amount:</span>

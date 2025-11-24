@@ -16,25 +16,26 @@
       </div>
 
       <div class="form-group">
-        <label for="time_slot_id">Waktu</label>
-        <select
-          id="time_slot_id"
-          v-model="form.time_slot_id"
-          required
-          :disabled="!form.booking_date || loadingSlots"
-        >
-          <option value="">Pilih waktu</option>
-          <option
-            v-for="slot in availableSlots"
-            :key="slot.id"
-            :value="slot.id"
-            :disabled="slot.is_booked"
-          >
-            {{ slot.start_time }} - {{ slot.end_time }}
-            {{ slot.is_booked ? '(Booked)' : '' }}
-          </option>
-        </select>
-        <p v-if="loadingSlots" class="loading-text">Loading available slots...</p>
+          <label>Jenis Tempahan</label>
+          <div class="radio-group">
+            <label><input type="radio" value="per_day" v-model="form.booking_type" /> Per Hari</label>
+            <label><input type="radio" value="per_hour" v-model="form.booking_type" /> Per Jam</label>
+          </div>
+
+          <!-- Per-hour inputs -->
+          <div v-if="form.booking_type === 'per_hour'" class="per-hour">
+            <label>Mulai (jam)</label>
+            <select v-model="form.start_time">
+              <option value="">Pilih mula</option>
+              <option v-for="t in hourOptions" :key="t" :value="t">{{ t }}</option>
+            </select>
+
+            <label>Tamat (jam)</label>
+            <select v-model="form.end_time">
+              <option value="">Pilih tamat</option>
+              <option v-for="t in hourOptions" :key="t" :value="t">{{ t }}</option>
+            </select>
+          </div>
       </div>
 
       <div class="form-group">
@@ -128,7 +129,9 @@ const { prefixPath } = useDistrictRoutes()
 
 const form = ref({
   booking_date: '',
-  time_slot_id: '',
+  booking_type: 'per_hour',
+  start_time: '',
+  end_time: '',
   number_of_people: 1,
   notes: ''
 })
@@ -136,14 +139,11 @@ const form = ref({
 onMounted(() => {
   if (props.selectedDate) {
     form.value.booking_date = props.selectedDate
-    loadAvailableSlots()
   }
 })
 
 const loading = ref(false)
-const loadingSlots = ref(false)
 const error = ref('')
-const availableSlots = ref([])
 
 const minDate = computed(() => {
   const today = new Date()
@@ -151,44 +151,41 @@ const minDate = computed(() => {
 })
 
 const duration = computed(() => {
-  const slot = availableSlots.value.find(s => s.id === form.value.time_slot_id)
-  if (!slot) return 0
-
-  const start = new Date(`2000-01-01 ${slot.start_time}`)
-  const end = new Date(`2000-01-01 ${slot.end_time}`)
-  return (end - start) / (1000 * 60 * 60)
+  if (form.value.booking_type === 'per_hour') {
+    if (!form.value.start_time || !form.value.end_time) return 0
+    const start = new Date(`2000-01-01 ${form.value.start_time}`)
+    const end = new Date(`2000-01-01 ${form.value.end_time}`)
+    return (end - start) / (1000 * 60 * 60)
+  }
+  // per_day considered as full day (24 hours)
+  if (form.value.booking_type === 'per_day') return 24
+  return 0
 })
 
 const totalPrice = computed(() => {
   if (!props.facility || !duration.value) return 0
+  if (form.value.booking_type === 'per_day') {
+    // use price_per_day if available, otherwise fall back to price_per_hour * 24
+    const perDay = parseFloat(props.facility.price_per_day || 0)
+    if (perDay > 0) return perDay.toFixed(2)
+    return (props.facility.price_per_hour * duration.value).toFixed(2)
+  }
   return (props.facility.price_per_hour * duration.value).toFixed(2)
 })
 
 watch(() => form.value.booking_date, (newDate) => {
   if (newDate) {
-    form.value.time_slot_id = ''
-    loadAvailableSlots()
+    // nothing to do now for per_day/per_hour
   }
 })
 
-const loadAvailableSlots = async () => {
-  if (!form.value.booking_date) return
+// loadAvailableSlots removed: per-slot flow is no longer supported
 
-  loadingSlots.value = true
-  try {
-    const response = await axios.get('/time-slots/available', {
-      params: {
-        facility_id: props.facility.id,
-        date: form.value.booking_date
-      }
-    })
-    availableSlots.value = response.data.data
-  } catch (err) {
-    console.error('Failed to load time slots:', err)
-    error.value = 'Failed to load available time slots'
-  } finally {
-    loadingSlots.value = false
-  }
+// generate hour options from 07:00 to 24:00 in 1-hour steps
+const hourOptions = []
+for (let h = 7; h <= 24; h++) {
+  const label = h === 24 ? '24:00' : (h < 10 ? `0${h}:00` : `${h}:00`)
+  hourOptions.push(label)
 }
 
 const handleSubmit = async () => {
@@ -196,10 +193,21 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
-    const booking = await bookingStore.createBooking({
+    // Build payload depending on booking_type
+    const payload = {
       facility_id: props.facility.id,
-      ...form.value
-    })
+      booking_type: form.value.booking_type,
+      booking_date: form.value.booking_date,
+      number_of_people: form.value.number_of_people,
+      notes: form.value.notes
+    }
+
+    if (form.value.booking_type === 'per_hour') {
+      payload.start_time = form.value.start_time
+      payload.end_time = form.value.end_time
+    }
+
+    const booking = await bookingStore.createBooking(payload)
 
     // Navigate to booking confirmation page for the current district
     const confPath = prefixPath(`/booking-confirmation/${booking.id}`)

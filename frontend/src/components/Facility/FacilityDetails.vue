@@ -29,12 +29,12 @@
       <div class="section" v-if="facility.timeSlots && facility.timeSlots.length > 0">
         <h2>Available Time Slots</h2>
         <div class="time-slots">
-          <div
-            v-for="slot in facility.timeSlots"
+            <div
+              v-for="slot in facility.timeSlots"
             :key="slot.id"
             class="time-slot"
           >
-            {{ slot.start_time }} - {{ slot.end_time }}
+            {{ slot.start_time || slot.startTime || slot.start }} - {{ slot.end_time || slot.endTime || slot.end }}
           </div>
         </div>
       </div>

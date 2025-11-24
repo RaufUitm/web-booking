@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
-use App\Models\TimeSlot;
 use App\Mail\BookingConfirmation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -14,7 +13,7 @@ class BookingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Booking::with(['user', 'facility', 'timeSlot']);
+        $query = Booking::with(['user', 'facility']);
 
         // Always filter by user_id - users (including admin) only see their own bookings
         // Admins can see all bookings through the admin/bookings endpoint
@@ -35,7 +34,7 @@ class BookingController extends Controller
 
     public function show($id)
     {
-        $booking = Booking::with(['user', 'facility', 'timeSlot', 'payment'])->find($id);
+        $booking = Booking::with(['user', 'facility', 'payment'])->find($id);
 
         if (!$booking) {
             return response()->json([
@@ -60,9 +59,10 @@ class BookingController extends Controller
 
     public function store(Request $request)
     {
+        // Booking can be either per_day or per_hour (start_time/end_time)
         $validator = Validator::make($request->all(), [
             'facility_id' => 'required|exists:facilities,id',
-            'time_slot_id' => 'required|exists:time_slots,id',
+            'booking_type' => 'required|in:per_day,per_hour',
             'booking_date' => 'required|date|after_or_equal:today',
             'number_of_people' => 'required|integer|min:1',
             'notes' => 'nullable|string',
@@ -75,29 +75,77 @@ class BookingController extends Controller
             ], 422);
         }
 
-        // Check if time slot is available
-        $existingBooking = Booking::where('facility_id', $request->facility_id)
-            ->where('time_slot_id', $request->time_slot_id)
-            ->where('booking_date', $request->booking_date)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->first();
-
-        if ($existingBooking) {
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'This time slot is already booked'
-            ], 409);
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        $booking = Booking::create([
-            'user_id' => $request->user()->id,
-            'facility_id' => $request->facility_id,
-            'time_slot_id' => $request->time_slot_id,
-            'booking_date' => $request->booking_date,
-            'number_of_people' => $request->number_of_people,
-            'notes' => $request->notes,
-            'status' => 'pending',
-        ]);
+        // Additional validation based on booking type
+        $bookingType = $request->booking_type;
+        if ($bookingType === 'per_hour') {
+            $hourValidator = Validator::make($request->all(), [
+                'start_time' => ['required', 'date_format:H:i'],
+                'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            ]);
+            if ($hourValidator->fails()) {
+                return response()->json(['success' => false, 'errors' => $hourValidator->errors()], 422);
+            }
+
+            // Check overlapping per_hour bookings for same facility/date
+            $start = $request->start_time;
+            $end = $request->end_time;
+
+            $conflict = Booking::where('facility_id', $request->facility_id)
+                ->where('booking_date', $request->booking_date)
+                ->where('booking_type', 'per_hour')
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->where(function ($q) use ($start, $end) {
+                    // overlap if existing.start < new.end AND existing.end > new.start
+                    $q->whereRaw("start_time < ? AND end_time > ?", [$end, $start]);
+                })
+                ->first();
+
+            if ($conflict) {
+                return response()->json(['success' => false, 'message' => 'The selected time range overlaps with another booking'], 409);
+            }
+
+            $bookingData = [
+                'user_id' => $request->user()->id,
+                'facility_id' => $request->facility_id,
+                'booking_type' => 'per_hour',
+                'start_time' => $request->start_time,
+                'end_time' => $request->end_time,
+                'booking_date' => $request->booking_date,
+                'number_of_people' => $request->number_of_people,
+                'notes' => $request->notes,
+                'status' => 'pending',
+            ];
+
+        } else { // per_day
+            // ensure no bookings already exist for this facility/date
+            $existing = Booking::where('facility_id', $request->facility_id)
+                ->where('booking_date', $request->booking_date)
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->first();
+
+            if ($existing) {
+                return response()->json(['success' => false, 'message' => 'Facility already has a booking on this date'], 409);
+            }
+
+            $bookingData = [
+                'user_id' => $request->user()->id,
+                'facility_id' => $request->facility_id,
+                'booking_type' => 'per_day',
+                'booking_date' => $request->booking_date,
+                'number_of_people' => $request->number_of_people,
+                'notes' => $request->notes,
+                'status' => 'pending',
+            ];
+        }
+
+        $booking = Booking::create($bookingData);
 
         // Send confirmation email
         try {
@@ -109,7 +157,7 @@ class BookingController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Booking created successfully',
-            'data' => $booking->load(['facility', 'timeSlot'])
+            'data' => $booking->load(['facility'])
         ], 201);
     }
 
@@ -151,7 +199,7 @@ class BookingController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Booking updated successfully',
-            'data' => $booking->load(['facility', 'timeSlot'])
+            'data' => $booking->load(['facility'])
         ]);
     }
 

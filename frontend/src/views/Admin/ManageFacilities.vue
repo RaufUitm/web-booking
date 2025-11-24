@@ -46,6 +46,7 @@
             <th>Lokasi</th>
             <th>Kapasiti</th>
             <th>Harga/Jam</th>
+            <th>Harga/Hari</th>
             <th>Status</th>
             <th>Tindakan</th>
           </tr>
@@ -58,6 +59,10 @@
             <td>{{ facility.location || '-' }}</td>
             <td>{{ facility.capacity }} orang</td>
             <td>RM {{ parseFloat(facility.price_per_hour).toFixed(2) }}</td>
+            <td>
+              <span v-if="facility.price_per_day !== null && facility.price_per_day !== undefined">RM {{ parseFloat(facility.price_per_day).toFixed(2) }}</span>
+              <span v-else>-</span>
+            </td>
             <td>
               <span :class="['status-badge', facility.is_available ? 'active' : 'inactive']">
                 {{ facility.is_available ? 'Tersedia' : 'Tidak Tersedia' }}
@@ -123,6 +128,15 @@
             <div class="form-group">
               <label>Harga/Jam (RM) <span class="required">*</span></label>
               <input v-model.number="formData.price_per_hour" type="number" step="0.01" min="0" required />
+            </div>
+
+            <div class="form-group">
+              <label>Harga/Hari (RM)</label>
+              <input v-model.number="formData.price_per_day" type="number" step="0.01" min="0" />
+                <div class="suggestion-row">
+                  <small class="hint">Cadangan: RM {{ suggestedPerDay.toFixed(2) }} (harga/jam × 8)</small>
+                  <button type="button" class="btn-ghost" @click="applySuggestedPerDay">Gunakan Cadangan</button>
+                </div>
             </div>
           </div>
 
@@ -205,6 +219,7 @@ const formData = ref({
   location: '',
   capacity: 1,
   price_per_hour: 0,
+  price_per_day: null,
   image: '',
   is_available: true
 })
@@ -305,11 +320,21 @@ const editFacility = (facility) => {
     location: facility.location || '',
     capacity: facility.capacity,
     price_per_hour: parseFloat(facility.price_per_hour),
+    price_per_day: facility.price_per_day !== undefined && facility.price_per_day !== null ? parseFloat(facility.price_per_day) : null,
     image: facility.image || '',
     is_available: facility.is_available
   }
   editingFacilityId.value = facility.id
   showEditModal.value = true
+}
+
+const suggestedPerDay = computed(() => {
+  const ph = parseFloat(formData.value.price_per_hour || 0)
+  return Number.isFinite(ph) ? +(ph * 8).toFixed(2) : 0
+})
+
+const applySuggestedPerDay = () => {
+  formData.value.price_per_day = suggestedPerDay.value
 }
 
 const confirmDelete = (facility) => {
@@ -341,6 +366,7 @@ const closeModal = () => {
     location: '',
     capacity: 1,
     price_per_hour: 0,
+    price_per_day: null,
     image: '',
     is_available: true
   }

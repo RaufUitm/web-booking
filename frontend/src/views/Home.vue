@@ -2,7 +2,7 @@
 <template>
   <div class="home">
     <!-- Hero Section -->
-    <section class="hero" :style="{ background: currentDistrictColor.gradient }">
+    <section class="hero" :style="{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${currentDistrictBg})` }">
       <div class="hero-content">
         <h1>{{ districtStore.pbtName }}</h1>
         <h2 style="font-size: 1.8rem; margin: 1rem 0; color: #ffffff;">Sistem Tempahan Kemudahan Awam</h2>
@@ -124,6 +124,7 @@ const route = useRoute()
 const authStore = useAuthStore()
 const facilityStore = useFacilityStore()
 const districtStore = useDistrictStore()
+
 // District color mapping for dynamic theme (defined after districtStore)
 const districtColors = {
   'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
@@ -131,9 +132,23 @@ const districtColors = {
   'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
   'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
 }
+
+// District background images
+const districtBackgrounds = {
+  'Besut': '/image/daerah/besutmain.jpg',
+  'Marang': '/image/daerah/marangmain.jpg',
+  'Setiu': '/image/daerah/setiumain.jpg',
+  'Hulu Terengganu': '/image/daerah/hulumain.jpg',
+}
+
 const currentDistrictColor = computed(() => {
   return districtColors[districtStore.districtName] || districtColors['Hulu Terengganu']
 })
+
+const currentDistrictBg = computed(() => {
+  return districtBackgrounds[districtStore.districtName] || districtBackgrounds['Hulu Terengganu']
+})
+
 const { prefixPath } = useDistrictRoutes()
 
 const { isAuthenticated } = storeToRefs(authStore)
@@ -207,10 +222,13 @@ const goToFacilities = (categoryId) => {
 }
 
 .hero {
-  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: white;
   padding: 6rem 2rem;
   text-align: center;
+  position: relative;
 }
 
 .hero-content h1 {

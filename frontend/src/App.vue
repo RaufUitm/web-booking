@@ -4,7 +4,7 @@
       <div class="nav-container">
         <router-link to="/" class="logo">
           <template v-if="districtStore.currentDistrict">
-            <img :src="`/images/${districtStore.districtAbbreviation}.png`"
+            <img :src="logoSrc"
                  :alt="`Logo ${districtStore.districtAbbreviation}`"
                  class="logo-img">
             <div>
@@ -13,7 +13,7 @@
             </div>
           </template>
           <template v-else>
-            <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="logo-img" style="height:40px; width:auto; object-fit:contain;" />
+            <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="logo-img" style="height:2.5vw; width:auto; object-fit:contain;" />
             <div>
               <span class="logo-text">T-Smart Booking</span>
               <div class="logo-sub">Sistem Tempahan Negeri</div>
@@ -121,7 +121,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useDistrictStore } from '@/stores/district'
@@ -141,6 +141,53 @@ const mobileMenuOpen = ref(false)
 const userMenuOpen = ref(false)
 
 const currentYear = computed(() => new Date().getFullYear())
+
+// Logo probing: try multiple extensions so images can be .png/.jpg/.jpeg/.svg
+const logoSrc = ref('/images/terengganu-flag-bw.png')
+
+const tryImage = (url) => {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => resolve(true)
+    img.onerror = () => resolve(false)
+    img.src = url
+  })
+}
+
+const probeLogo = async (abbr) => {
+  if (!abbr) return '/images/terengganu-flag-bw.png'
+  const exts = ['.png', '.jpg', '.jpeg', '.svg']
+  for (const ext of exts) {
+    const path = `/images/${abbr}${ext}`
+    // eslint-disable-next-line no-await-in-loop
+    const ok = await tryImage(path)
+    if (ok) return path
+  }
+  return `/images/${abbr}.png`
+}
+
+onMounted(async () => {
+  // initial logo probe based on any current district
+  if (districtStore.currentDistrict) {
+    const abbr = districtStore.districtAbbreviation
+    logoSrc.value = await probeLogo(abbr)
+  }
+})
+
+// update logo when district changes
+watch(() => districtStore.currentDistrict, async (newVal) => {
+  if (!newVal) {
+    logoSrc.value = '/images/terengganu-flag-bw.png'
+    return
+  }
+  const abbr = districtStore.districtAbbreviation
+  try {
+    logoSrc.value = await probeLogo(abbr)
+  } catch (e) {
+    console.error('Logo probe failed', e)
+    logoSrc.value = `/images/${abbr}.png`
+  }
+})
 
 // Navbar style uses current district color
 function hexToRgb(hex) {
@@ -280,7 +327,7 @@ main {
 }
 
 .nav-container {
-  max-width: 1400px;
+  max-width: 70vw;
   margin: 0 auto;
   padding: 0 2rem;
   display: flex;
@@ -292,7 +339,7 @@ main {
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   color: #fff;
   text-decoration: none;
   font-weight: 700;

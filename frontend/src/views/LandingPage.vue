@@ -5,21 +5,21 @@
     <!-- Header -->
     <header class="w-full landing-hero shadow-sm border-b-4 border-yellow-400 py-12" style="width: 100% !important; margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important; position: relative;">
       <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem; text-align: center; position: relative; z-index: 2;">
-        <h1 style="font-size: 2.5rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem; text-align: center;">T-Smart Booking</h1>
-        <p style="font-size: 1.125rem; color: #ffffff; margin-bottom: 1rem; text-align: center;">Sistem Tempahan Kemudahan Awam Negeri Terengganu</p>
-        <p style="font-size: 0.875rem; color: #ffffff; max-width: 48rem; margin: 0 auto; line-height: 1.625; text-align: center;">
-          T-Smart Booking adalah sistem tempahan kemudahan dalam talian yang memudahkan orang ramai dan organisasi untuk menempah kemudahan awam di seluruh negeri Terengganu. Pilih daerah anda untuk melihat senarai kemudahan yang tersedia dan buat tempahan dengan mudah.
+        <h1 style="font-size: 2.5vw; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem; text-align: center;">T-Smart Booking</h1>
+        <p style="font-size: 1.5vw; color: #ffffff; margin-bottom: 1rem; text-align: center;">Sistem Tempahan Kemudahan Awam Negeri Terengganu</p>
+        <p style="font-size: 1vw; color: #ffffff; max-width: 60vw; margin: 0 auto; line-height: 1.2; text-align: center;">
+          Terengganu Smart Booking adalah sistem tempahan kemudahan awam dalam talian yang memudahkan orang ramai dan organisasi untuk menempah kemudahan awam di seluruh negeri Terengganu. Pilih daerah anda untuk melihat senarai kemudahan yang tersedia dan buat tempahan dengan mudah.
         </p>
 
       </div>
     </header>
 
     <!-- Main Content -->
+    <div class="mx-8 after-hero"><h2 class=" text-2xl md:text-3xl font-semibold text-black text-center">Daerah Pilihan Anda</h2></div>
+
     <main class="flex-1 flex flex-col items-center justify-center">
       <!-- Introduction -->
-        <div >
-          <h2 class="text-2xl md:text-3xl font-semibold text-black">Daerah Pilihan Anda</h2>
-        </div>
+
 
       <!-- Daerah Cards Grid (4 columns) -->
       <div class="w-full max-w-7xl px-4">
@@ -311,6 +311,18 @@ const navigateToDaerah = (daerah) => {
   height: clamp(300px, 30vh, 400px);
   position: relative;
   padding-top: clamp(1.5rem, 4vh, 3rem);
+}
+
+/* Use League Spartan for landing hero headings only */
+.landing-hero h1,
+.landing-hero p,
+.landing-hero h2 {
+  font-family: 'League Spartan', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* Small gap below the hero before the next section */
+.after-hero {
+  margin-top: clamp(1rem, 3vw, 2.5rem);
 }
 
 /* Top-right auth CTAs */

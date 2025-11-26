@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar">
+  <nav class="navbar" :style="navbarStyle">
     <div class="navbar-container">
       <router-link to="/" class="navbar-brand">
         <span class="logo">🏛️</span>
@@ -102,6 +102,39 @@ const districtStore = useDistrictStore()
 const mobileMenuOpen = ref(false)
 const userMenuOpen = ref(false)
 
+const currentDistrictColor = computed(() => districtStore.districtColor || '#FF8C00')
+
+function hexToRgb(hex) {
+  const sanitized = hex.replace('#', '')
+  const bigint = parseInt(sanitized, 16)
+  const r = (bigint >> 16) & 255
+  const g = (bigint >> 8) & 255
+  const b = bigint & 255
+  return { r, g, b }
+}
+
+function hexToRgbaStr(hex, alpha = 1) {
+  const { r, g, b } = hexToRgb(hex)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
+function getContrastColor(hex) {
+  const { r, g, b } = hexToRgb(hex)
+  // Perceived luminance
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return lum > 0.6 ? '#111' : '#ffffff'
+}
+
+const navbarStyle = computed(() => {
+  const main = currentDistrictColor.value
+  return {
+    background: main,
+    color: getContrastColor(main),
+    '--accent-color': main,
+    '--accent-rgba': hexToRgbaStr(main, 0.08)
+  }
+})
+
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const user = computed(() => authStore.user)
 const isAdmin = computed(() => authStore.user?.role === 'admin')
@@ -170,7 +203,7 @@ onUnmounted(() => {
   text-decoration: none;
   font-weight: 700;
   font-size: 20px;
-  color: #333;
+  color: inherit;
 }
 
 .logo {
@@ -179,7 +212,7 @@ onUnmounted(() => {
 }
 
 .brand-name {
-  color: #FF8C00;
+  color: inherit;
 }
 
 .mobile-menu-toggle {
@@ -194,7 +227,7 @@ onUnmounted(() => {
 .mobile-menu-toggle span {
   width: 25px;
   height: 3px;
-  background-color: #333;
+  background-color: currentColor;
   margin: 3px 0;
   transition: 0.3s;
 }
@@ -212,7 +245,7 @@ onUnmounted(() => {
 
 .nav-link {
   text-decoration: none;
-  color: #666;
+  color: inherit;
   font-weight: 500;
   padding: 8px 12px;
   border-radius: 4px;
@@ -221,8 +254,8 @@ onUnmounted(() => {
 
 .nav-link:hover,
 .nav-link.router-link-active {
-  color: #FF8C00;
-  background-color: rgba(255, 140, 0, 0.08);
+  color: var(--accent-color);
+  background-color: var(--accent-rgba);
 }
 
 .navbar-actions {
@@ -240,7 +273,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background-color: #f5f5f5;
+  background-color: rgba(255,255,255,0.12);
   border: none;
   border-radius: 20px;
   cursor: pointer;
@@ -248,7 +281,7 @@ onUnmounted(() => {
 }
 
 .user-button:hover {
-  background-color: #e0e0e0;
+  background-color: rgba(255,255,255,0.18);
 }
 
 .user-icon {
@@ -305,24 +338,24 @@ onUnmounted(() => {
 }
 
 .btn-login {
-  color: #FF8C00;
-  border: 2px solid #FF8C00;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
 }
 
 .btn-login:hover {
-  background-color: #FF8C00;
+  background-color: var(--accent-color);
   color: white;
 }
 
 .btn-register {
-  background-color: #FF8C00;
+  background-color: var(--accent-color);
   color: white;
 }
 
 .btn-register:hover {
-  background-color: #E67E00;
+  filter: brightness(0.95);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 
 @media (max-width: 768px) {

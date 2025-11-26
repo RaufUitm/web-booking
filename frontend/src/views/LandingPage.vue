@@ -3,11 +3,11 @@
     <!-- Nav is provided by App.vue to avoid duplication -->
 
     <!-- Header -->
-    <header class="w-full bg-white shadow-sm border-b-4 border-yellow-400 py-6" style="width: 100% !important; margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important; position: relative;">
-      <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem; text-align: center; position: relative;">
-        <h1 style="font-size: 2.5rem; font-weight: 700; color: #111827; margin-bottom: 0.5rem; text-align: center;">T-Smart Booking</h1>
-        <p style="font-size: 1.125rem; color: #4b5563; margin-bottom: 1rem; text-align: center;">Sistem Tempahan Kemudahan Negeri Terengganu</p>
-        <p style="font-size: 0.875rem; color: #4b5563; max-width: 48rem; margin: 0 auto; line-height: 1.625; text-align: center;">
+    <header class="w-full landing-hero shadow-sm border-b-4 border-yellow-400 py-12" style="width: 100% !important; margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important; position: relative;">
+      <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem; text-align: center; position: relative; z-index: 2;">
+        <h1 style="font-size: 2.5rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem; text-align: center;">T-Smart Booking</h1>
+        <p style="font-size: 1.125rem; color: #ffffff; margin-bottom: 1rem; text-align: center;">Sistem Tempahan Kemudahan Awam Negeri Terengganu</p>
+        <p style="font-size: 0.875rem; color: #ffffff; max-width: 48rem; margin: 0 auto; line-height: 1.625; text-align: center;">
           T-Smart Booking adalah sistem tempahan kemudahan dalam talian yang memudahkan orang ramai dan organisasi untuk menempah kemudahan awam di seluruh negeri Terengganu. Pilih daerah anda untuk melihat senarai kemudahan yang tersedia dan buat tempahan dengan mudah.
         </p>
 
@@ -15,10 +15,10 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col items-center justify-center py-8 px-4">
+    <main class="flex-1 flex flex-col items-center justify-center">
       <!-- Introduction -->
-        <div class="text-center mb-8 max-w-3xl">
-          <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-3">Daerah Pilihan Anda</h2>
+        <div >
+          <h2 class="text-2xl md:text-3xl font-semibold text-black">Daerah Pilihan Anda</h2>
         </div>
 
       <!-- Daerah Cards Grid (4 columns) -->
@@ -31,7 +31,7 @@
           >
             <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-besut">
               <div class="absolute top-3 left-3 z-10">
-                <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
+                <img src="/images/derebesut.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
               </div>
               <div class="text-center w-full px-4 relative z-10">
                 <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Besut</h3>
@@ -43,8 +43,8 @@
               <div class="absolute inset-0 bg-black/40 z-0"></div>
             </div>
             <div class="p-6 bg-white">
-              <p class="text-sm text-gray-600 text-center mb-2">
-                Sistem tempahan kemudahan di Besut
+              <p class="text-sm text-white-600 text-center mb-2">
+                Tempahan kemudahan awam di Besut
               </p>
               <div class="flex items-center justify-center text-red-600 font-medium text-sm hover:text-red-700">
                 <span>Klik untuk masuk →</span>
@@ -59,7 +59,7 @@
           >
             <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-marang">
               <div class="absolute top-3 left-3 z-10">
-                <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
+                <img src="/images/deremarang.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
               </div>
               <div class="text-center w-full px-4 relative z-10">
                 <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Marang</h3>
@@ -71,8 +71,8 @@
               <div class="absolute inset-0 bg-black/40 z-0"></div>
             </div>
             <div class="p-6 bg-white">
-              <p class="text-sm text-gray-600 text-center mb-2">
-                Sistem tempahan kemudahan di Marang
+              <p class="text-sm text-white-600 text-center mb-2">
+                Tempahan kemudahan awam di Marang
               </p>
               <div class="flex items-center justify-center text-purple-600 font-medium text-sm hover:text-purple-700">
                 <span>Klik untuk masuk →</span>
@@ -87,20 +87,20 @@
           >
             <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-setiu">
               <div class="absolute top-3 left-3 z-10">
-                <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
+                <img src="/images/deresetiu.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
               </div>
               <div class="text-center w-full px-4 relative z-10">
                 <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Setiu</h3>
                 <div class="flex justify-center mb-2">
-                  <img src="/images/MDS.png" alt="Logo Majlis Daerah Setiu" class="w-32 h-32 object-contain">
+                  <img src="/images/MDS.jpg" alt="Logo Majlis Daerah Setiu" class="w-32 h-32 object-contain">
                 </div>
                 <p class="text-base md:text-lg font-semibold text-white">Majlis Daerah Setiu</p>
               </div>
               <div class="absolute inset-0 bg-black/40 z-0"></div>
             </div>
             <div class="p-6 bg-white">
-              <p class="text-sm text-gray-600 text-center mb-2">
-                Sistem tempahan kemudahan di Setiu
+              <p class="text-sm text-white-600 text-center mb-2">
+                Tempahan kemudahan awam di Setiu
               </p>
               <div class="flex items-center justify-center text-amber-700 font-medium text-sm hover:text-amber-800">
                 <span>Klik untuk masuk →</span>
@@ -115,7 +115,7 @@
           >
             <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-hulu-terengganu">
               <div class="absolute top-3 left-3 z-10">
-                <img src="/images/terengganu-flag-bw.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
+                <img src="/images/derehulu.png" alt="Terengganu Flag" class="w-10 h-7 object-contain rounded shadow" />
               </div>
               <div class="text-center w-full px-4 relative z-10">
                 <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Hulu Terengganu</h3>
@@ -127,8 +127,8 @@
               <div class="absolute inset-0 bg-black/40 z-0"></div>
             </div>
             <div class="p-6 bg-white">
-              <p class="text-sm text-gray-600 text-center mb-2">
-                Sistem tempahan kemudahan di Hulu Terengganu
+              <p class="text-sm text-white-600 text-center mb-2">
+                Tempahan kemudahan awam di Hulu Terengganu
               </p>
               <div class="flex items-center justify-center text-orange-600 font-medium text-sm hover:text-orange-700">
                 <span>Klik untuk masuk →</span>
@@ -291,16 +291,26 @@ const navigateToDaerah = (daerah) => {
   position: relative;
 }
 .daerah-bg-besut {
-  background-image: url('/image/daerah/besut.jpg');
+  background-image: url('/image/daerah/besut1.jpg');
 }
 .daerah-bg-marang {
-  background-image: url('/image/daerah/marang.jpg');
+  background-image: url('/image/daerah/marang1.jpg');
 }
 .daerah-bg-setiu {
-  background-image: url('/image/daerah/setiu.jpg');
+  background-image: url('/image/daerah/setiu1.jpg');
 }
 .daerah-bg-hulu-terengganu {
-  background-image: url('/image/daerah/hulu-terengganu.jpg');
+  background-image: url('/image/daerah/hulu1.png');
+}
+
+/* Landing page hero background */
+.landing-hero {
+  background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/image/drawbrige.jpg');
+  background-size: cover;
+  background-position: center;
+  height: clamp(300px, 30vh, 400px);
+  position: relative;
+  padding-top: clamp(1.5rem, 4vh, 3rem);
 }
 
 /* Top-right auth CTAs */

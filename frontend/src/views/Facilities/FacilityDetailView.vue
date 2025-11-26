@@ -1,7 +1,7 @@
 <template>
   <div class="facility-detail-view">
     <div class="container">
-      <button @click="goBack" class="btn-back">← Back to Facilities</button>
+      <button @click="goBack" class="btn-back" :style="{ background: currentDistrictColor.main, color: '#fff' }">← Back to Facilities</button>
 
       <div v-if="loading" class="loading">Loading facility details...</div>
 
@@ -19,11 +19,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFacilityStore } from '@/stores/facility'
 import useDistrictRoutes from '@/utils/districtRoutes'
 import FacilityDetails from '@/components/Facility/FacilityDetails.vue'
+import { useDistrictStore } from '@/stores/district'
 
 const route = useRoute()
 const router = useRouter()
@@ -31,6 +32,15 @@ const facilityStore = useFacilityStore()
 
 const facility = ref(null)
 const loading = ref(false)
+
+const districtStore = useDistrictStore()
+const districtColors = {
+  'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
+  'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
+  'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
+  'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
+}
+const currentDistrictColor = computed(() => districtColors[districtStore.districtName] || districtColors['Hulu Terengganu'])
 
 onMounted(async () => {
   await loadFacility()

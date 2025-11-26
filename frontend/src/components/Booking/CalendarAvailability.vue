@@ -1,5 +1,12 @@
 <template>
-  <div class="calendar-availability">
+  <div class="calendar-availability"
+       :style="{
+         '--mdht-green': currentDistrictColor.main,
+         '--mdht-light-green': currentDistrictColor.main,
+         '--mdht-dark-green': currentDistrictColor.dark || currentDistrictColor.main,
+         '--mdht-primary-green': currentDistrictColor.main,
+         '--mdht-bg': 'rgba(0,0,0,0.03)'
+       }">
     <div class="calendar-header">
       <button @click="previousMonth" class="nav-btn">‹</button>
       <h3>{{ monthYear }}</h3>
@@ -90,6 +97,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useDistrictStore } from '@/stores/district'
 import api from '@/api/axios'
 
 const props = defineProps({
@@ -277,6 +285,16 @@ const proceedToBooking = () => {
 onMounted(() => {
   loadBookings()
 })
+
+// district color mapping and computed color
+const districtStore = useDistrictStore()
+const districtColors = {
+  'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
+  'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
+  'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
+  'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
+}
+const currentDistrictColor = computed(() => districtColors[districtStore.districtName] || districtColors['Hulu Terengganu'])
 </script>
 
 <style scoped>

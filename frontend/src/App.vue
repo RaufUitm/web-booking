@@ -142,11 +142,37 @@ const userMenuOpen = ref(false)
 
 const currentYear = computed(() => new Date().getFullYear())
 
-// Use a consistent black/white navbar theme
-const navbarStyle = computed(() => ({
-  backgroundColor: '#111',
-  color: '#fff'
-}))
+// Navbar style uses current district color
+function hexToRgb(hex) {
+  const sanitized = hex.replace('#', '')
+  const bigint = parseInt(sanitized, 16)
+  const r = (bigint >> 16) & 255
+  const g = (bigint >> 8) & 255
+  const b = bigint & 255
+  return { r, g, b }
+}
+
+function getContrastColor(hex) {
+  const { r, g, b } = hexToRgb(hex)
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return lum > 0.6 ? '#111' : '#fff'
+}
+
+const navbarStyle = computed(() => {
+  // Keep navbar black on the public landing page for visual consistency
+  if (route.name === 'landing' || route.path === '/') {
+    return {
+      backgroundColor: '#111',
+      color: '#fff'
+    }
+  }
+
+  const main = districtStore.districtColor || '#111'
+  return {
+    backgroundColor: main,
+    color: getContrastColor(main)
+  }
+})
 
 const footerStyle = computed(() => {
   const color = districtStore.districtColor || '#D77800'
@@ -213,9 +239,23 @@ if (typeof window !== 'undefined') {
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background-color: #f5f7fa;
   color: #2c3e50;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5 {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Body text weights */
+p, a, li, input, button {
+  font-weight: 400;
 }
 
 #app {

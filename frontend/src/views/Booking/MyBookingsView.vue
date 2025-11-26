@@ -17,7 +17,7 @@
 
       <div v-else-if="filteredBookings.length === 0" class="no-bookings">
         <p>Tiada tempahan dijumpai.</p>
-        <router-link :to="prefixPath('/facilities')" class="btn-browse">
+        <router-link :to="prefixPath('/facilities')" class="btn-browse" :style="{ background: currentDistrictColor.main, color: '#fff' }">
           Lihat Kemudahan
         </router-link>
       </div>
@@ -58,7 +58,7 @@
           </div>
 
           <div class="booking-actions">
-            <button @click="viewBooking(booking.id)" class="btn-view">
+            <button @click="viewBooking(booking.id)" class="btn-view" :style="{ background: currentDistrictColor.main, color: '#fff' }">
               Lihat Butiran
             </button>
             <button
@@ -80,10 +80,20 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import useDistrictRoutes from '@/utils/districtRoutes'
 import { useBookingStore } from '@/stores/booking'
+import { useDistrictStore } from '@/stores/district'
 
 const router = useRouter()
 const { prefixPath } = useDistrictRoutes()
 const bookingStore = useBookingStore()
+
+const districtStore = useDistrictStore()
+const districtColors = {
+  'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
+  'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
+  'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
+  'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
+}
+const currentDistrictColor = computed(() => districtColors[districtStore.districtName] || districtColors['Hulu Terengganu'])
 
 const bookings = ref([])
 const loading = ref(false)

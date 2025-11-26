@@ -1,6 +1,6 @@
 <template>
   <div class="facilities-page">
-    <div class="page-header">
+    <div class="page-header" :style="{ background: currentDistrictColor.gradient }">
       <h1>Kemudahan Tersedia</h1>
       <p>Pilih kemudahan yang anda perlukan untuk tempahan</p>
     </div>
@@ -70,14 +70,14 @@
           class="facility-card"
           @click="viewDetails(facility.id)"
         >
-          <div class="facility-image">
+          <div class="facility-image" :style="{ background: currentDistrictColor.gradient }">
             <img :src="facility.image || '/images/placeholder.jpg'" :alt="facility.name" />
             <span v-if="!facility.is_available" class="badge-unavailable">Tidak Tersedia</span>
-            <span v-else class="badge-available">Tersedia</span>
+            <span v-else class="badge-available" :style="{ background: currentDistrictColor.main, color: '#fff' }">Tersedia</span>
           </div>
 
           <div class="facility-content">
-            <div class="facility-category">{{ getCategoryName(facility.category_id) }}</div>
+            <div class="facility-category" :style="{ backgroundColor: currentDistrictColor.main + '20', color: currentDistrictColor.main }">{{ getCategoryName(facility.category_id) }}</div>
             <h3>{{ facility.name }}</h3>
             <p class="facility-description">{{ facility.description }}</p>
 
@@ -95,7 +95,7 @@
             <div class="facility-footer">
               <div class="price">
                 <span class="price-label">Harga:</span>
-                <span class="price-amount">RM {{ facility.price_per_hour }}/jam</span>
+                <span class="price-amount" :style="{ color: currentDistrictColor.main }">RM {{ facility.price_per_hour }}/jam</span>
               </div>
               <button class="btn-book" @click.stop="bookNow(facility.id)" :style="{ background: currentDistrictColor.main, color: '#fff' }">
                 {{ isAuthenticated ? 'Tempah' : 'Lihat' }}

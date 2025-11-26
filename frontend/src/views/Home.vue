@@ -5,15 +5,13 @@
     <section class="hero" :style="{ background: currentDistrictColor.gradient }">
       <div class="hero-content">
         <h1>{{ districtStore.pbtName }}</h1>
-        <h2 style="font-size: 1.8rem; margin: 1rem 0; color: #2c3e50;">Sistem Tempahan Kemudahan Awam</h2>
+        <h2 style="font-size: 1.8rem; margin: 1rem 0; color: #ffffff;">Sistem Tempahan Kemudahan Awam</h2>
         <p class="subtitle">Tempah kemudahan awam dengan mudah dan pantas di {{ districtStore.districtName }}, Terengganu</p>
         <div class="hero-buttons">
           <router-link :to="prefixPath('/facilities')" class="btn btn-primary" :style="{ color: currentDistrictColor.main, borderColor: currentDistrictColor.main }">
             Lihat Kemudahan
           </router-link>
-          <router-link v-if="!isAuthenticated" :to="prefixPath('/register')" class="btn btn-secondary" :style="{ borderColor: currentDistrictColor.main, color: currentDistrictColor.main }">
-            Daftar Sekarang
-          </router-link>
+
         </div>
       </div>
     </section>
@@ -113,16 +111,6 @@
 </template>
 
 <script setup>
-// District color mapping for dynamic theme
-const districtColors = {
-  'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
-  'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
-  'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
-  'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
-}
-const currentDistrictColor = computed(() => {
-  return districtColors[districtStore.districtName] || districtColors['Hulu Terengganu']
-})
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -136,6 +124,16 @@ const route = useRoute()
 const authStore = useAuthStore()
 const facilityStore = useFacilityStore()
 const districtStore = useDistrictStore()
+// District color mapping for dynamic theme (defined after districtStore)
+const districtColors = {
+  'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
+  'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
+  'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
+  'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
+}
+const currentDistrictColor = computed(() => {
+  return districtColors[districtStore.districtName] || districtColors['Hulu Terengganu']
+})
 const { prefixPath } = useDistrictRoutes()
 
 const { isAuthenticated } = storeToRefs(authStore)

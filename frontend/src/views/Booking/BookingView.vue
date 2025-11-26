@@ -21,14 +21,14 @@
       />
 
       <div v-else-if="bookingComplete" class="success-message">
-        <div class="success-icon">✓</div>
+        <div class="success-icon" :style="{ background: currentDistrictColor.main, color: '#fff' }">✓</div>
         <h2>Tempahan Berjaya!</h2>
         <p>Tempahan anda telah disahkan. Sila tunggu pengesahan daripada admin.</p>
         <div class="actions">
-          <router-link :to="prefixPath('/my-bookings')" class="btn-primary">
+          <router-link :to="prefixPath('/my-bookings')" class="btn-primary" :style="{ background: currentDistrictColor.main, color: '#fff' }">
             Lihat Tempahan Saya
           </router-link>
-          <router-link :to="prefixPath('/facilities')" class="btn-secondary">
+          <router-link :to="prefixPath('/facilities')" class="btn-secondary" :style="{ borderColor: currentDistrictColor.main, color: currentDistrictColor.main }">
             Lihat Kemudahan Lain
           </router-link>
         </div>
@@ -38,12 +38,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import useDistrictRoutes from '@/utils/districtRoutes'
 import { useFacilityStore } from '@/stores/facility'
 import CalendarAvailability from '@/components/Booking/CalendarAvailability.vue'
 import BookingForm from '@/components/Booking/BookingForm.vue'
+import { useDistrictStore } from '@/stores/district'
 
 const route = useRoute()
 const router = useRouter()
@@ -55,6 +56,15 @@ const bookingComplete = ref(false)
 const showCalendar = ref(true)
 const selectedDate = ref(null)
 const { prefixPath } = useDistrictRoutes()
+
+const districtStore = useDistrictStore()
+const districtColors = {
+  'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
+  'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
+  'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
+  'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
+}
+const currentDistrictColor = computed(() => districtColors[districtStore.districtName] || districtColors['Hulu Terengganu'])
 
 onMounted(async () => {
   await loadFacility()

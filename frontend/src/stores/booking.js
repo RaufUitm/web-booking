@@ -93,5 +93,19 @@ export const useBookingStore = defineStore('booking', {
         this.loading = false
       }
     }
+,
+    async fetchBookingById(id) {
+      this.loading = true
+      try {
+        const response = await api.get(`/bookings/${id}`)
+        const data = response.data.data || response.data
+        return data
+      } catch (error) {
+        this.error = error.response?.data?.message || error.message
+        throw error
+      } finally {
+        this.loading = false
+      }
+    }
   }
 })

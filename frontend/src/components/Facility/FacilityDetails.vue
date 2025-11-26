@@ -6,7 +6,7 @@
       </div>
       <div class="facility-header-info">
         <h1>{{ facility.name }}</h1>
-        <p class="category">{{ facility.category?.name }}</p>
+        <p class="category" :style="{ color: currentDistrictColor.main }">{{ facility.category?.name }}</p>
         <div class="facility-meta">
           <span class="location">📍 {{ facility.location }}</span>
           <span class="capacity">👥 Capacity: {{ facility.capacity }} people</span>
@@ -44,6 +44,7 @@
           @click="$emit('book', facility)"
           class="btn-book"
           :disabled="!facility.is_available"
+          :style="{ background: currentDistrictColor.main, borderColor: currentDistrictColor.main }"
         >
           {{ facility.is_available ? 'Book This Facility' : 'Currently Unavailable' }}
         </button>
@@ -53,7 +54,8 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, computed } from 'vue'
+import { useDistrictStore } from '@/stores/district'
 
 defineProps({
   facility: {
@@ -63,6 +65,15 @@ defineProps({
 })
 
 defineEmits(['book'])
+
+const districtStore = useDistrictStore()
+const districtColors = {
+  'Besut': { main: '#DC143C', dark: '#a10e2a', gradient: 'linear-gradient(135deg, #DC143C 0%, #a10e2a 100%)' },
+  'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
+  'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
+  'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
+}
+const currentDistrictColor = computed(() => districtColors[districtStore.districtName] || districtColors['Hulu Terengganu'])
 </script>
 
 <style scoped>

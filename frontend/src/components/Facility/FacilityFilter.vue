@@ -1,9 +1,9 @@
 <template>
   <div class="facility-filter">
     <div class="filter-section">
-      <label>Category</label>
+      <label>Kategori</label>
       <select v-model="filters.category_id" @change="applyFilters">
-        <option value="">All Categories</option>
+        <option value="">Semua Kategori</option>
         <option
           v-for="category in categories"
           :key="category.id"
@@ -15,27 +15,27 @@
     </div>
 
     <div class="filter-section">
-      <label>Search</label>
+      <label>Carian</label>
       <input
         v-model="filters.search"
         type="text"
-        placeholder="Search facilities..."
+        placeholder="Cari kemudahan..."
         @input="debouncedSearch"
       />
     </div>
 
     <div class="filter-section">
-      <label>Availability</label>
+      <label>Ketersediaan</label>
       <select v-model="filters.available" @change="applyFilters">
-        <option value="">All</option>
-        <option value="1">Available</option>
-        <option value="0">Unavailable</option>
+        <option value="">Semua</option>
+        <option value="1">Tersedia</option>
+        <option value="0">Tidak Tersedia</option>
       </select>
     </div>
 
     <div class="filter-actions">
       <button @click="clearFilters" class="btn-clear">
-        Clear Filters
+        Kosongkan Penapis
       </button>
     </div>
   </div>

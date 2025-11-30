@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class FacilityController extends Controller
 {
@@ -65,6 +66,7 @@ class FacilityController extends Controller
 
     public function store(Request $request)
     {
+        // Validate basic fields. We allow `image` to be either a URL/string or a file upload.
         $validator = Validator::make($request->all(), [
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
@@ -73,7 +75,7 @@ class FacilityController extends Controller
             'capacity' => 'required|integer|min:1',
             'price_per_hour' => 'required|numeric|min:0',
             'price_per_day' => 'nullable|numeric|min:0',
-            'image' => 'nullable|string',
+            'image' => 'nullable', // accept string URL or file; file validated below when present
             'is_available' => 'boolean',
         ]);
 
@@ -85,6 +87,19 @@ class FacilityController extends Controller
         }
 
         $data = $request->all();
+
+        // If an image file was uploaded, validate it specifically and store it.
+        if ($request->hasFile('image')) {
+            $fileValidator = Validator::make(['image' => $request->file('image')], ['image' => 'file|image|max:2048']);
+            if ($fileValidator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $fileValidator->errors()
+                ], 422);
+            }
+            $path = $request->file('image')->store('facilities', 'public');
+            $data['image'] = Storage::url($path);
+        }
 
         // If the authenticated user is a district admin, always assign their district
         $user = $request->user();
@@ -112,6 +127,7 @@ class FacilityController extends Controller
             ], 404);
         }
 
+        // For updates, allow image to be string or file; validate file if present.
         $validator = Validator::make($request->all(), [
             'category_id' => 'sometimes|exists:categories,id',
             'name' => 'sometimes|string|max:255',
@@ -120,7 +136,7 @@ class FacilityController extends Controller
             'capacity' => 'sometimes|integer|min:1',
             'price_per_hour' => 'sometimes|numeric|min:0',
             'price_per_day' => 'nullable|numeric|min:0',
-            'image' => 'nullable|string',
+            'image' => 'nullable',
             'is_available' => 'boolean',
         ]);
 
@@ -142,6 +158,18 @@ class FacilityController extends Controller
         }
 
         $data = $request->all();
+        // Handle uploaded image file on update (validate file separately)
+        if ($request->hasFile('image')) {
+            $fileValidator = Validator::make(['image' => $request->file('image')], ['image' => 'file|image|max:2048']);
+            if ($fileValidator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $fileValidator->errors()
+                ], 422);
+            }
+            $path = $request->file('image')->store('facilities', 'public');
+            $data['image'] = Storage::url($path);
+        }
         // Prevent district admin from changing the district field
         if ($user && $user->role === 'district_admin') {
             unset($data['district']);

@@ -1,7 +1,7 @@
 <template>
   <div class="booking-confirmation-view">
     <div class="container">
-      <div v-if="loading" class="loading">Loading booking details...</div>
+      <div v-if="loading" class="loading">Memuatkan butiran tempahan...</div>
 
       <BookingSummary
         v-else-if="booking"
@@ -11,10 +11,17 @@
         @edit="handleEdit"
       />
 
+      <EditBookingForm
+        v-if="showEdit && booking"
+        :booking="booking"
+        @saved="handleEditSaved"
+        @cancel="handleEditCancel"
+      />
+
       <div v-else class="error">
-        <p>Booking not found.</p>
+        <p>Tempahan tidak ditemui.</p>
         <router-link :to="prefixPath('/my-bookings')" class="btn-back" :style="{ background: currentDistrictColor.main, color: '#fff' }">
-          Back to My Bookings
+          Kembali ke Tempahan Saya
         </router-link>
       </div>
     </div>
@@ -27,6 +34,7 @@ import { useRoute, useRouter } from 'vue-router'
 import useDistrictRoutes from '@/utils/districtRoutes'
 import { useBookingStore } from '@/stores/booking'
 import BookingSummary from '@/components/Booking/BookingSummary.vue'
+import EditBookingForm from '@/components/Booking/EditBookingForm.vue'
 import { useDistrictStore } from '@/stores/district'
 
 const route = useRoute()
@@ -36,6 +44,7 @@ const bookingStore = useBookingStore()
 
 const booking = ref(null)
 const loading = ref(false)
+const showEdit = ref(false)
 
 const districtStore = useDistrictStore()
 const districtColors = {
@@ -62,19 +71,30 @@ const loadBooking = async () => {
 }
 
 const handleCancel = async () => {
-  if (!confirm('Are you sure you want to cancel this booking?')) return
+  if (!confirm('Adakah anda pasti mahu membatalkan tempahan ini?')) return
 
   try {
     await bookingStore.cancelBooking(booking.value.id)
     await loadBooking()
   } catch (error) {
     console.error('Failed to cancel booking:', error)
-    alert('Failed to cancel booking. Please try again.')
+    alert('Gagal membatalkan tempahan. Sila cuba lagi.')
   }
 }
 
 const handleEdit = () => {
-  router.push(prefixPath(`/booking/${booking.value.facility_id}`))
+  // Open edit modal
+  showEdit.value = true
+}
+
+const handleEditSaved = async (updated) => {
+  // Update local booking and close modal
+  booking.value = updated
+  showEdit.value = false
+}
+
+const handleEditCancel = () => {
+  showEdit.value = false
 }
 </script>
 

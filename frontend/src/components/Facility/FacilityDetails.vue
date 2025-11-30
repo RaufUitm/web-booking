@@ -5,29 +5,29 @@
         <img :src="facility.image || '/image/default-facility.jpg'" :alt="facility.name" />
       </div>
       <div class="facility-header-info">
-        <h1>{{ facility.name }}</h1>
-        <p class="category" :style="{ color: currentDistrictColor.main }">{{ facility.category?.name }}</p>
-        <div class="facility-meta">
-          <span class="location">📍 {{ facility.location }}</span>
-          <span class="capacity">👥 Capacity: {{ facility.capacity }} people</span>
-          <span class="price">💰 ${{ facility.price_per_hour }}/hour</span>
+          <h1>{{ facility.name }}</h1>
+          <p class="category" :style="{ color: currentDistrictColor.main }">{{ facility.category?.name }}</p>
+          <div class="facility-meta">
+            <span class="location">📍 {{ facility.location }}</span>
+            <span class="capacity">👥 Kapasiti: {{ facility.capacity }} orang</span>
+            <span class="price">💰 {{ formattedPricePerHour }} / jam</span>
+          </div>
+          <div class="availability">
+            <span :class="['status', facility.is_available ? 'available' : 'unavailable']">
+              {{ facility.is_available ? '✓ Tersedia' : '✗ Tidak Tersedia' }}
+            </span>
+          </div>
         </div>
-        <div class="availability">
-          <span :class="['status', facility.is_available ? 'available' : 'unavailable']">
-            {{ facility.is_available ? '✓ Available' : '✗ Not Available' }}
-          </span>
-        </div>
-      </div>
     </div>
 
     <div class="facility-body">
       <div class="section">
-        <h2>Description</h2>
+        <h2>Penerangan</h2>
         <p>{{ facility.description }}</p>
       </div>
 
       <div class="section" v-if="facility.timeSlots && facility.timeSlots.length > 0">
-        <h2>Available Time Slots</h2>
+        <h2>Slot Masa Tersedia</h2>
         <div class="time-slots">
             <div
               v-for="slot in facility.timeSlots"
@@ -46,7 +46,7 @@
           :disabled="!facility.is_available"
           :style="{ background: currentDistrictColor.main, borderColor: currentDistrictColor.main }"
         >
-          {{ facility.is_available ? 'Book This Facility' : 'Currently Unavailable' }}
+          {{ facility.is_available ? 'Tempah Kemudahan Ini' : 'Tidak Tersedia' }}
         </button>
       </div>
     </div>
@@ -57,7 +57,7 @@
 import { defineProps, defineEmits, computed } from 'vue'
 import { useDistrictStore } from '@/stores/district'
 
-defineProps({
+const props = defineProps({
   facility: {
     type: Object,
     default: null
@@ -74,6 +74,8 @@ const districtColors = {
   'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
 }
 const currentDistrictColor = computed(() => districtColors[districtStore.districtName] || districtColors['Hulu Terengganu'])
+const currencyFormatter = new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR' })
+const formattedPricePerHour = computed(() => currencyFormatter.format(Number((props.facility && (props.facility.price_per_hour ?? 0)) || 0)))
 </script>
 
 <style scoped>

@@ -31,7 +31,7 @@
           <div class="booking-header">
             <h3>{{ booking.facility?.name }}</h3>
             <span :class="['status-badge', booking.status]">
-              {{ booking.status }}
+              {{ formatStatus(booking.status) }}
             </span>
           </div>
 
@@ -129,12 +129,22 @@ const filterBookings = () => {
 
 const formatDate = (date) => {
   if (!date) return ''
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString('ms-MY', {
     weekday: 'short',
     year: 'numeric',
     month: 'short',
     day: 'numeric'
   })
+}
+
+const formatStatus = (status) => {
+  const map = {
+    pending: 'Menunggu',
+    confirmed: 'Disahkan',
+    completed: 'Selesai',
+    cancelled: 'Dibatalkan'
+  }
+  return map[status] || status
 }
 
 const canCancel = (booking) => {

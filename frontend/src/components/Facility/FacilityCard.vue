@@ -2,7 +2,7 @@
   <div class="facility-card" @click="handleClick">
     <div class="facility-image">
       <img :src="facility.image || '/image/default-facility.jpg'" :alt="facility.name" />
-      <span v-if="!facility.is_available" class="unavailable-badge">Unavailable</span>
+      <span v-if="!facility.is_available" class="unavailable-badge">Tidak Tersedia</span>
     </div>
     <div class="facility-info">
       <h3>{{ facility.name }}</h3>
@@ -10,12 +10,12 @@
       <p class="description">{{ truncateText(facility.description, 100) }}</p>
       <div class="facility-details">
         <span class="location">📍 {{ facility.location }}</span>
-        <span class="capacity">👥 {{ facility.capacity }} people</span>
+        <span class="capacity">👥 {{ facility.capacity }} orang</span>
       </div>
       <div class="facility-footer">
-        <span class="price">${{ facility.price_per_hour }}/hour</span>
+        <span class="price">{{ formattedPricePerHour }} / jam</span>
         <button class="btn-book" @click.stop="$emit('book', facility)">
-          Book Now
+          Tempah Sekarang
         </button>
       </div>
     </div>
@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import useDistrictRoutes from '@/utils/districtRoutes'
 
@@ -47,6 +47,9 @@ const { facilityDetailPath } = useDistrictRoutes()
 const handleClick = () => {
   router.push(facilityDetailPath(props.facility.id))
 }
+
+const currencyFormatter = new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR' })
+const formattedPricePerHour = computed(() => currencyFormatter.format(Number(props.facility?.price_per_hour ?? 0)))
 </script>
 
 <style scoped>

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,22 +16,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create admin user
-        User::factory()->create([
-            'name' => 'Admin MDHT',
-            'email' => 'admin@mdht.com',
-            'password' => bcrypt('admin123'),
-            'role' => 'admin',
-            'phone' => '0123456789',
-        ]);
+        // Ensure admin user exists (idempotent)
+        User::updateOrCreate(
+            ['email' => 'admin@mdht.com'],
+            [
+                'name' => 'Admin MDHT',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
+                'phone' => '0123456789',
+            ]
+        );
 
-        // Create regular test user
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'user@mdht.com',
-            'password' => bcrypt('user123'),
-            'role' => 'user',
-            'phone' => '0123456788',
-        ]);
+        // Ensure regular test user exists (idempotent)
+        User::updateOrCreate(
+            ['email' => 'user@mdht.com'],
+            [
+                'name' => 'Test User',
+                'password' => Hash::make('user123'),
+                'role' => 'user',
+                'phone' => '0123456788',
+            ]
+        );
     }
 }

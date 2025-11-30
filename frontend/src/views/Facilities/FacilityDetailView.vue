@@ -1,9 +1,9 @@
 <template>
   <div class="facility-detail-view">
     <div class="container">
-      <button @click="goBack" class="btn-back" :style="{ background: currentDistrictColor.main, color: '#fff' }">← Back to Facilities</button>
+      <button @click="goBack" class="btn-back" :style="{ background: currentDistrictColor.main, color: '#fff' }">← Kembali ke Senarai Kemudahan</button>
 
-      <div v-if="loading" class="loading">Loading facility details...</div>
+      <div v-if="loading" class="loading">Memuatkan butiran kemudahan...</div>
 
       <FacilityDetails
         v-else-if="facility"
@@ -12,7 +12,7 @@
       />
 
       <div v-else class="error">
-        <p>Facility not found.</p>
+        <p>Kemudahan tidak ditemui.</p>
       </div>
     </div>
   </div>

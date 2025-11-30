@@ -7,44 +7,44 @@
     <nav class="sidebar-nav">
       <router-link :to="prefixPath('/admin')" class="sidebar-link">
         <span class="icon">📊</span>
-        <span v-if="!isCollapsed" class="text">Dashboard</span>
+        <span v-if="!isCollapsed" class="text">Papan Pemuka</span>
       </router-link>
 
       <router-link :to="prefixPath('/admin/facilities')" class="sidebar-link">
         <span class="icon">🏢</span>
-        <span v-if="!isCollapsed" class="text">Manage Facilities</span>
+        <span v-if="!isCollapsed" class="text">Urus Kemudahan</span>
       </router-link>
 
       <router-link :to="prefixPath('/admin/bookings')" class="sidebar-link">
         <span class="icon">📅</span>
-        <span v-if="!isCollapsed" class="text">Manage Bookings</span>
+        <span v-if="!isCollapsed" class="text">Urus Tempahan</span>
       </router-link>
 
       <router-link :to="prefixPath('/admin/categories')" class="sidebar-link">
         <span class="icon">📁</span>
-        <span v-if="!isCollapsed" class="text">Categories</span>
+        <span v-if="!isCollapsed" class="text">Kategori</span>
       </router-link>
 
       <router-link :to="prefixPath('/admin/users')" class="sidebar-link">
         <span class="icon">👥</span>
-        <span v-if="!isCollapsed" class="text">Users</span>
+        <span v-if="!isCollapsed" class="text">Pengguna</span>
       </router-link>
 
       <router-link :to="prefixPath('/admin/reports')" class="sidebar-link">
         <span class="icon">📈</span>
-        <span v-if="!isCollapsed" class="text">Reports</span>
+        <span v-if="!isCollapsed" class="text">Laporan</span>
       </router-link>
 
       <router-link :to="prefixPath('/admin/settings')" class="sidebar-link">
         <span class="icon">⚙️</span>
-        <span v-if="!isCollapsed" class="text">Settings</span>
+        <span v-if="!isCollapsed" class="text">Tetapan</span>
       </router-link>
     </nav>
 
     <div class="sidebar-footer">
       <router-link to="/" class="sidebar-link">
         <span class="icon">🏠</span>
-        <span v-if="!isCollapsed" class="text">Back to Site</span>
+        <span v-if="!isCollapsed" class="text">Kembali ke Laman</span>
       </router-link>
     </div>
   </aside>

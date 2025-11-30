@@ -2,7 +2,7 @@
   <div class="admin-dashboard">
     <div class="dashboard-header">
       <div>
-        <h1>Admin Dashboard</h1>
+        <h1>Papan Pemuka Admin</h1>
         <p class="role-badge" :class="authStore.userRole">
           {{ getRoleDisplay(authStore.userRole) }}
           <span v-if="authStore.userDistrict"> - {{ authStore.userDistrict }}</span>
@@ -52,7 +52,7 @@
       <div class="stat-card">
         <div class="stat-icon">💰</div>
         <div class="stat-info">
-          <div class="stat-value">RM {{ stats.total_revenue.toFixed(2) }}</div>
+          <div class="stat-value">{{ formattedRevenue(stats.total_revenue) }}</div>
           <div class="stat-label">Jumlah Pendapatan</div>
         </div>
       </div>
@@ -60,7 +60,7 @@
 
     <div class="dashboard-sections">
       <div class="section">
-        <h2>Recent Bookings</h2>
+        <h2>Tempahan Terkini</h2>
         <div class="recent-bookings">
           <div v-for="booking in recentBookings" :key="booking.id" class="booking-item">
             <div class="booking-info">
@@ -68,13 +68,13 @@
               <span>{{ booking.user?.name }}</span>
               <span>{{ formatDate(booking.booking_date) }}</span>
             </div>
-            <span :class="['status', booking.status]">{{ booking.status }}</span>
+            <span :class="['status', booking.status]">{{ formatStatus(booking.status) }}</span>
           </div>
         </div>
       </div>
 
       <div class="section">
-        <h2>Quick Actions</h2>
+        <h2>Tindakan Pantas</h2>
         <div class="quick-actions">
                 <router-link :to="adminRoute('facilities')" class="action-btn">
                   <span class="icon">🏢</span>
@@ -154,10 +154,10 @@ onMounted(() => {
 
 const getRoleDisplay = (role) => {
   const roleMap = {
-    'master_admin': 'Master Admin - Full System Access',
-    'state_admin': 'State Admin - All Districts',
-    'district_admin': 'District Admin',
-    'user': 'User'
+    'master_admin': 'Master Admin - Akses Penuh Sistem',
+    'state_admin': 'State Admin - Semua Daerah',
+    'district_admin': 'Admin Daerah',
+    'user': 'Pengguna'
   }
   return roleMap[role] || role
 }
@@ -168,23 +168,59 @@ const loadDashboardData = async () => {
     const params = {}
 
     // Apply district filter based on role
+    // NOTE: backend expects the district value as stored in DB (name),
+    // so pass the raw district name instead of a slug to ensure matching.
     if (authStore.isDistrictAdmin) {
-      params.district = authStore.userDistrict
+      const districtName = (authStore.userDistrict || '').toString().trim()
+      if (districtName) params.district = districtName
     } else if (selectedDistrict.value) {
-      params.district = selectedDistrict.value
+      // selectedDistrict contains the display name (e.g. 'Besut'), pass it as-is
+      params.district = selectedDistrict.value.toString().trim()
     }
 
     const response = await api.get('/admin/dashboard', { params })
-    const data = response.data.data
+    // Be defensive: backend may return different wrappers. Try common shapes.
+    const raw = response.data
+    console.debug('admin/dashboard response', raw)
+    const data = raw.data || raw
 
-    stats.value = data.stats
-    recentBookings.value = data.recent_bookings || []
+    // Defensive defaults in case API doesn't return all fields
+    const defaults = {
+      total_users: 0,
+      total_bookings: 0,
+      total_facilities: 0,
+      total_revenue: 0,
+      pending_bookings: 0,
+      confirmed_bookings: 0,
+      monthly_revenue: 0
+    }
+
+    stats.value = Object.assign({}, defaults, (data && data.stats) || raw.stats || {})
+    // Ensure numeric types
+    stats.value.total_revenue = Number(stats.value.total_revenue || 0)
+    stats.value.total_users = Number(stats.value.total_users || 0)
+    stats.value.total_bookings = Number(stats.value.total_bookings || 0)
+    stats.value.total_facilities = Number(stats.value.total_facilities || 0)
+
+    recentBookings.value = (data && data.recent_bookings) || raw.recent_bookings || raw.recentBookings || []
   } catch (error) {
+    // Log detailed server error if available
     console.error('Failed to load dashboard data:', error)
+    try {
+      if (error.response && error.response.data) {
+        console.error('Server response:', error.response.data)
+      }
+    } catch (e) {
+      // ignore
+    }
   } finally {
     loading.value = false
   }
 }
+
+// Format revenue as Malaysian Ringgit
+const currencyFormatter = new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR' })
+const formattedRevenue = (amount) => currencyFormatter.format(Number(amount || 0))
 
 const formatDate = (date) => {
   if (!date) return ''
@@ -193,6 +229,16 @@ const formatDate = (date) => {
     day: 'numeric',
     year: 'numeric'
   })
+}
+
+const formatStatus = (status) => {
+  const statusMap = {
+    pending: 'Menunggu',
+    confirmed: 'Disahkan',
+    cancelled: 'Dibatalkan',
+    completed: 'Selesai'
+  }
+  return statusMap[status] || status
 }
 
 // Helper to return the appropriate admin route for the current user

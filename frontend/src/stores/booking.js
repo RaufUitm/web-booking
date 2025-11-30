@@ -94,6 +94,23 @@ export const useBookingStore = defineStore('booking', {
       }
     }
 ,
+    async updateBooking(id, payload) {
+      this.loading = true
+      try {
+        const response = await api.put(`/bookings/${id}`, payload)
+        const updated = response.data.data || response.data
+        // Update local bookings array if present
+        const index = this.bookings.findIndex(b => b.id === id)
+        if (index !== -1) this.bookings[index] = updated
+        return updated
+      } catch (error) {
+        this.error = error.response?.data?.message || error.message
+        throw error
+      } finally {
+        this.loading = false
+      }
+    }
+    ,
     async fetchBookingById(id) {
       this.loading = true
       try {

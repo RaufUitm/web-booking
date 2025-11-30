@@ -1,17 +1,17 @@
 <template>
   <div class="forgot-password-form">
-    <h2>Forgot Password</h2>
-    <p class="subtitle">Enter your email address and we'll send you a reset link.</p>
+    <h2>Lupa Kata Laluan</h2>
+    <p class="subtitle">Masukkan alamat emel anda dan kami akan menghantar pautan reset.</p>
 
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label for="email">Email</label>
+        <label for="email">Emel</label>
         <input
           id="email"
           v-model="form.email"
           type="email"
           required
-          placeholder="Enter your email"
+          placeholder="Masukkan emel anda"
         />
       </div>
 
@@ -24,11 +24,11 @@
       </div>
 
       <button type="submit" :disabled="loading" class="btn-primary">
-        {{ loading ? 'Sending...' : 'Send Reset Link' }}
+        {{ loading ? 'Menghantar...' : 'Hantar Pautan Reset' }}
       </button>
 
       <div class="form-links">
-        <router-link :to="prefixPath('/login')">Back to Login</router-link>
+        <router-link :to="prefixPath('/login')">Kembali ke Log Masuk</router-link>
       </div>
     </form>
   </div>
@@ -55,12 +55,12 @@ const handleSubmit = async () => {
   error.value = ''
   success.value = ''
 
-  try {
+    try {
     await authStore.forgotPassword(form.value.email)
-    success.value = 'Password reset link sent to your email!'
+    success.value = 'Pautan reset kata laluan telah dihantar ke emel anda.'
     form.value.email = ''
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to send reset link. Please try again.'
+    error.value = err.response?.data?.message || 'Gagal menghantar pautan reset. Sila cuba lagi.'
   } finally {
     loading.value = false
   }

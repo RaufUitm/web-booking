@@ -1,9 +1,9 @@
 <template>
   <div class="facility-list">
-    <div v-if="loading" class="loading">Loading facilities...</div>
+    <div v-if="loading" class="loading">Memuatkan kemudahan...</div>
 
     <div v-else-if="facilities.length === 0" class="no-facilities">
-      <p>No facilities found.</p>
+      <p>Tiada kemudahan ditemui.</p>
     </div>
 
     <div v-else class="facilities-grid">
@@ -17,7 +17,7 @@
 
     <div v-if="hasMore && !loading" class="load-more">
       <button @click="loadMore" class="btn-load-more">
-        Load More
+        Muat Lagi
       </button>
     </div>
   </div>

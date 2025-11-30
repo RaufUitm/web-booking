@@ -1,38 +1,38 @@
 <template>
   <div class="booking-summary">
-    <h2>Booking Summary</h2>
+    <h2>Ringkasan Tempahan</h2>
 
     <div class="summary-section">
-      <h3>Facility Details</h3>
+      <h3>Butiran Kemudahan</h3>
       <div class="detail-row">
-        <span class="label">Facility:</span>
+        <span class="label">Kemudahan:</span>
         <span class="value">{{ booking.facility?.name }}</span>
       </div>
       <div class="detail-row">
-        <span class="label">Location:</span>
+        <span class="label">Lokasi:</span>
         <span class="value">{{ booking.facility?.location }}</span>
       </div>
       <div class="detail-row">
-        <span class="label">Category:</span>
+        <span class="label">Kategori:</span>
         <span class="value">{{ booking.facility?.category?.name }}</span>
       </div>
     </div>
 
     <div class="summary-section">
-      <h3>Booking Information</h3>
+      <h3>Maklumat Tempahan</h3>
       <div class="detail-row">
-        <span class="label">Date:</span>
+        <span class="label">Tarikh:</span>
         <span class="value">{{ formatDate(booking.booking_date) }}</span>
       </div>
       <div class="detail-row">
-        <span class="label">Time:</span>
+        <span class="label">Masa:</span>
         <span class="value">
           <template v-if="booking.booking_type === 'per_day'">Sepanjang Hari</template>
           <template v-else>{{ booking.start_time || '' }} - {{ booking.end_time || '' }}</template>
         </span>
       </div>
       <div class="detail-row">
-        <span class="label">Number of People:</span>
+        <span class="label">Bilangan Orang:</span>
         <span class="value">{{ booking.number_of_people }}</span>
       </div>
       <div class="detail-row">
@@ -42,24 +42,24 @@
         </span>
       </div>
       <div v-if="booking.notes" class="detail-row notes">
-        <span class="label">Notes:</span>
+        <span class="label">Catatan:</span>
         <span class="value">{{ booking.notes }}</span>
       </div>
     </div>
 
     <div class="summary-section pricing">
-      <h3>Pricing</h3>
+      <h3>Harga</h3>
       <div class="detail-row">
-        <span class="label">Price per hour:</span>
-        <span class="value">${{ booking.facility?.price_per_hour }}</span>
+        <span class="label">Harga setiap jam:</span>
+        <span class="value">{{ formattedPricePerHour }}</span>
       </div>
       <div class="detail-row">
-        <span class="label">Duration:</span>
-        <span class="value">{{ duration }} hour(s)</span>
+        <span class="label">Tempoh:</span>
+        <span class="value">{{ duration }} jam</span>
       </div>
       <div class="detail-row total">
-        <span class="label">Total Amount:</span>
-        <span class="value" :style="{ color: districtColor }">${{ totalPrice }}</span>
+        <span class="label">Jumlah:</span>
+        <span class="value" :style="{ color: districtColor }">{{ formattedTotal }}</span>
       </div>
     </div>
 
@@ -70,7 +70,7 @@
         class="btn-cancel"
         :style="{ backgroundColor: districtColor, borderColor: districtColor }"
       >
-        Cancel Booking
+        Batal Tempahan
       </button>
       <button
         v-if="canEdit"
@@ -78,7 +78,7 @@
         class="btn-edit"
         :style="{ backgroundColor: districtColor, borderColor: districtColor }"
       >
-        Edit Booking
+        Edit Tempahan
       </button>
     </div>
   </div>
@@ -116,14 +116,26 @@ const duration = computed(() => {
   return (end - start) / (1000 * 60 * 60)
 })
 
-const totalPrice = computed(() => {
+const parseNumber = (value) => {
+  const n = Number(value ?? 0)
+  return Number.isNaN(n) ? 0 : n
+}
+
+const pricePerHour = computed(() => parseNumber(props.booking.facility?.price_per_hour))
+const pricePerDay = computed(() => parseNumber(props.booking.facility?.price_per_day))
+
+// Numeric total (used for calculations) and formatted currency strings
+const totalPriceNumber = computed(() => {
   if (!props.booking.facility) return 0
-  if (props.booking.booking_type === 'per_day') {
-    return (props.booking.facility.price_per_day ?? 0).toFixed(2)
-  }
+  if (props.booking.booking_type === 'per_day') return pricePerDay.value
   if (!duration.value) return 0
-  return (props.booking.facility.price_per_hour * duration.value).toFixed(2)
+  return pricePerHour.value * duration.value
 })
+
+const currencyFormatter = new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR' })
+
+const formattedTotal = computed(() => currencyFormatter.format(totalPriceNumber.value))
+const formattedPricePerHour = computed(() => currencyFormatter.format(pricePerHour.value))
 
 const canCancel = computed(() => {
   return ['pending', 'confirmed'].includes(props.booking.status)
@@ -135,7 +147,7 @@ const canEdit = computed(() => {
 
 const formatDate = (date) => {
   if (!date) return ''
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString('ms-MY', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -145,10 +157,10 @@ const formatDate = (date) => {
 
 const formatStatus = (status) => {
   const statusMap = {
-    pending: 'Pending',
-    confirmed: 'Confirmed',
-    cancelled: 'Cancelled',
-    completed: 'Completed'
+    pending: 'Menunggu',
+    confirmed: 'Disahkan',
+    cancelled: 'Dibatalkan',
+    completed: 'Selesai'
   }
   return statusMap[status] || status
 }

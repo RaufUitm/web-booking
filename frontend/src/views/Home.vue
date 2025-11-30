@@ -154,41 +154,9 @@ const { prefixPath } = useDistrictRoutes()
 const { isAuthenticated } = storeToRefs(authStore)
 const { categories } = storeToRefs(facilityStore)
 
-// Default categories if not loaded from backend
-const defaultCategories = ref([
-  {
-    id: 1,
-    name: 'Dewan Serbaguna',
-    description: 'Untuk majlis dan acara rasmi',
-    icon: '🏛️',
-    facility_count: 5
-  },
-  {
-    id: 2,
-    name: 'Padang & Gelanggang',
-    description: 'Kemudahan sukan dan rekreasi',
-    icon: '⚽',
-    facility_count: 8
-  },
-  {
-    id: 3,
-    name: 'Bilik Seminar',
-    description: 'Untuk mesyuarat dan pembentangan',
-    icon: '💼',
-    facility_count: 4
-  },
-  {
-    id: 4,
-    name: 'Kemudahan Rekreasi',
-    description: 'Taman dan kawasan rekreasi',
-    icon: '🎡',
-    facility_count: 6
-  }
-])
-
-const displayCategories = computed(() => {
-  return categories.value.length > 0 ? categories.value : defaultCategories.value
-})
+// Use categories loaded from backend. The store already enriches
+// categories with `icon` and `facility_count` in `fetchCategories()`.
+const displayCategories = computed(() => categories.value)
 
 const popularFacilities = ref([])
 

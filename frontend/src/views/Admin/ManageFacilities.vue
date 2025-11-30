@@ -2,7 +2,7 @@
   <div class="manage-facilities">
     <div class="page-header">
       <h1>Pengurusan Kemudahan</h1>
-      <button @click="showAddModal = true" class="btn-add">
+      <button @click="openAddModal" class="btn-add">
         <span>➕</span> Tambah Kemudahan
       </button>
     </div>
@@ -23,6 +23,11 @@
         <option v-for="category in categories" :key="category.id" :value="category.id">
           {{ category.name }}
         </option>
+      </select>
+
+      <select v-if="authStore.canManageAllDistricts" v-model="selectedDistrictFilter" @change="loadFacilities">
+        <option value="">Semua Daerah</option>
+        <option v-for="d in districtStore.districts" :key="d.slug" :value="d.name">{{ d.name }}</option>
       </select>
 
       <select v-model="statusFilter">
@@ -69,12 +74,13 @@
               </span>
             </td>
             <td class="actions">
-              <button @click="editFacility(facility)" class="btn-icon" title="Edit">
+              <button v-if="canModify(facility)" @click="editFacility(facility)" class="btn-icon" title="Edit">
                 ✏️
               </button>
-              <button @click="confirmDelete(facility)" class="btn-icon btn-danger" title="Delete">
+              <button v-if="canModify(facility)" @click="confirmDelete(facility)" class="btn-icon btn-danger" title="Delete">
                 🗑️
               </button>
+              <span v-if="!canModify(facility)" class="text-muted">Dilarang</span>
             </td>
           </tr>
         </tbody>
@@ -141,8 +147,15 @@
           </div>
 
           <div class="form-group">
-            <label>URL Gambar</label>
-            <input v-model="formData.image" type="text" placeholder="https://..." />
+            <label>Gambar Kemudahan</label>
+            <input id="facility-image-input" ref="imageInput" @change="handleImageChange" type="file" accept="image/*" />
+            <div v-if="imagePreview" class="image-preview">
+              <img :src="imagePreview" alt="Preview" />
+            </div>
+            <div v-else-if="formData.image" class="image-preview">
+              <img :src="formData.image" alt="Current" />
+            </div>
+            <small class="hint">Muat naik imej (.jpg, .png). Saiz maksimum 2MB.</small>
           </div>
 
           <div class="form-group">
@@ -196,9 +209,12 @@
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
 import { useAuthStore } from '@/stores/auth'
+import { useDistrictStore } from '@/stores/district'
 
 const facilities = ref([])
 const categories = ref([])
+const districtStore = useDistrictStore()
+const selectedDistrictFilter = ref('')
 const loading = ref(false)
 const saving = ref(false)
 const deleting = ref(false)
@@ -212,6 +228,9 @@ const showAddModal = ref(false)
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
 
+// Auth store (used to restrict district-admins)
+const authStore = useAuthStore()
+
 const formData = ref({
   name: '',
   category_id: '',
@@ -223,6 +242,9 @@ const formData = ref({
   image: '',
   is_available: true
 })
+
+const imageFile = ref(null)
+const imagePreview = ref('')
 
 const facilityToDelete = ref(null)
 const editingFacilityId = ref(null)
@@ -245,6 +267,30 @@ const filteredFacilities = computed(() => {
     filtered = filtered.filter(f => !f.is_available)
   }
 
+  // If user is a district admin, ensure the UI only shows facilities belonging to their district.
+  if (authStore.isDistrictAdmin) {
+    const myDistrict = (authStore.userDistrict || '').toString().trim().toLowerCase()
+    filtered = filtered.filter(f => {
+      if (!f) return false
+      // Normalize possible district representations on the facility
+      const vals = []
+      ;['district', 'district_name', 'district_slug', 'pbt', 'council'].forEach(k => {
+        if (f[k] !== undefined && f[k] !== null) vals.push(String(f[k]))
+      })
+      if (f.district && typeof f.district === 'object') {
+        if (f.district.name) vals.push(String(f.district.name))
+        if (f.district.slug) vals.push(String(f.district.slug))
+        if (f.district.id) vals.push(String(f.district.id))
+      }
+      if (f.district_id !== undefined && f.district_id !== null) vals.push(String(f.district_id))
+      if (f.districtId !== undefined && f.districtId !== null) vals.push(String(f.districtId))
+
+      const norm = vals.map(v => v.toString().trim().toLowerCase()).filter(Boolean)
+      if (norm.length === 0) return false
+      return norm.includes(myDistrict)
+    })
+  }
+
   return filtered
 })
 
@@ -261,10 +307,12 @@ const loadFacilities = async () => {
       params.category_id = categoryFilter.value
     }
 
-    // If district admin, restrict facilities to their district
+    // If district admin, restrict facilities to their district. Otherwise, allow filtering by selectedDistrictFilter (for state/master admins)
     const authStore = useAuthStore()
     if (authStore.isDistrictAdmin) {
       params.district = authStore.userDistrict
+    } else if (selectedDistrictFilter.value) {
+      params.district = selectedDistrictFilter.value
     }
 
     const response = await api.get('/facilities', { params })
@@ -296,10 +344,33 @@ const saveFacility = async () => {
   error.value = ''
 
   try {
-    if (showEditModal.value) {
-      await api.put(`/admin/facilities/${editingFacilityId.value}`, formData.value)
+    // If an image file was selected, send multipart/form-data
+    if (imageFile.value) {
+      const fd = new FormData()
+      fd.append('name', formData.value.name)
+      fd.append('category_id', formData.value.category_id)
+      fd.append('description', formData.value.description)
+      fd.append('location', formData.value.location)
+      fd.append('capacity', formData.value.capacity)
+      fd.append('price_per_hour', formData.value.price_per_hour)
+      if (formData.value.price_per_day !== null && formData.value.price_per_day !== undefined) fd.append('price_per_day', formData.value.price_per_day)
+      fd.append('is_available', formData.value.is_available ? 1 : 0)
+      fd.append('image', imageFile.value)
+
+      if (showEditModal.value) {
+        // Some servers don't accept PUT with multipart easily; use POST + _method=PUT
+        await api.post(`/admin/facilities/${editingFacilityId.value}?_method=PUT`, fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      } else {
+        await api.post('/admin/facilities', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+      }
     } else {
-      await api.post('/admin/facilities', formData.value)
+      // No new file - send JSON
+      const payload = { ...formData.value }
+      if (showEditModal.value) {
+        await api.put(`/admin/facilities/${editingFacilityId.value}`, payload)
+      } else {
+        await api.post('/admin/facilities', payload)
+      }
     }
 
     closeModal()
@@ -313,6 +384,11 @@ const saveFacility = async () => {
 }
 
 const editFacility = (facility) => {
+  if (!canModify(facility)) {
+    alert('Anda tidak dibenarkan mengubah kemudahan di luar daerah anda.')
+    return
+  }
+
   formData.value = {
     name: facility.name,
     category_id: facility.category_id,
@@ -325,7 +401,50 @@ const editFacility = (facility) => {
     is_available: facility.is_available
   }
   editingFacilityId.value = facility.id
+  // set preview to existing image (if any) and clear any pending file
+  imagePreview.value = facility.image || ''
+  imageFile.value = null
   showEditModal.value = true
+}
+
+const openAddModal = () => {
+  // prepare fresh form for adding
+  formData.value = {
+    name: '',
+    category_id: '',
+    description: '',
+    location: '',
+    capacity: 1,
+    price_per_hour: 0,
+    price_per_day: null,
+    image: '',
+    is_available: true
+  }
+  editingFacilityId.value = null
+  resetImageState()
+  showAddModal.value = true
+}
+
+const handleImageChange = (e) => {
+  const file = e.target.files && e.target.files[0]
+  if (!file) {
+    imageFile.value = null
+    imagePreview.value = ''
+    return
+  }
+  if (file.size > 2 * 1024 * 1024) {
+    alert('Sila pilih imej saiz kurang daripada 2MB.')
+    e.target.value = ''
+    imageFile.value = null
+    imagePreview.value = ''
+    return
+  }
+  imageFile.value = file
+  const reader = new FileReader()
+  reader.onload = (ev) => {
+    imagePreview.value = ev.target.result
+  }
+  reader.readAsDataURL(file)
 }
 
 const suggestedPerDay = computed(() => {
@@ -338,6 +457,11 @@ const applySuggestedPerDay = () => {
 }
 
 const confirmDelete = (facility) => {
+  if (!canModify(facility)) {
+    alert('Anda tidak dibenarkan memadam kemudahan di luar daerah anda.')
+    return
+  }
+
   facilityToDelete.value = facility
   showDeleteModal.value = true
 }
@@ -372,6 +496,41 @@ const closeModal = () => {
   }
   editingFacilityId.value = null
   error.value = ''
+  // reset image state
+  resetImageState()
+}
+
+// Clean up imageFile/preview when closing
+const resetImageState = () => {
+  imageFile.value = null
+  imagePreview.value = ''
+  try {
+    const inp = document.querySelector('#facility-image-input')
+    if (inp) inp.value = ''
+  } catch (e) {
+    // ignore
+  }
+}
+
+// Return whether current user can modify/delete a facility
+const canModify = (facility) => {
+  if (!authStore.isDistrictAdmin) return true
+  if (!facility) return false
+  const myDistrict = (authStore.userDistrict || '').toString().trim().toLowerCase()
+  const vals = []
+  ;['district', 'district_name', 'district_slug', 'pbt', 'council'].forEach(k => {
+    if (facility[k] !== undefined && facility[k] !== null) vals.push(String(facility[k]))
+  })
+  if (facility.district && typeof facility.district === 'object') {
+    if (facility.district.name) vals.push(String(facility.district.name))
+    if (facility.district.slug) vals.push(String(facility.district.slug))
+    if (facility.district.id) vals.push(String(facility.district.id))
+  }
+  if (facility.district_id !== undefined && facility.district_id !== null) vals.push(String(facility.district_id))
+  if (facility.districtId !== undefined && facility.districtId !== null) vals.push(String(facility.districtId))
+
+  const norm = vals.map(v => v.toString().trim().toLowerCase()).filter(Boolean)
+  return norm.includes(myDistrict)
 }
 </script>
 

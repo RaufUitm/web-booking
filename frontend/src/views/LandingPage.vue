@@ -305,12 +305,14 @@ const navigateToDaerah = (daerah) => {
 
 /* Landing page hero background */
 .landing-hero {
-  background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/image/drawbrige.jpg');
+  background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/image/d.png');
   background-size: cover;
   background-position: center;
-  height: clamp(300px, 30vh, 400px);
+  height: clamp(300px, 40vh, 400px);
   position: relative;
   padding-top: clamp(1.5rem, 4vh, 3rem);
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* Use League Spartan for landing hero headings only */

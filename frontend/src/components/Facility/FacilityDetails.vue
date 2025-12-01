@@ -2,7 +2,7 @@
   <div class="facility-details" v-if="facility">
     <div class="facility-header">
       <div class="facility-main-image">
-        <img :src="facility.image || '/image/default-facility.jpg'" :alt="facility.name" />
+        <img :src="getImageUrl(facility.image)" :alt="facility.name" @error="handleImageError" />
       </div>
       <div class="facility-header-info">
           <h1>{{ facility.name }}</h1>
@@ -56,6 +56,7 @@
 <script setup>
 import { defineProps, defineEmits, computed } from 'vue'
 import { useDistrictStore } from '@/stores/district'
+import { getImageUrl } from '@/utils/helpers'
 
 const props = defineProps({
   facility: {
@@ -76,6 +77,10 @@ const districtColors = {
 const currentDistrictColor = computed(() => districtColors[districtStore.districtName] || districtColors['Hulu Terengganu'])
 const currencyFormatter = new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR' })
 const formattedPricePerHour = computed(() => currencyFormatter.format(Number((props.facility && (props.facility.price_per_hour ?? 0)) || 0)))
+
+const handleImageError = (e) => {
+  e.target.src = '/images/placeholder.jpg'
+}
 </script>
 
 <style scoped>

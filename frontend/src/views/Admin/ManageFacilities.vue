@@ -172,7 +172,14 @@
             </label>
           </div>
 
-          <div v-if="error" class="error-message">{{ error }}</div>
+          <div v-if="error" class="error-message">
+            <div v-if="typeof error === 'string'">{{ error }}</div>
+            <div v-else-if="typeof error === 'object'">
+              <div v-for="(msgs, field) in error" :key="field">
+                <strong>{{ field }}:</strong> {{ Array.isArray(msgs) ? msgs.join(', ') : msgs }}
+              </div>
+            </div>
+          </div>
 
           <div class="modal-actions">
             <button type="button" @click="closeModal" class="btn-secondary">
@@ -352,44 +359,44 @@ const saveFacility = async () => {
   error.value = ''
 
   try {
-    // If an image file was selected, send multipart/form-data
+    // Always use FormData to handle both file uploads and regular data
+    const fd = new FormData()
+    fd.append('name', formData.value.name)
+    fd.append('category_id', formData.value.category_id)
+    fd.append('description', formData.value.description)
+    fd.append('location', formData.value.location)
+    fd.append('capacity', formData.value.capacity)
+    fd.append('price_per_hour', formData.value.price_per_hour)
+    if (formData.value.price_per_day !== null && formData.value.price_per_day !== undefined) {
+      fd.append('price_per_day', formData.value.price_per_day)
+    }
+    fd.append('is_available', formData.value.is_available ? 1 : 0)
+    
+    // Only append image if a new file was selected
     if (imageFile.value) {
-      const fd = new FormData()
-      fd.append('name', formData.value.name)
-      fd.append('category_id', formData.value.category_id)
-      fd.append('description', formData.value.description)
-      fd.append('location', formData.value.location)
-      fd.append('capacity', formData.value.capacity)
-      fd.append('price_per_hour', formData.value.price_per_hour)
-      if (formData.value.price_per_day !== null && formData.value.price_per_day !== undefined) fd.append('price_per_day', formData.value.price_per_day)
-      fd.append('is_available', formData.value.is_available ? 1 : 0)
       fd.append('image', imageFile.value)
+    }
 
-      if (showEditModal.value) {
-        // Use PUT with FormData directly
-        await api.put(`/admin/facilities/${editingFacilityId.value}`, fd, { 
-          headers: { 'Content-Type': 'multipart/form-data' } 
-        })
-      } else {
-        await api.post('/admin/facilities', fd, { 
-          headers: { 'Content-Type': 'multipart/form-data' } 
-        })
-      }
+    if (showEditModal.value) {
+      // For edit, use POST with _method=PUT for better multipart support
+      fd.append('_method', 'PUT')
+      const response = await api.post(`/admin/facilities/${editingFacilityId.value}`, fd, { 
+        headers: { 'Content-Type': 'multipart/form-data' } 
+      })
+      console.log('Update response:', response.data)
     } else {
-      // No new file - send JSON
-      const payload = { ...formData.value }
-      if (showEditModal.value) {
-        await api.put(`/admin/facilities/${editingFacilityId.value}`, payload)
-      } else {
-        await api.post('/admin/facilities', payload)
-      }
+      const response = await api.post('/admin/facilities', fd, { 
+        headers: { 'Content-Type': 'multipart/form-data' } 
+      })
+      console.log('Create response:', response.data)
     }
 
     closeModal()
     await loadFacilities()
   } catch (err) {
     console.error('Failed to save facility:', err)
-    error.value = err.response?.data?.message || 'Gagal menyimpan kemudahan'
+    console.error('Error details:', err.response?.data)
+    error.value = err.response?.data?.message || err.response?.data?.errors || 'Gagal menyimpan kemudahan'
   } finally {
     saving.value = false
   }
@@ -414,7 +421,7 @@ const editFacility = (facility) => {
   }
   editingFacilityId.value = facility.id
   // set preview to existing image (if any) and clear any pending file
-  imagePreview.value = facility.image || ''
+  imagePreview.value = facility.image ? getImageUrl(facility.image) : ''
   imageFile.value = null
   showEditModal.value = true
 }

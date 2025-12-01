@@ -60,6 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Facility management - All admins
         Route::post('/facilities', [FacilityController::class, 'store']);
         Route::put('/facilities/{id}', [FacilityController::class, 'update']);
+        Route::post('/facilities/{id}', [FacilityController::class, 'update']); // Accept POST for multipart updates
         Route::delete('/facilities/{id}', [FacilityController::class, 'destroy']);
 
         // Time slot management - All admins

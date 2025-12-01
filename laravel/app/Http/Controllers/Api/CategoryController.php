@@ -9,9 +9,18 @@ use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::withCount('facilities')->get();
+        $district = $request->query('district');
+        
+        // If district is provided, count only facilities for that district
+        if ($district) {
+            $categories = Category::withCount(['facilities' => function ($query) use ($district) {
+                $query->where('district', $district);
+            }])->get();
+        } else {
+            $categories = Category::withCount('facilities')->get();
+        }
 
         return response()->json([
             'success' => true,

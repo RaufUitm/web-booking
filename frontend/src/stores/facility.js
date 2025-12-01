@@ -105,7 +105,14 @@ export const useFacilityStore = defineStore('facility', {
 
     async fetchCategories() {
       try {
-        const response = await api.get('/categories')
+        // Pass district parameter to get district-specific facility counts
+        const districtStore = useDistrictStore()
+        const params = {}
+        if (districtStore.currentDistrict) {
+          params.district = districtStore.currentDistrict
+        }
+
+        const response = await api.get('/categories', { params })
         const iconMap = {
           'Dewan & Panggung': '🏛️',
           'Padang & Gelanggang': '⚽',

@@ -6,7 +6,7 @@ export default function useDistrictRoutes() {
   const getDistrictSlug = () => {
     const current = districtStore.districtInfo
     // prefer slug if available
-    return current?.slug || current?.name?.toLowerCase()?.replace(/\s+/g, '-') || 'hulu-terengganu'
+    return current?.slug || current?.name?.toLowerCase()?.replace(/\s+/g, '-')
   }
 
   const prefixPath = (path) => {

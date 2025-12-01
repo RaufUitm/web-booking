@@ -56,6 +56,47 @@ export const useDistrictStore = defineStore('district', {
         facebook: 'https://www.facebook.com/MDHuluTerengganu',
         instagram: 'https://www.instagram.com/mdhuluterengganu'
       }
+      ,
+      // New PBTs
+      {
+        name: 'Kuala Terengganu',
+        slug: 'kuala-terengganu',
+        pbt: 'Majlis Bandaraya Kuala Terengganu',
+        abbreviation: 'MBKT',
+        color: '#EEBF04',
+        phone: '+60 9-000 0000',
+        email: 'info@mbkt.terengganu.gov.my',
+        address: 'Majlis Bandaraya Kuala Terengganu, 20000 Kuala Terengganu, Terengganu',
+        website: 'https://mbkt.terengganu.gov.my',
+        facebook: 'https://www.facebook.com/MBKTOfficial',
+        instagram: 'https://www.instagram.com/mbkt_official'
+      },
+      {
+        name: 'Kemaman',
+        slug: 'kemaman',
+        pbt: 'Majlis Perbandaran Kemaman',
+        abbreviation: 'MPK',
+        color: '#1E3A8A',
+        phone: '+60 9-000 0000',
+        email: 'info@mpk.terengganu.gov.my',
+        address: 'Majlis Perbandaran Kemaman, 24000 Kemaman, Terengganu',
+        website: 'https://mpk.terengganu.gov.my',
+        facebook: 'https://www.facebook.com/MPKemaman',
+        instagram: 'https://www.instagram.com/mpkemaman'
+      },
+      {
+        name: 'Dungun',
+        slug: 'dungun',
+        pbt: 'Majlis Perbandaran Dungun',
+        abbreviation: 'MPD',
+        color: '#06B6D4',
+        phone: '+60 9-000 0000',
+        email: 'info@mpd.terengganu.gov.my',
+        address: 'Majlis Perbandaran Dungun, 23000 Dungun, Terengganu',
+        website: 'https://mpd.terengganu.gov.my',
+        facebook: 'https://www.facebook.com/MPDungun',
+        instagram: 'https://www.instagram.com/mpdungun'
+      }
     ]
   }),
 

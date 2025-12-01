@@ -231,14 +231,24 @@ const footerStyle = computed(() => {
 
 // Helper function to darken a hex color
 const darkenColor = (color, percent) => {
-  const num = parseInt(color.replace('#', ''), 16)
-  const amt = Math.round(2.55 * percent)
-  const R = (num >> 16) - amt
-  const G = (num >> 8 & 0x00FF) - amt
-  const B = (num & 0x0000FF) - amt
-  return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1).toUpperCase()
+  // Clean the hex string
+  let hex = color.replace('#', '')
+  // Remove alpha channel if present
+  if (hex.length > 6) hex = hex.substring(0, 6)
+  
+  const num = parseInt(hex, 16)
+  const factor = 1 - (percent / 100)
+  
+  let R = Math.floor(((num >> 16) & 0xFF) * factor)
+  let G = Math.floor(((num >> 8) & 0xFF) * factor)
+  let B = Math.floor((num & 0xFF) * factor)
+  
+  // Clamp values
+  R = Math.max(0, Math.min(255, R))
+  G = Math.max(0, Math.min(255, G))
+  B = Math.max(0, Math.min(255, B))
+  
+  return '#' + ((R << 16) | (G << 8) | B).toString(16).padStart(6, '0').toUpperCase()
 }
 
 onMounted(() => {

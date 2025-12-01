@@ -333,7 +333,7 @@ h1 {
 
 .search-box input:focus {
   outline: none;
-  border-color: #2d5f2e;
+  border-color: var(--theme-primary);
 }
 
 .search-icon {
@@ -355,7 +355,7 @@ h1 {
 .filters select:focus,
 .date-filter:focus {
   outline: none;
-  border-color: #2d5f2e;
+  border-color: var(--theme-primary);
 }
 
 .loading {
@@ -377,8 +377,8 @@ h1 {
 }
 
 .bookings-table thead {
-  background: #2d5f2e;
-  color: white;
+  background: var(--theme-primary);
+  color: var(--theme-primary-contrast, #fff);
 }
 
 .bookings-table th {
@@ -393,7 +393,7 @@ h1 {
 }
 
 .bookings-table tbody tr:hover {
-  background: rgba(45, 95, 46, 0.03);
+  background: rgba(var(--theme-primary-rgb), 0.06);
 }
 
 .user-info {
@@ -558,7 +558,7 @@ h1 {
 
 .detail-section h3 {
   margin: 0 0 clamp(0.8rem, 1.2vw, 1rem) 0;
-  color: #2d5f2e;
+  color: var(--theme-primary);
   font-size: clamp(1rem, 1.4vw, 1.1rem);
   padding-bottom: clamp(0.4rem, 0.6vw, 0.5rem);
   border-bottom: 2px solid #e0e0e0;
@@ -591,8 +591,8 @@ h1 {
 .btn-secondary {
   padding: clamp(0.6rem, 0.9vw, 0.75rem) clamp(1.2rem, 1.8vw, 1.5rem);
   background: transparent;
-  color: #2d5f2e;
-  border: 2px solid #2d5f2e;
+  color: var(--theme-primary);
+  border: 2px solid var(--theme-primary);
   border-radius: clamp(6px, 0.8vw, 8px);
   font-weight: 600;
   cursor: pointer;
@@ -600,7 +600,7 @@ h1 {
 }
 
 .btn-secondary:hover {
-  background: rgba(45, 95, 46, 0.05);
+  background: rgba(var(--theme-primary-rgb), 0.08);
 }
 
 @media (max-width: 768px) {

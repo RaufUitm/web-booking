@@ -327,7 +327,7 @@ h1 {
 
 .district-filter select:focus {
   outline: none;
-  border-color: #FF8C00;
+  border-color: var(--theme-primary);
 }
 
 .stats-grid {
@@ -449,8 +449,8 @@ h1 {
 }
 
 .action-btn:hover {
-  background-color: #FF8C00;
-  color: white;
+  background-color: var(--theme-primary);
+  color: var(--theme-primary-contrast, #fff);
   transform: translateX(5px);
 }
 

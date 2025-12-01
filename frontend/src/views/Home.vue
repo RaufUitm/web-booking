@@ -131,6 +131,9 @@ const districtColors = {
   'Marang': { main: '#8B008B', dark: '#5c005c', gradient: 'linear-gradient(135deg, #8B008B 0%, #5c005c 100%)' },
   'Setiu': { main: '#8B7355', dark: '#5c4c36', gradient: 'linear-gradient(135deg, #8B7355 0%, #5c4c36 100%)' },
   'Hulu Terengganu': { main: '#FF8C00', dark: '#b35f00', gradient: 'linear-gradient(135deg, #FF8C00 0%, #b35f00 100%)' },
+  'Kuala Terengganu': { main: '#EEBF04', dark: '#a88903', gradient: 'linear-gradient(135deg, #EEBF04 0%, #a88903 100%)' },
+  'Kemaman': { main: '#1E3A8A', dark: '#152a61', gradient: 'linear-gradient(135deg, #1E3A8A 0%, #152a61 100%)' },
+  'Dungun': { main: '#06B6D4', dark: '#058099', gradient: 'linear-gradient(135deg, #06B6D4 0%, #058099 100%)' },
 }
 
 // District background images
@@ -139,6 +142,9 @@ const districtBackgrounds = {
   'Marang': '/image/daerah/marangmain.jpg',
   'Setiu': '/image/daerah/setiumain.jpg',
   'Hulu Terengganu': '/image/daerah/hulumain.jpg',
+  'Kuala Terengganu': '/image/daerah/ktmain.jpg',
+  'Kemaman': '/image/daerah/kemanmain.jpg',
+  'Dungun': '/image/daerah/dungunmain.jpg',
 }
 
 const currentDistrictColor = computed(() => {
@@ -235,7 +241,7 @@ const goToFacilities = (categoryId) => {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(215, 120, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--theme-primary-rgb), 0.3);
 }
 
 .btn-secondary {
@@ -246,20 +252,20 @@ const goToFacilities = (categoryId) => {
 
 .btn-secondary:hover {
   background-color: white;
-  color: #D77800;
+  color: var(--theme-primary);
 }
 
 .btn-large {
   padding: clamp(1rem, 1.5vw, 1.2rem) clamp(2rem, 3.5vw, 3rem);
   font-size: clamp(1.1rem, 1.5vw, 1.2rem);
-  background-color: #D77800;
-  color: white;
+  background-color: var(--theme-primary);
+  color: var(--theme-primary-contrast, #fff);
 }
 
 .btn-large:hover {
-  background-color: #C66900;
+  background-color: var(--theme-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(45, 95, 46, 0.3);
+  box-shadow: 0 6px 16px rgba(var(--theme-primary-rgb), 0.3);
 }
 
 .container {
@@ -322,8 +328,8 @@ section h2 {
 
 .facility-count {
   display: inline-block;
-  background-color: rgba(215, 120, 0, 0.1);
-  color: #D77800;
+  background-color: rgba(var(--theme-primary-rgb), 0.1);
+  color: var(--theme-primary);
   padding: clamp(0.4rem, 0.6vw, 0.5rem) clamp(0.8rem, 1.2vw, 1rem);
   border-radius: clamp(16px, 2vw, 20px);
   font-size: clamp(0.85rem, 1.1vw, 0.9rem);
@@ -379,8 +385,8 @@ section h2 {
 .step-number {
   width: clamp(50px, 7vw, 60px);
   height: clamp(50px, 7vw, 60px);
-  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
-  color: white;
+  background: var(--theme-primary);
+  color: var(--theme-primary-contrast, #fff);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -403,13 +409,13 @@ section h2 {
 
 .step-arrow {
   font-size: clamp(1.5rem, 2.5vw, 2rem);
-  color: #FF8C00;
+  color: var(--theme-primary);
   font-weight: bold;
 }
 
 .cta {
-  background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
-  color: white;
+  background: var(--theme-primary);
+  color: var(--theme-primary-contrast, #fff);
   text-align: center;
 }
 

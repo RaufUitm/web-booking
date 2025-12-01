@@ -39,7 +39,7 @@ class AdminAccountsSeeder extends Seeder
 
             // District Admin - Hulu Terengganu (MDHT)
             [
-                'name' => 'Fatimah - Admin MDHT',
+                'name' => 'Ammar - Admin MDHT',
                 'email' => 'admin.mdht@terengganu.gov.my',
                 'password' => Hash::make('12345678'),
                 'phone' => '0198765432',
@@ -50,7 +50,7 @@ class AdminAccountsSeeder extends Seeder
 
             // District Admin - Besut (MDB)
             [
-                'name' => 'Hassan - Admin MDB',
+                'name' => 'Rifqi - Admin MDB',
                 'email' => 'admin.mdb@terengganu.gov.my',
                 'password' => Hash::make('12345678'),
                 'phone' => '0197654321',
@@ -61,7 +61,7 @@ class AdminAccountsSeeder extends Seeder
 
             // District Admin - Marang (MDM)
             [
-                'name' => 'Siti - Admin MDM',
+                'name' => 'Aina - Admin MDM',
                 'email' => 'admin.mdm@terengganu.gov.my',
                 'password' => Hash::make('12345678'),
                 'phone' => '0196543210',
@@ -72,13 +72,46 @@ class AdminAccountsSeeder extends Seeder
 
             // District Admin - Setiu (MDS)
             [
-                'name' => 'Ali - Admin MDS',
+                'name' => 'Ika - Admin MDS',
                 'email' => 'admin.mds@terengganu.gov.my',
                 'password' => Hash::make('12345678'),
                 'phone' => '0195432109',
                 'ic_number' => '920202-03-0006',
                 'role' => 'district_admin',
                 'district' => 'Setiu',
+            ],
+
+            // District Admin - Kuala Terengganu (MBKT)
+            [
+                'name' => 'Amin - Admin MBKT',
+                'email' => 'admin.mbkt@terengganu.gov.my',
+                'password' => Hash::make('12345678'),
+                'phone' => '0194321098',
+                'ic_number' => '860606-03-0007',
+                'role' => 'district_admin',
+                'district' => 'Kuala Terengganu',
+            ],
+
+            // District Admin - Kemaman (MPK)
+            [
+                'name' => 'Farah - Admin MPK',
+                'email' => 'admin.mpk@terengganu.gov.my',
+                'password' => Hash::make('12345678'),
+                'phone' => '0193210987',
+                'ic_number' => '891111-03-0008',
+                'role' => 'district_admin',
+                'district' => 'Kemaman',
+            ],
+
+            // District Admin - Dungun (MPD)
+            [
+                'name' => 'Faiz - Admin MPD',
+                'email' => 'admin.mpd@terengganu.gov.my',
+                'password' => Hash::make('12345678'),
+                'phone' => '0192109876',
+                'ic_number' => '911212-03-0009',
+                'role' => 'district_admin',
+                'district' => 'Dungun',
             ],
         ];
 
@@ -114,6 +147,9 @@ class AdminAccountsSeeder extends Seeder
         echo "MDB Admin: admin.mdb@terengganu.gov.my (Besut only)\n";
         echo "MDM Admin: admin.mdm@terengganu.gov.my (Marang only)\n";
         echo "MDS Admin: admin.mds@terengganu.gov.my (Setiu only)\n";
+        echo "MBKT Admin: admin.mbkt@terengganu.gov.my (Kuala Terengganu only)\n";
+        echo "MPK Admin: admin.mpk@terengganu.gov.my (Kemaman only)\n";
+        echo "MPD Admin: admin.mpd@terengganu.gov.my (Dungun only)\n";
         echo "\nPassword for all accounts: 12345678\n";
     }
 }

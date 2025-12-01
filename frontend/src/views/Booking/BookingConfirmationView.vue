@@ -123,16 +123,16 @@ const handleEditCancel = () => {
   display: inline-block;
   margin-top: 20px;
   padding: 12px 30px;
-  background-color: #FF8C00;
-  color: white;
+  background-color: var(--theme-primary);
+  color: var(--theme-primary-contrast, #fff);
   text-decoration: none;
   border-radius: 4px;
   transition: all 0.3s;
 }
 
 .btn-back:hover {
-  background-color: #E67E00;
+  background-color: var(--theme-primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(var(--theme-primary-rgb), 0.3);
 }
 </style>

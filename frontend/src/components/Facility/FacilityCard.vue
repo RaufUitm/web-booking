@@ -55,7 +55,7 @@ const formattedPricePerHour = computed(() => currencyFormatter.format(Number(pro
 <style scoped>
 .facility-card {
   background: white;
-  border-radius: 8px;
+  border-radius: clamp(6px, 0.8vw, 8px);
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
@@ -69,7 +69,7 @@ const formattedPricePerHour = computed(() => currencyFormatter.format(Number(pro
 
 .facility-image {
   position: relative;
-  height: 200px;
+  height: clamp(180px, 20vw, 200px);
   overflow: hidden;
 }
 
@@ -81,37 +81,37 @@ const formattedPricePerHour = computed(() => currencyFormatter.format(Number(pro
 
 .unavailable-badge {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: clamp(8px, 1vw, 10px);
+  right: clamp(8px, 1vw, 10px);
   background: rgba(255, 0, 0, 0.8);
   color: white;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: clamp(4px, 0.6vw, 5px) clamp(8px, 1.2vw, 10px);
+  border-radius: clamp(3px, 0.5vw, 4px);
+  font-size: clamp(11px, 1.3vw, 12px);
   font-weight: bold;
 }
 
 .facility-info {
-  padding: 20px;
+  padding: clamp(15px, 2.5vw, 20px);
 }
 
 h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 clamp(6px, 1vw, 8px) 0;
   color: #333;
-  font-size: 20px;
+  font-size: clamp(16px, 2.5vw, 20px);
 }
 
 .category {
   color: #FF8C00;
-  font-size: 14px;
-  margin: 0 0 12px 0;
+  font-size: clamp(13px, 1.5vw, 14px);
+  margin: 0 0 clamp(10px, 1.5vw, 12px) 0;
   font-weight: 500;
 }
 
 .description {
   color: #666;
-  font-size: 14px;
-  margin: 0 0 15px 0;
+  font-size: clamp(13px, 1.5vw, 14px);
+  margin: 0 0 clamp(12px, 1.8vw, 15px) 0;
   line-height: 1.5;
 }
 
@@ -132,19 +132,19 @@ h3 {
 }
 
 .price {
-  font-size: 20px;
+  font-size: clamp(16px, 2.5vw, 20px);
   font-weight: bold;
   color: #FF8C00;
 }
 
 .btn-book {
-  padding: 8px 20px;
+  padding: clamp(6px, 1vw, 8px) clamp(16px, 2.5vw, 20px);
   background-color: #FF8C00;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: clamp(3px, 0.5vw, 4px);
   cursor: pointer;
-  font-size: 14px;
+  font-size: clamp(13px, 1.5vw, 14px);
   transition: background-color 0.3s;
 }
 

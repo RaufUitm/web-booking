@@ -299,21 +299,21 @@ const getStatusText = (status) => {
 
 <style scoped>
 .manage-bookings {
-  padding: 2rem;
+  padding: clamp(1.5rem, 2.5vw, 2rem);
   max-width: 1600px;
   margin: 0 auto;
 }
 
 h1 {
-  margin: 0 0 2rem 0;
+  margin: 0 0 clamp(1.5rem, 2.5vw, 2rem) 0;
   color: #2c3e50;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .filters {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: clamp(0.75rem, 1.2vw, 1rem);
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
   flex-wrap: wrap;
 }
 
@@ -325,10 +325,10 @@ h1 {
 
 .search-box input {
   width: 100%;
-  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  padding: clamp(0.6rem, 0.9vw, 0.75rem) clamp(2rem, 3vw, 2.5rem) clamp(0.6rem, 0.9vw, 0.75rem) clamp(0.8rem, 1.2vw, 1rem);
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
 }
 
 .search-box input:focus {
@@ -338,17 +338,17 @@ h1 {
 
 .search-icon {
   position: absolute;
-  right: 1rem;
+  right: clamp(0.8rem, 1.2vw, 1rem);
   top: 50%;
   transform: translateY(-50%);
 }
 
 .filters select,
 .date-filter {
-  padding: 0.75rem 1rem;
+  padding: clamp(0.6rem, 0.9vw, 0.75rem) clamp(0.8rem, 1.2vw, 1rem);
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
   cursor: pointer;
 }
 
@@ -360,13 +360,13 @@ h1 {
 
 .loading {
   text-align: center;
-  padding: 3rem;
+  padding: clamp(2rem, 4vw, 3rem);
   color: #666;
 }
 
 .table-container {
   background: white;
-  border-radius: 12px;
+  border-radius: clamp(10px, 1.2vw, 12px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
@@ -382,13 +382,13 @@ h1 {
 }
 
 .bookings-table th {
-  padding: 1rem;
+  padding: clamp(0.75rem, 1.2vw, 1rem);
   text-align: left;
   font-weight: 600;
 }
 
 .bookings-table td {
-  padding: 1rem;
+  padding: clamp(0.75rem, 1.2vw, 1rem);
   border-bottom: 1px solid #f0f0f0;
 }
 
@@ -403,13 +403,13 @@ h1 {
 
 .user-info small {
   color: #666;
-  font-size: 0.85rem;
+  font-size: clamp(0.8rem, 1vw, 0.85rem);
 }
 
 .status-badge {
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  padding: clamp(0.35rem, 0.5vw, 0.4rem) clamp(0.7rem, 1vw, 0.8rem);
+  border-radius: clamp(16px, 2vw, 20px);
+  font-size: clamp(0.8rem, 1vw, 0.85rem);
   font-weight: 600;
 }
 
@@ -435,16 +435,16 @@ h1 {
 
 .actions {
   display: flex;
-  gap: 0.5rem;
+  gap: clamp(0.4rem, 0.6vw, 0.5rem);
 }
 
 .btn-icon {
-  padding: 0.5rem 0.75rem;
+  padding: clamp(0.4rem, 0.6vw, 0.5rem) clamp(0.6rem, 0.9vw, 0.75rem);
   border: none;
-  border-radius: 6px;
+  border-radius: clamp(5px, 0.6vw, 6px);
   cursor: pointer;
   transition: all 0.3s;
-  font-size: 1rem;
+  font-size: clamp(0.95rem, 1.2vw, 1rem);
 }
 
 .btn-confirm {
@@ -485,7 +485,7 @@ h1 {
 
 .no-data {
   text-align: center;
-  padding: 3rem;
+  padding: clamp(2rem, 4vw, 3rem);
   color: #666;
 }
 
@@ -505,7 +505,7 @@ h1 {
 
 .modal {
   background: white;
-  border-radius: 12px;
+  border-radius: clamp(10px, 1.2vw, 12px);
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
@@ -517,25 +517,25 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
+  padding: clamp(1.2rem, 1.8vw, 1.5rem);
   border-bottom: 2px solid #f0f0f0;
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: clamp(1.3rem, 1.8vw, 1.5rem);
   color: #2c3e50;
 }
 
 .btn-close {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: clamp(1.3rem, 2vw, 1.5rem);
   cursor: pointer;
   color: #666;
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: clamp(28px, 4vw, 32px);
+  height: clamp(28px, 4vw, 32px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -549,25 +549,25 @@ h1 {
 }
 
 .modal-body.details {
-  padding: 1.5rem;
+  padding: clamp(1.2rem, 1.8vw, 1.5rem);
 }
 
 .detail-section {
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .detail-section h3 {
-  margin: 0 0 1rem 0;
+  margin: 0 0 clamp(0.8rem, 1.2vw, 1rem) 0;
   color: #2d5f2e;
-  font-size: 1.1rem;
-  padding-bottom: 0.5rem;
+  font-size: clamp(1rem, 1.4vw, 1.1rem);
+  padding-bottom: clamp(0.4rem, 0.6vw, 0.5rem);
   border-bottom: 2px solid #e0e0e0;
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
-  padding: 0.75rem 0;
+  padding: clamp(0.6rem, 0.9vw, 0.75rem) 0;
   border-bottom: 1px solid #f0f0f0;
 }
 
@@ -584,16 +584,16 @@ h1 {
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: clamp(0.75rem, 1.2vw, 1rem);
+  margin-top: clamp(1.2rem, 1.8vw, 1.5rem);
 }
 
 .btn-secondary {
-  padding: 0.75rem 1.5rem;
+  padding: clamp(0.6rem, 0.9vw, 0.75rem) clamp(1.2rem, 1.8vw, 1.5rem);
   background: transparent;
   color: #2d5f2e;
   border: 2px solid #2d5f2e;
-  border-radius: 8px;
+  border-radius: clamp(6px, 0.8vw, 8px);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
@@ -605,7 +605,7 @@ h1 {
 
 @media (max-width: 768px) {
   .manage-bookings {
-    padding: 1rem;
+    padding: clamp(0.75rem, 1.5vw, 1rem);
   }
 
   .filters {
@@ -622,7 +622,7 @@ h1 {
 
   .detail-row {
     flex-direction: column;
-    gap: 0.25rem;
+    gap: clamp(0.2rem, 0.4vw, 0.25rem);
   }
 
   .detail-row .value {

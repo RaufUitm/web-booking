@@ -188,13 +188,13 @@ onUnmounted(() => {
 }
 
 .navbar-container {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 clamp(8px, 1.5vw, 20px);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 70px;
+  height: 64px;
 }
 
 .navbar-brand {
@@ -202,13 +202,16 @@ onUnmounted(() => {
   align-items: center;
   text-decoration: none;
   font-weight: 700;
-  font-size: 20px;
+  font-size: clamp(11px, 1.2vw, 16px);
   color: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+  gap: clamp(4px, 0.5vw, 8px);
 }
 
 .logo {
-  font-size: 28px;
-  margin-right: 10px;
+  font-size: clamp(18px, 2vw, 26px);
+  margin-right: 0;
 }
 
 .brand-name {
@@ -235,21 +238,27 @@ onUnmounted(() => {
 .navbar-menu {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: clamp(12px, 2vw, 24px);
+  flex: 1;
+  justify-content: flex-end;
 }
 
 .navbar-links {
   display: flex;
-  gap: 20px;
+  gap: clamp(1px, 0.3vw, 8px);
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .nav-link {
   text-decoration: none;
   color: inherit;
   font-weight: 500;
-  padding: 8px 12px;
+  font-size: clamp(10px, 1vw, 14px);
+  padding: clamp(3px, 0.5vw, 6px) clamp(4px, 0.8vw, 10px);
   border-radius: 4px;
   transition: all 0.3s;
+  white-space: nowrap;
 }
 
 .nav-link:hover,
@@ -261,7 +270,8 @@ onUnmounted(() => {
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: clamp(4px, 0.6vw, 10px);
+  flex-shrink: 0;
 }
 
 .user-menu {
@@ -271,13 +281,15 @@ onUnmounted(() => {
 .user-button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: clamp(3px, 0.4vw, 6px);
+  padding: clamp(4px, 0.6vw, 6px) clamp(8px, 1vw, 12px);
   background-color: rgba(255,255,255,0.12);
   border: none;
   border-radius: 20px;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-size: clamp(10px, 1vw, 13px);
+  white-space: nowrap;
 }
 
 .user-button:hover {
@@ -285,12 +297,17 @@ onUnmounted(() => {
 }
 
 .user-icon {
-  font-size: 20px;
+  font-size: clamp(14px, 1.5vw, 18px);
 }
 
 .user-name {
   font-weight: 500;
   color: #333;
+  max-width: clamp(60px, 8vw, 100px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(10px, 1vw, 13px);
 }
 
 .user-dropdown {
@@ -330,11 +347,13 @@ onUnmounted(() => {
 
 .btn-login,
 .btn-register {
-  padding: 8px 20px;
+  padding: clamp(4px, 0.6vw, 6px) clamp(8px, 1.2vw, 16px);
   text-decoration: none;
   border-radius: 4px;
   font-weight: 500;
+  font-size: clamp(10px, 1vw, 13px);
   transition: all 0.3s;
+  white-space: nowrap;
 }
 
 .btn-login {
@@ -358,22 +377,157 @@ onUnmounted(() => {
   box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 
-@media (max-width: 768px) {
+/* ========================================
+   RESPONSIVE BREAKPOINTS
+   Following mobile-first approach
+   ======================================== */
+
+/* Large Desktop (1200px+) - Default styles above apply */
+
+/* Desktop/Laptop (max-width: 1300px) */
+@media (max-width: 1300px) {
+  .navbar-container {
+    padding: 0 10px;
+  }
+
+  .navbar-brand {
+    font-size: 11px;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .navbar-links {
+    gap: 1px;
+  }
+
+  .nav-link {
+    font-size: 10px;
+    padding: 3px 5px;
+  }
+
+  .user-button {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .user-icon {
+    font-size: 14px;
+  }
+
+  .user-name {
+    max-width: 50px;
+    font-size: 9px;
+  }
+
+  .btn-login,
+  .btn-register {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}
+
+/* Tablet/Small Laptop (max-width: 1100px) - Hide user name */
+@media (max-width: 1100px) {
+  .navbar-container {
+    height: 60px;
+    padding: 0 8px;
+  }
+
+  .navbar-brand {
+    font-size: 10px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .navbar-menu {
+    gap: 6px;
+  }
+
+  .navbar-links {
+    gap: 0px;
+  }
+
+  .nav-link {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+
+  /* Hide user name on smaller screens to save space */
+  .user-name {
+    display: none !important;
+  }
+
+  .user-button {
+    padding: 5px 6px;
+  }
+
+  .btn-login,
+  .btn-register {
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+}
+
+/* Mobile/Tablet (max-width: 767px) - Mobile Menu */
+@media (max-width: 767px) {
   .mobile-menu-toggle {
     display: flex;
+    width: 30px;
+    height: 24px;
+    justify-content: space-around;
+    padding: 0;
+    z-index: 10;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-menu-toggle:hover {
+    transform: scale(1.1);
+  }
+
+  .mobile-menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: currentColor;
+    border-radius: 10px;
+    transition: all 0.3s linear;
+    transform-origin: 1px;
+  }
+
+  /* Animated hamburger to X */
+  .mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg);
+  }
+
+  .mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  .mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg);
+  }
+
+  .navbar-container {
+    height: clamp(54px, 7vh, 64px);
   }
 
   .navbar-menu {
     position: fixed;
-    top: 70px;
+    top: clamp(54px, 7vh, 64px);
     left: -100%;
     width: 100%;
-    height: calc(100vh - 70px);
+    height: calc(100vh - clamp(54px, 7vh, 64px));
     background-color: white;
     flex-direction: column;
-    padding: 20px;
-    transition: left 0.3s;
-    gap: 20px;
+    padding: clamp(16px, 3vw, 24px);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: clamp(16px, 3vw, 24px);
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   .navbar-menu.active {
@@ -383,28 +537,121 @@ onUnmounted(() => {
   .navbar-links {
     flex-direction: column;
     width: 100%;
+    gap: clamp(6px, 1.5vw, 10px);
   }
 
   .nav-link {
     width: 100%;
     text-align: center;
-    padding: 12px;
+    padding: clamp(10px, 2vw, 14px);
+    font-size: clamp(14px, 2.5vw, 16px);
+    border-radius: 8px;
+    font-weight: 500;
   }
 
   .navbar-actions {
     flex-direction: column;
     width: 100%;
+    gap: clamp(8px, 2vw, 12px);
+    padding-top: clamp(8px, 2vw, 12px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
 
   .btn-login,
   .btn-register {
     width: 100%;
     text-align: center;
+    padding: clamp(10px, 2vw, 12px);
+    font-size: clamp(14px, 2.5vw, 16px);
+    font-weight: 600;
   }
 
   .user-button {
     width: 100%;
     justify-content: center;
+    padding: clamp(10px, 2vw, 12px);
+    font-size: clamp(14px, 2.5vw, 16px);
   }
+
+  .user-name {
+    display: inline;
+    max-width: none;
+    font-size: clamp(14px, 2.5vw, 16px);
+  }
+
+  .user-icon {
+    font-size: clamp(18px, 3vw, 22px);
+  }
+
+  .user-dropdown {
+    position: static;
+    margin-top: clamp(8px, 2vw, 12px);
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  .navbar-container {
+    height: 52px;
+    padding: 0 12px;
+  }
+
+  .navbar-brand {
+    font-size: 12px;
+  }
+
+  .logo {
+    font-size: 18px;
+    margin-right: 4px;
+  }
+
+  .navbar-menu {
+    top: 52px;
+    height: calc(100vh - 52px);
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .navbar-links {
+    gap: 6px;
+  }
+
+  .nav-link {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .btn-login,
+  .btn-register {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .user-button {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .user-icon {
+    font-size: 18px;
+  }
+}
+
+/* Menu fade animation */
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-menu.active {
+  animation: menuFadeIn 0.3s ease;
 }
 </style>

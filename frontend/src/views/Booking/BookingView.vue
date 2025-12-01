@@ -104,7 +104,7 @@ const goBack = () => {
 
 <style scoped>
 .booking-view {
-  padding: 40px 0;
+  padding: clamp(30px, 5vw, 40px) 0;
   min-height: calc(100vh - 200px);
   background-color: #f5f5f5;
 }
@@ -112,41 +112,41 @@ const goBack = () => {
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 clamp(15px, 2.5vw, 20px);
 }
 
 h1 {
   text-align: center;
-  margin: 0 0 30px 0;
+  margin: 0 0 clamp(25px, 4vw, 30px) 0;
   color: #333;
-  font-size: 32px;
+  font-size: clamp(24px, 4vw, 32px);
 }
 
 .loading {
   text-align: center;
-  padding: 60px 20px;
+  padding: clamp(45px, 7vw, 60px) clamp(15px, 2.5vw, 20px);
   color: #666;
-  font-size: 18px;
+  font-size: clamp(16px, 2.2vw, 18px);
 }
 
 .success-message {
   text-align: center;
-  padding: 60px 20px;
+  padding: clamp(45px, 7vw, 60px) clamp(15px, 2.5vw, 20px);
   background: white;
-  border-radius: 8px;
+  border-radius: clamp(6px, 0.8vw, 8px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .success-icon {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 20px;
+  width: clamp(65px, 10vw, 80px);
+  height: clamp(65px, 10vw, 80px);
+  margin: 0 auto clamp(16px, 2.5vw, 20px);
   background-color: #FF8C00;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
+  font-size: clamp(38px, 6vw, 48px);
   color: white;
 }
 
@@ -170,10 +170,10 @@ h1 {
 
 .btn-primary,
 .btn-secondary {
-  padding: 12px 30px;
+  padding: clamp(10px, 1.5vw, 12px) clamp(25px, 4vw, 30px);
   text-decoration: none;
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: clamp(3px, 0.5vw, 4px);
+  font-size: clamp(14px, 2vw, 16px);
   transition: all 0.3s;
 }
 

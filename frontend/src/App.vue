@@ -329,31 +329,31 @@ main {
 .nav-container {
   max-width: 70vw;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 clamp(1rem, 2vw, 2rem);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 70px;
+  height: clamp(60px, 8vw, 70px);
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: clamp(0.25rem, 0.5vw, 0.5rem);
   color: #fff;
   text-decoration: none;
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
 }
 
 .logo-img {
-  height: 50px;
-  width: 50px;
+  height: clamp(40px, 6vw, 50px);
+  width: clamp(40px, 6vw, 50px);
   object-fit: contain;
 }
 
 .logo-icon {
-  font-size: 1.8rem;
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
 }
 
 .mobile-menu-btn {
@@ -361,22 +361,22 @@ main {
   background: none;
   border: none;
   color: white;
-  font-size: 1.5rem;
+  font-size: clamp(1.3rem, 2vw, 1.5rem);
   cursor: pointer;
-  padding: 0.5rem;
+  padding: clamp(0.4rem, 0.6vw, 0.5rem);
 }
 
 .nav-links {
   display: flex;
-  gap: 0.5rem;
+  gap: clamp(0.25rem, 0.6vw, 0.5rem);
   align-items: center;
 }
 
 .nav-links a {
   color: #fff;
   text-decoration: none;
-  padding: 0.75rem 1.25rem;
-  border-radius: 6px;
+  padding: clamp(0.5rem, 0.8vw, 0.75rem) clamp(0.8rem, 1.3vw, 1.25rem);
+  border-radius: clamp(4px, 0.6vw, 6px);
   transition: background-color 0.3s ease;
   font-weight: 500;
 }
@@ -393,9 +393,9 @@ main {
   background-color: transparent;
   border: 2px solid #fff;
   color: #fff;
-  margin-left: 0.5rem;
-  padding: 0.5rem 0.9rem;
-  border-radius: 6px;
+  margin-left: clamp(0.3rem, 0.5vw, 0.5rem);
+  padding: clamp(0.4rem, 0.6vw, 0.5rem) clamp(0.7rem, 1vw, 0.9rem);
+  border-radius: clamp(4px, 0.6vw, 6px);
 }
 
 .btn-register {
@@ -403,9 +403,9 @@ main {
   background-color: transparent;
   border: 2px solid #fff;
   color: #fff;
-  margin-left: 0.5rem;
-  padding: 0.5rem 0.9rem;
-  border-radius: 6px;
+  margin-left: clamp(0.3rem, 0.5vw, 0.5rem);
+  padding: clamp(0.4rem, 0.6vw, 0.5rem) clamp(0.7rem, 1vw, 0.9rem);
+  border-radius: clamp(4px, 0.6vw, 6px);
   font-weight: 600;
 }
 
@@ -422,12 +422,12 @@ main {
 .user-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: clamp(0.3rem, 0.5vw, 0.5rem);
   background-color: rgba(255, 255, 255, 0.1);
   color: white;
   border: none;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
+  padding: clamp(0.5rem, 0.8vw, 0.75rem) clamp(0.8rem, 1.2vw, 1rem);
+  border-radius: clamp(4px, 0.6vw, 6px);
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.3s ease;
@@ -438,7 +438,7 @@ main {
 }
 
 .user-icon {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
 }
 
 .dropdown-arrow {
@@ -448,12 +448,12 @@ main {
 
 .user-dropdown {
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + clamp(0.3rem, 0.5vw, 0.5rem));
   right: 0;
   background: white;
-  border-radius: 8px;
+  border-radius: clamp(6px, 0.8vw, 8px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  min-width: 250px;
+  min-width: clamp(200px, 25vw, 250px);
   overflow: hidden;
   animation: dropdownFade 0.2s ease;
 }
@@ -470,7 +470,7 @@ main {
 }
 
 .user-info {
-  padding: 1rem;
+  padding: clamp(0.75rem, 1.2vw, 1rem);
   background-color: #f8f9fa;
 }
 
@@ -481,7 +481,7 @@ main {
 }
 
 .user-email {
-  font-size: 0.85rem;
+  font-size: clamp(0.75rem, 1vw, 0.85rem);
   color: #7f8c8d;
 }
 
@@ -493,7 +493,7 @@ main {
 .dropdown-item {
   display: block;
   width: 100%;
-  padding: 0.875rem 1rem;
+  padding: clamp(0.7rem, 1vw, 0.875rem) clamp(0.8rem, 1.2vw, 1rem);
   background: none;
   border: none;
   text-align: left;
@@ -501,7 +501,7 @@ main {
   text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 1.1vw, 0.95rem);
   color: rgba(255,255,255,0.85);
 }
 
@@ -518,31 +518,31 @@ main {
 .footer {
   background-color: #B36200;
   color: white;
-  padding: 3rem 0 1rem;
-  margin-top: 4rem;
+  padding: clamp(2rem, 4vw, 3rem) 0 clamp(0.75rem, 1.2vw, 1rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
 }
 
 .footer-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 clamp(1rem, 2vw, 2rem);
 }
 
 .footer-content {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
+  gap: clamp(1.5rem, 2.5vw, 2rem);
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .footer-section h3 {
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
+  margin-bottom: clamp(0.75rem, 1.2vw, 1rem);
+  font-size: clamp(1.1rem, 1.6vw, 1.3rem);
 }
 
 .footer-section h4 {
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
+  margin-bottom: clamp(0.75rem, 1.2vw, 1rem);
+  font-size: clamp(1rem, 1.4vw, 1.1rem);
   color: #ecf0f1;
 }
 
@@ -575,11 +575,11 @@ main {
 
 .social-links {
   display: flex;
-  gap: 1rem;
+  gap: clamp(0.75rem, 1.2vw, 1rem);
 }
 
 .social-icon {
-  font-size: 1.5rem;
+  font-size: clamp(1.3rem, 2vw, 1.5rem);
   transition: transform 0.3s ease;
 }
 
@@ -589,7 +589,7 @@ main {
 
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 1.5rem;
+  padding-top: clamp(1rem, 1.8vw, 1.5rem);
   text-align: center;
   color: rgba(255, 255, 255, 0.6);
 }

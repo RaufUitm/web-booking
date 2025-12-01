@@ -68,7 +68,7 @@ const { prefixPath } = useDistrictRoutes()
 
 <style scoped>
 .sidebar {
-  width: 250px;
+  width: clamp(200px, 25vw, 250px);
   background-color: #2c3e50;
   color: #ecf0f1;
   height: 100vh;
@@ -82,15 +82,15 @@ const { prefixPath } = useDistrictRoutes()
 }
 
 .sidebar.collapsed {
-  width: 70px;
+  width: clamp(60px, 8vw, 70px);
 }
 
 .collapse-btn {
   position: absolute;
-  right: -15px;
-  top: 20px;
-  width: 30px;
-  height: 30px;
+  right: clamp(-12px, -2vw, -15px);
+  top: clamp(18px, 2.5vw, 20px);
+  width: clamp(28px, 4vw, 30px);
+  height: clamp(28px, 4vw, 30px);
   border-radius: 50%;
   background-color: #FF8C00;
   color: white;
@@ -99,7 +99,7 @@ const { prefixPath } = useDistrictRoutes()
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: clamp(14px, 2vw, 16px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s;
 }
@@ -117,8 +117,8 @@ const { prefixPath } = useDistrictRoutes()
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 15px 20px;
+  gap: clamp(12px, 1.8vw, 15px);
+  padding: clamp(12px, 1.8vw, 15px) clamp(16px, 2.5vw, 20px);
   color: #ecf0f1;
   text-decoration: none;
   transition: all 0.3s;
@@ -149,12 +149,12 @@ const { prefixPath } = useDistrictRoutes()
 }
 
 .icon {
-  font-size: 20px;
-  min-width: 20px;
+  font-size: clamp(18px, 2.5vw, 20px);
+  min-width: clamp(18px, 2.5vw, 20px);
 }
 
 .text {
-  font-size: 14px;
+  font-size: clamp(13px, 1.6vw, 14px);
   font-weight: 500;
 }
 

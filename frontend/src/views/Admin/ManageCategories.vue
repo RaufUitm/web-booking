@@ -353,32 +353,32 @@ const formatDate = (dateStr) => {
 
 <style scoped>
 .manage-categories {
-  padding: 2rem;
+  padding: clamp(1.5rem, 2.5vw, 2rem);
   max-width: 1400px;
   margin: 0 auto;
 }
 
 h1 {
-  margin: 0 0 2rem 0;
+  margin: 0 0 clamp(1.5rem, 2.5vw, 2rem) 0;
   color: #2c3e50;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .actions-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  gap: 1rem;
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
+  gap: clamp(0.75rem, 1.2vw, 1rem);
   flex-wrap: wrap;
 }
 
 .search-box input {
-  padding: 0.75rem 1.25rem;
+  padding: clamp(0.6rem, 0.9vw, 0.75rem) clamp(1rem, 1.5vw, 1.25rem);
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  width: 300px;
-  font-size: 1rem;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  width: clamp(250px, 30vw, 300px);
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
 }
 
 .search-box input:focus {

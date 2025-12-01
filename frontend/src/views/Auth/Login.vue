@@ -99,15 +99,15 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: clamp(1.5rem, 2.5vw, 2rem);
   background: #f5f5f5;
 }
 
 .auth-card {
   background: #f7f7f7;
-  border-radius: 12px;
+  border-radius: clamp(10px, 1.2vw, 12px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  padding: 3rem;
+  padding: clamp(2rem, 3.5vw, 3rem);
   width: 100%;
   max-width: 450px;
   border: 2px solid #222;
@@ -115,18 +115,18 @@ const handleLogin = async () => {
 
 .auth-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .auth-header h1 {
   color: #2c3e50;
-  margin-bottom: 0.5rem;
-  font-size: 2rem;
+  margin-bottom: clamp(0.4rem, 0.6vw, 0.5rem);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .auth-header p {
   color: #7f8c8d;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
 }
 
 .flag-container {
@@ -147,26 +147,26 @@ const handleLogin = async () => {
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: clamp(1.2rem, 1.8vw, 1.5rem);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: clamp(0.4rem, 0.6vw, 0.5rem);
 }
 
 .form-group label {
   color: #2c3e50;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: clamp(0.9rem, 1.1vw, 0.95rem);
 }
 
 .form-group input {
-  padding: 0.875rem;
+  padding: clamp(0.7rem, 1vw, 0.875rem);
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
   transition: border-color 0.3s ease;
 }
 
@@ -190,10 +190,10 @@ const handleLogin = async () => {
 .checkbox {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: clamp(0.4rem, 0.6vw, 0.5rem);
   cursor: pointer;
   color: #2c3e50;
-  font-size: 0.95rem;
+  font-size: clamp(0.9rem, 1.1vw, 0.95rem);
 }
 
 .checkbox input {

@@ -200,30 +200,30 @@ const goToFacilities = (categoryId) => {
 }
 
 .hero-content h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(0.75rem, 1.2vw, 1rem);
   font-weight: 700;
 }
 
 .subtitle {
-  font-size: 1.3rem;
-  margin-bottom: 2rem;
+  font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
   opacity: 0.95;
 }
 
 .hero-buttons {
   display: flex;
-  gap: 1rem;
+  gap: clamp(0.75rem, 1.2vw, 1rem);
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .btn {
-  padding: 1rem 2rem;
-  border-radius: 8px;
+  padding: clamp(0.75rem, 1.2vw, 1rem) clamp(1.5rem, 2.5vw, 2rem);
+  border-radius: clamp(6px, 0.8vw, 8px);
   text-decoration: none;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 1.4vw, 1.1rem);
   transition: all 0.3s ease;
   display: inline-block;
 }
@@ -250,8 +250,8 @@ const goToFacilities = (categoryId) => {
 }
 
 .btn-large {
-  padding: 1.2rem 3rem;
-  font-size: 1.2rem;
+  padding: clamp(1rem, 1.5vw, 1.2rem) clamp(2rem, 3.5vw, 3rem);
+  font-size: clamp(1.1rem, 1.5vw, 1.2rem);
   background-color: #D77800;
   color: white;
 }
@@ -265,17 +265,17 @@ const goToFacilities = (categoryId) => {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 clamp(1rem, 2vw, 2rem);
 }
 
 section {
-  padding: 4rem 0;
+  padding: clamp(2.5rem, 5vw, 4rem) 0;
 }
 
 section h2 {
   text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 3rem;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  margin-bottom: clamp(2rem, 3.5vw, 3rem);
   color: #2c3e50;
 }
 
@@ -286,13 +286,13 @@ section h2 {
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  gap: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .category-card {
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
+  padding: clamp(1.5rem, 2.5vw, 2rem);
+  border-radius: clamp(10px, 1.2vw, 12px);
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -305,51 +305,51 @@ section h2 {
 }
 
 .category-icon {
-  font-size: 3.5rem;
-  margin-bottom: 1rem;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  margin-bottom: clamp(0.75rem, 1.2vw, 1rem);
 }
 
 .category-card h3 {
   color: #2c3e50;
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+  margin-bottom: clamp(0.4rem, 0.6vw, 0.5rem);
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
 }
 
 .category-card p {
   color: #7f8c8d;
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.75rem, 1.2vw, 1rem);
 }
 
 .facility-count {
   display: inline-block;
   background-color: rgba(215, 120, 0, 0.1);
   color: #D77800;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  padding: clamp(0.4rem, 0.6vw, 0.5rem) clamp(0.8rem, 1.2vw, 1rem);
+  border-radius: clamp(16px, 2vw, 20px);
+  font-size: clamp(0.85rem, 1.1vw, 0.9rem);
   font-weight: 600;
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  gap: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .feature-card {
   text-align: center;
-  padding: 2rem;
+  padding: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .feature-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: clamp(2.5rem, 3.5vw, 3rem);
+  margin-bottom: clamp(0.75rem, 1.2vw, 1rem);
 }
 
 .feature-card h3 {
   color: #2c3e50;
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
+  margin-bottom: clamp(0.75rem, 1.2vw, 1rem);
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
 }
 
 .feature-card p {
@@ -366,43 +366,43 @@ section h2 {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: clamp(0.75rem, 1.2vw, 1rem);
 }
 
 .step {
   flex: 1;
   min-width: 200px;
   text-align: center;
-  padding: 1.5rem;
+  padding: clamp(1rem, 1.8vw, 1.5rem);
 }
 
 .step-number {
-  width: 60px;
-  height: 60px;
+  width: clamp(50px, 7vw, 60px);
+  height: clamp(50px, 7vw, 60px);
   background: linear-gradient(135deg, #FF8C00 0%, #D77800 100%);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: clamp(1.3rem, 2vw, 1.5rem);
   font-weight: bold;
-  margin: 0 auto 1rem;
+  margin: 0 auto clamp(0.75rem, 1.2vw, 1rem);
 }
 
 .step h3 {
   color: #2c3e50;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
+  margin-bottom: clamp(0.4rem, 0.6vw, 0.5rem);
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
 }
 
 .step p {
   color: #7f8c8d;
-  font-size: 0.95rem;
+  font-size: clamp(0.9rem, 1.1vw, 0.95rem);
 }
 
 .step-arrow {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
   color: #FF8C00;
   font-weight: bold;
 }
@@ -415,26 +415,26 @@ section h2 {
 
 .cta h2 {
   color: white;
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.75rem, 1.2vw, 1rem);
 }
 
 .cta p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
   opacity: 0.95;
 }
 
 @media (max-width: 768px) {
   .hero-content h1 {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
   }
 
   .subtitle {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 1.4vw, 1.1rem);
   }
 
   section h2 {
-    font-size: 1.8rem;
+    font-size: clamp(1.5rem, 2.5vw, 1.8rem);
   }
 
   .step-arrow {

@@ -262,29 +262,29 @@ const adminRoute = (section) => {
 
 <style scoped>
 .admin-dashboard {
-  padding: 30px;
+  padding: clamp(20px, 3vw, 30px);
 }
 
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 30px;
+  margin-bottom: clamp(20px, 3vw, 30px);
   flex-wrap: wrap;
-  gap: 20px;
+  gap: clamp(15px, 2.5vw, 20px);
 }
 
 h1 {
-  margin: 0 0 10px 0;
+  margin: 0 0 clamp(8px, 1.2vw, 10px) 0;
   color: #333;
-  font-size: 32px;
+  font-size: clamp(24px, 3.5vw, 32px);
 }
 
 .role-badge {
   display: inline-block;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
+  padding: clamp(6px, 1vw, 8px) clamp(12px, 2vw, 16px);
+  border-radius: clamp(16px, 2vw, 20px);
+  font-size: clamp(12px, 1.5vw, 14px);
   font-weight: 600;
   margin: 0;
 }
@@ -307,7 +307,7 @@ h1 {
 .district-filter {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(8px, 1.2vw, 10px);
 }
 
 .district-filter label {
@@ -316,13 +316,13 @@ h1 {
 }
 
 .district-filter select {
-  padding: 10px 15px;
+  padding: clamp(8px, 1.2vw, 10px) clamp(12px, 2vw, 15px);
   border: 2px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(13px, 1.5vw, 14px);
   cursor: pointer;
   background: white;
-  min-width: 200px;
+  min-width: clamp(180px, 20vw, 200px);
 }
 
 .district-filter select:focus {
@@ -333,22 +333,22 @@ h1 {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
+  gap: clamp(15px, 2.5vw, 20px);
+  margin-bottom: clamp(30px, 5vw, 40px);
 }
 
 .stat-card {
   background: white;
-  border-radius: 8px;
-  padding: 25px;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  padding: clamp(20px, 3vw, 25px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: clamp(15px, 2.5vw, 20px);
 }
 
 .stat-icon {
-  font-size: 48px;
+  font-size: clamp(36px, 5vw, 48px);
 }
 
 .stat-info {
@@ -356,66 +356,66 @@ h1 {
 }
 
 .stat-value {
-  font-size: 32px;
+  font-size: clamp(24px, 3.5vw, 32px);
   font-weight: 700;
   color: #333;
 }
 
 .stat-label {
   color: #666;
-  font-size: 14px;
-  margin-top: 5px;
+  font-size: clamp(13px, 1.5vw, 14px);
+  margin-top: clamp(4px, 0.6vw, 5px);
 }
 
 .dashboard-sections {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 30px;
+  gap: clamp(20px, 3.5vw, 30px);
 }
 
 .section {
   background: white;
-  border-radius: 8px;
-  padding: 25px;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  padding: clamp(20px, 3vw, 25px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .section h2 {
-  margin: 0 0 20px 0;
+  margin: 0 0 clamp(15px, 2.5vw, 20px) 0;
   color: #333;
-  font-size: 20px;
+  font-size: clamp(18px, 2.5vw, 20px);
 }
 
 .recent-bookings {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: clamp(12px, 2vw, 15px);
 }
 
 .booking-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
+  padding: clamp(12px, 2vw, 15px);
   background-color: #f9f9f9;
-  border-radius: 4px;
+  border-radius: clamp(3px, 0.5vw, 4px);
 }
 
 .booking-info {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: clamp(4px, 0.6vw, 5px);
 }
 
 .booking-info span {
-  font-size: 14px;
+  font-size: clamp(13px, 1.5vw, 14px);
   color: #666;
 }
 
 .status {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: clamp(3px, 0.5vw, 4px) clamp(10px, 1.5vw, 12px);
+  border-radius: clamp(10px, 1.2vw, 12px);
+  font-size: clamp(11px, 1.3vw, 12px);
   font-weight: 600;
   text-transform: capitalize;
 }
@@ -432,16 +432,16 @@ h1 {
 
 .quick-actions {
   display: grid;
-  gap: 15px;
+  gap: clamp(12px, 2vw, 15px);
 }
 
 .action-btn {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 15px;
+  gap: clamp(12px, 2vw, 15px);
+  padding: clamp(12px, 2vw, 15px);
   background-color: #f9f9f9;
-  border-radius: 4px;
+  border-radius: clamp(3px, 0.5vw, 4px);
   text-decoration: none;
   color: #333;
   transition: all 0.3s;
@@ -466,7 +466,7 @@ h1 {
 }
 
 .action-btn .icon {
-  font-size: 24px;
+  font-size: clamp(20px, 3vw, 24px);
 }
 
 @media (max-width: 1024px) {
@@ -481,7 +481,11 @@ h1 {
   }
 
   .admin-dashboard {
-    padding: 20px;
+    padding: clamp(15px, 2.5vw, 20px);
+  }
+  
+  .dashboard-sections {
+    grid-template-columns: 1fr;
   }
 }
 </style>

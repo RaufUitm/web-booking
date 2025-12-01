@@ -536,7 +536,7 @@ const canModify = (facility) => {
 
 <style scoped>
 .manage-facilities {
-  padding: 2rem;
+  padding: clamp(1.5rem, 2.5vw, 2rem);
   max-width: 1600px;
   margin: 0 auto;
 }
@@ -545,26 +545,26 @@ const canModify = (facility) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 h1 {
   margin: 0;
   color: #2c3e50;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .btn-add {
-  padding: 0.75rem 1.5rem;
+  padding: clamp(0.6rem, 0.9vw, 0.75rem) clamp(1.2rem, 1.8vw, 1.5rem);
   background: #2d5f2e;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: clamp(6px, 0.8vw, 8px);
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: clamp(0.4rem, 0.6vw, 0.5rem);
   transition: all 0.3s;
 }
 
@@ -575,8 +575,8 @@ h1 {
 
 .filters {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: clamp(0.75rem, 1.2vw, 1rem);
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
   flex-wrap: wrap;
 }
 
@@ -588,10 +588,10 @@ h1 {
 
 .search-box input {
   width: 100%;
-  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  padding: clamp(0.6rem, 0.9vw, 0.75rem) clamp(2rem, 3vw, 2.5rem) clamp(0.6rem, 0.9vw, 0.75rem) clamp(0.8rem, 1.2vw, 1rem);
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
 }
 
 .search-box input:focus {
@@ -601,16 +601,16 @@ h1 {
 
 .search-icon {
   position: absolute;
-  right: 1rem;
+  right: clamp(0.8rem, 1.2vw, 1rem);
   top: 50%;
   transform: translateY(-50%);
 }
 
 .filters select {
-  padding: 0.75rem 1rem;
+  padding: clamp(0.6rem, 0.9vw, 0.75rem) clamp(0.8rem, 1.2vw, 1rem);
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
   cursor: pointer;
 }
 
@@ -643,13 +643,13 @@ h1 {
 }
 
 .facilities-table th {
-  padding: 1rem;
+  padding: clamp(0.75rem, 1.2vw, 1rem);
   text-align: left;
   font-weight: 600;
 }
 
 .facilities-table td {
-  padding: 1rem;
+  padding: clamp(0.75rem, 1.2vw, 1rem);
   border-bottom: 1px solid #f0f0f0;
 }
 
@@ -809,10 +809,10 @@ h1 {
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 0.75rem;
+  padding: clamp(0.6rem, 0.9vw, 0.75rem);
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
   box-sizing: border-box;
 }
 
@@ -858,11 +858,11 @@ h1 {
 }
 
 .btn-primary {
-  padding: 0.75rem 1.5rem;
+  padding: clamp(0.6rem, 0.9vw, 0.75rem) clamp(1.2rem, 1.8vw, 1.5rem);
   background: #2d5f2e;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: clamp(6px, 0.8vw, 8px);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
@@ -914,13 +914,13 @@ h1 {
 
 @media (max-width: 768px) {
   .manage-facilities {
-    padding: 1rem;
+    padding: clamp(0.75rem, 1.5vw, 1rem);
   }
 
   .page-header {
     flex-direction: column;
     align-items: stretch;
-    gap: 1rem;
+    gap: clamp(0.75rem, 1.2vw, 1rem);
   }
 
   .filters {

@@ -75,32 +75,32 @@ const { prefixPath } = useDistrictRoutes()
 .footer {
   background-color: #1a3a1b;
   color: #ecf0f1;
-  margin-top: 60px;
+  margin-top: clamp(40px, 7vw, 60px);
 }
 
 .footer-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px 20px;
+  padding: clamp(30px, 5vw, 40px) clamp(15px, 2.5vw, 20px) clamp(15px, 2.5vw, 20px);
 }
 
 .footer-content {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 40px;
-  margin-bottom: 40px;
+  gap: clamp(30px, 5vw, 40px);
+  margin-bottom: clamp(30px, 5vw, 40px);
 }
 
 .footer-section h3 {
   color: #FFB84D;
-  margin: 0 0 15px 0;
-  font-size: 24px;
+  margin: 0 0 clamp(12px, 1.8vw, 15px) 0;
+  font-size: clamp(20px, 3vw, 24px);
 }
 
 .footer-section h4 {
   color: #ecf0f1;
-  margin: 0 0 15px 0;
-  font-size: 18px;
+  margin: 0 0 clamp(12px, 1.8vw, 15px) 0;
+  font-size: clamp(16px, 2.2vw, 18px);
 }
 
 .footer-section p {
@@ -131,12 +131,12 @@ const { prefixPath } = useDistrictRoutes()
 
 .social-links {
   display: flex;
-  gap: 15px;
-  margin-top: 15px;
+  gap: clamp(12px, 1.8vw, 15px);
+  margin-top: clamp(12px, 1.8vw, 15px);
 }
 
 .social-link {
-  font-size: 24px;
+  font-size: clamp(20px, 3vw, 24px);
   text-decoration: none;
   transition: transform 0.3s;
 }

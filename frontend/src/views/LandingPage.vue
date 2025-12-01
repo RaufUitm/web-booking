@@ -5,9 +5,9 @@
     <!-- Header -->
     <header class="w-full landing-hero shadow-sm border-b-4 border-yellow-400 py-12" style="width: 100% !important; margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important; position: relative;">
       <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem; text-align: center; position: relative; z-index: 2;">
-        <h1 style="font-size: 2.5vw; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem; text-align: center;">T-Smart Booking</h1>
-        <p style="font-size: 1.5vw; color: #ffffff; margin-bottom: 1rem; text-align: center;">Sistem Tempahan Kemudahan Awam Negeri Terengganu</p>
-        <p style="font-size: 1vw; color: #ffffff; max-width: 60vw; margin: 0 auto; line-height: 1.2; text-align: center;">
+        <h1 style="font-size: clamp(1.5rem, 2.5vw, 2.5rem); font-weight: 700; color: #ffffff; margin-bottom: 0.5rem; text-align: center;">T-Smart Booking</h1>
+        <p style="font-size: clamp(1rem, 1.5vw, 1.3rem); color: #ffffff; margin-bottom: 1rem; text-align: center;">Sistem Tempahan Kemudahan Awam Negeri Terengganu</p>
+        <p style="font-size: clamp(0.85rem, 1vw, 1rem); color: #ffffff; max-width: clamp(80%, 60vw, 90%); margin: 0 auto; line-height: 1.2; text-align: center;">
           Terengganu Smart Booking adalah sistem tempahan kemudahan awam dalam talian yang memudahkan orang ramai dan organisasi untuk menempah kemudahan awam di seluruh negeri Terengganu. Pilih daerah anda untuk melihat senarai kemudahan yang tersedia dan buat tempahan dengan mudah.
         </p>
 
@@ -195,16 +195,16 @@ const navigateToDaerah = (daerah) => {
   background: transparent;
   color: #FF8C00;
   font-weight: 600;
-  padding: 0.7rem 2rem;
+  padding: clamp(0.6rem, 0.8vw, 0.7rem) clamp(1.5rem, 2.5vw, 2rem);
   border-radius: 9999px;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
   border: 2px solid #FF8C00;
   transition: all 0.3s ease;
   cursor: pointer;
   letter-spacing: 0.02em;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: clamp(0.4rem, 0.6vw, 0.5rem);
   text-decoration: none;
 }
 
@@ -220,9 +220,9 @@ const navigateToDaerah = (daerah) => {
   background: #111;
   color: #fff;
   font-weight: 600;
-  padding: 0.7rem 2rem;
+  padding: clamp(0.6rem, 0.8vw, 0.7rem) clamp(1.5rem, 2.5vw, 2rem);
   border-radius: 9999px;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   transition: all 0.3s ease;
   border: none;
@@ -230,7 +230,7 @@ const navigateToDaerah = (daerah) => {
   letter-spacing: 0.02em;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: clamp(0.4rem, 0.6vw, 0.5rem);
   text-decoration: none;
   position: relative;
   overflow: hidden;
@@ -274,13 +274,13 @@ const navigateToDaerah = (daerah) => {
 @media (max-width: 640px) {
   .register-btn,
   .login-btn {
-    padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
+    padding: clamp(0.5rem, 1vw, 0.6rem) clamp(1.2rem, 2vw, 1.5rem);
+    font-size: clamp(0.85rem, 1.1vw, 0.9rem);
   }
 
   .icon {
-    width: 1.1rem;
-    height: 1.1rem;
+    width: clamp(1rem, 1.2vw, 1.1rem);
+    height: clamp(1rem, 1.2vw, 1.1rem);
   }
 }
 /* Daerah Card Backgrounds */

@@ -348,7 +348,7 @@ const formatDate = (date) => {
 
 <style scoped>
 .manage-users {
-  padding: 2rem;
+  padding: clamp(1.5rem, 2.5vw, 2rem);
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -357,24 +357,24 @@ const formatDate = (date) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .page-header h1 {
   margin: 0;
   color: #2c3e50;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .btn-add {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  gap: clamp(0.4rem, 0.6vw, 0.5rem);
+  padding: clamp(0.6rem, 0.9vw, 0.75rem) clamp(1.2rem, 1.8vw, 1.5rem);
   background: #2d5f2e;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: clamp(6px, 0.8vw, 8px);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
@@ -388,8 +388,8 @@ const formatDate = (date) => {
 
 .filters {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: clamp(0.75rem, 1.2vw, 1rem);
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .search-box {

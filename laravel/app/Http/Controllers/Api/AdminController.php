@@ -47,17 +47,35 @@ class AdminController extends Controller
                 $bookingQuery->whereIn('facility_id', $facilityIds);
             }
 
+            // Get booking IDs for revenue calculation
+            $bookingIds = (clone $bookingQuery)->pluck('id');
+            $confirmedBookingIds = (clone $bookingQuery)->whereIn('status', ['confirmed', 'completed'])->pluck('id');
+            
+            // Calculate revenue from payments table
+            $totalRevenue = 0;
+            $monthlyRevenue = 0;
+            
+            if ($confirmedBookingIds->isNotEmpty()) {
+                $totalRevenue = DB::table('payments')
+                    ->whereIn('booking_id', $confirmedBookingIds)
+                    ->where('payment_status', 'completed')
+                    ->sum('amount') ?? 0;
+                    
+                $monthlyRevenue = DB::table('payments')
+                    ->whereIn('booking_id', $confirmedBookingIds)
+                    ->where('payment_status', 'completed')
+                    ->whereMonth('created_at', now()->month)
+                    ->sum('amount') ?? 0;
+            }
+            
             $stats = [
                 'total_users' => $userQuery->count(),
                 'total_bookings' => (clone $bookingQuery)->count(),
                 'total_facilities' => $facilityQuery->count(),
                 'pending_bookings' => (clone $bookingQuery)->where('status', 'pending')->count(),
                 'confirmed_bookings' => (clone $bookingQuery)->where('status', 'confirmed')->count(),
-                'total_revenue' => (clone $bookingQuery)->whereIn('status', ['confirmed', 'completed'])
-                    ->sum('total_price'),
-                'monthly_revenue' => (clone $bookingQuery)->whereIn('status', ['confirmed', 'completed'])
-                    ->whereMonth('created_at', now()->month)
-                    ->sum('total_price'),
+                'total_revenue' => $totalRevenue,
+                'monthly_revenue' => $monthlyRevenue,
             ];
 
             $recent_bookings = (clone $bookingQuery)
@@ -427,30 +445,48 @@ class AdminController extends Controller
     {
         $bookings = Booking::whereYear('booking_date', $year)
             ->whereMonth('booking_date', $month)
-            ->selectRaw('DATE(booking_date) as date, COUNT(*) as total, SUM(total_price) as revenue')
+            ->selectRaw('DATE(booking_date) as date, COUNT(*) as total')
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
+        // Calculate revenue from payments
+        $bookingIds = Booking::whereYear('booking_date', $year)
+            ->whereMonth('booking_date', $month)
+            ->pluck('id');
+        
+        $totalRevenue = DB::table('payments')
+            ->whereIn('booking_id', $bookingIds)
+            ->where('payment_status', 'completed')
+            ->sum('amount');
+
         return [
             'bookings' => $bookings,
             'total_bookings' => $bookings->sum('total'),
-            'total_revenue' => $bookings->sum('revenue')
+            'total_revenue' => $totalRevenue
         ];
     }
 
     private function getYearlyReport($year)
     {
         $bookings = Booking::whereYear('booking_date', $year)
-            ->selectRaw('MONTH(booking_date) as month, COUNT(*) as total, SUM(total_price) as revenue')
+            ->selectRaw('MONTH(booking_date) as month, COUNT(*) as total')
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
+        // Calculate revenue from payments
+        $bookingIds = Booking::whereYear('booking_date', $year)->pluck('id');
+        
+        $totalRevenue = DB::table('payments')
+            ->whereIn('booking_id', $bookingIds)
+            ->where('payment_status', 'completed')
+            ->sum('amount');
+
         return [
             'bookings' => $bookings,
             'total_bookings' => $bookings->sum('total'),
-            'total_revenue' => $bookings->sum('revenue')
+            'total_revenue' => $totalRevenue
         ];
     }
 
@@ -459,10 +495,23 @@ class AdminController extends Controller
         $bookings = Booking::with('facility')
             ->whereYear('booking_date', $year)
             ->whereMonth('booking_date', $month)
-            ->selectRaw('facility_id, COUNT(*) as total, SUM(total_price) as revenue')
+            ->selectRaw('facility_id, COUNT(*) as total')
             ->groupBy('facility_id')
             ->orderByDesc('total')
             ->get();
+
+        // Calculate revenue from payments for each facility
+        foreach ($bookings as $booking) {
+            $facilityBookingIds = Booking::where('facility_id', $booking->facility_id)
+                ->whereYear('booking_date', $year)
+                ->whereMonth('booking_date', $month)
+                ->pluck('id');
+            
+            $booking->revenue = DB::table('payments')
+                ->whereIn('booking_id', $facilityBookingIds)
+                ->where('payment_status', 'completed')
+                ->sum('amount');
+        }
 
         return [
             'bookings' => $bookings,

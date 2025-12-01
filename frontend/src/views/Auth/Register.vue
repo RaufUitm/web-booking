@@ -187,9 +187,9 @@ const handleRegister = async () => {
 
 .auth-card {
   background: #f7f7f7;
-  border-radius: 12px;
+  border-radius: clamp(10px, 1.2vw, 12px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  padding: 3rem;
+  padding: clamp(2rem, 3.5vw, 3rem);
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
@@ -199,18 +199,18 @@ const handleRegister = async () => {
 
 .auth-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
 }
 
 .auth-header h1 {
   color: #2c3e50;
-  margin-bottom: 0.5rem;
-  font-size: 1.8rem;
+  margin-bottom: clamp(0.4rem, 0.6vw, 0.5rem);
+  font-size: clamp(1.4rem, 2.2vw, 1.8rem);
 }
 
 .auth-header p {
   color: #7f8c8d;
-  font-size: 0.95rem;
+  font-size: clamp(0.9rem, 1.1vw, 0.95rem);
 }
 
 .flag-container {
@@ -231,19 +231,19 @@ const handleRegister = async () => {
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: clamp(1rem, 1.5vw, 1.25rem);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: clamp(0.4rem, 0.6vw, 0.5rem);
 }
 
 .form-group label {
   color: #2c3e50;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: clamp(0.9rem, 1.1vw, 0.95rem);
 }
 
 .required {

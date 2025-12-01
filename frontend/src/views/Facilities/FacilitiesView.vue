@@ -71,7 +71,7 @@
           @click="viewDetails(facility.id)"
         >
           <div class="facility-image" :style="{ background: currentDistrictColor.gradient }">
-            <img :src="facility.image || '/images/placeholder.jpg'" :alt="facility.name" />
+            <img :src="getImageUrl(facility.image)" :alt="facility.name" @error="handleImageError" />
             <span v-if="!facility.is_available" class="badge-unavailable">Tidak Tersedia</span>
             <span v-else class="badge-available" :style="{ background: currentDistrictColor.main, color: '#fff' }">Tersedia</span>
           </div>
@@ -116,6 +116,7 @@ import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
 import { useDistrictStore } from '@/stores/district'
 import useDistrictRoutes from '@/utils/districtRoutes'
+import { getImageUrl } from '@/utils/helpers'
 
 const router = useRouter()
 const route = useRoute()
@@ -352,6 +353,10 @@ const bookNow = (facilityId) => {
   } else {
     router.push(bp)
   }
+}
+
+const handleImageError = (e) => {
+  e.target.src = '/images/placeholder.jpg'
 }
 
 const districtColors = {

@@ -337,33 +337,33 @@ main {
 }
 
 .nav-container {
-  max-width: 70vw;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 clamp(1rem, 2vw, 2rem);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: clamp(60px, 8vw, 70px);
+  height: 70px;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: clamp(0.25rem, 0.5vw, 0.5rem);
+  gap: 0.75rem;
   color: #fff;
   text-decoration: none;
   font-weight: 700;
-  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-size: 1.1rem;
 }
 
 .logo-img {
-  height: clamp(40px, 6vw, 50px);
-  width: clamp(40px, 6vw, 50px);
+  height: 45px;
+  width: 45px;
   object-fit: contain;
 }
 
 .logo-icon {
-  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+  font-size: 1.5rem;
 }
 
 .mobile-menu-btn {
@@ -371,24 +371,26 @@ main {
   background: none;
   border: none;
   color: white;
-  font-size: clamp(1.3rem, 2vw, 1.5rem);
+  font-size: 1.5rem;
   cursor: pointer;
-  padding: clamp(0.4rem, 0.6vw, 0.5rem);
+  padding: 0.5rem;
 }
 
 .nav-links {
   display: flex;
-  gap: clamp(0.25rem, 0.6vw, 0.5rem);
+  gap: 0.5rem;
   align-items: center;
 }
 
 .nav-links a {
   color: #fff;
   text-decoration: none;
-  padding: clamp(0.5rem, 0.8vw, 0.75rem) clamp(0.8rem, 1.3vw, 1.25rem);
-  border-radius: clamp(4px, 0.6vw, 6px);
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
   transition: background-color 0.3s ease;
   font-weight: 500;
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .nav-links a:hover {
@@ -403,20 +405,27 @@ main {
   background-color: transparent;
   border: 2px solid #fff;
   color: #fff;
-  margin-left: clamp(0.3rem, 0.5vw, 0.5rem);
-  padding: clamp(0.4rem, 0.6vw, 0.5rem) clamp(0.7rem, 1vw, 0.9rem);
-  border-radius: clamp(4px, 0.6vw, 6px);
+  margin-left: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.btn-login:hover {
+  background-color: rgba(255,255,255,0.08);
 }
 
 .btn-register {
-  /* Match login button: white outline, transparent background */
   background-color: transparent;
   border: 2px solid #fff;
   color: #fff;
-  margin-left: clamp(0.3rem, 0.5vw, 0.5rem);
-  padding: clamp(0.4rem, 0.6vw, 0.5rem) clamp(0.7rem, 1vw, 0.9rem);
-  border-radius: clamp(4px, 0.6vw, 6px);
+  margin-left: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .btn-register:hover {
@@ -432,15 +441,17 @@ main {
 .user-btn {
   display: flex;
   align-items: center;
-  gap: clamp(0.3rem, 0.5vw, 0.5rem);
+  gap: 0.5rem;
   background-color: rgba(255, 255, 255, 0.1);
   color: white;
   border: none;
-  padding: clamp(0.5rem, 0.8vw, 0.75rem) clamp(0.8rem, 1.2vw, 1rem);
-  border-radius: clamp(4px, 0.6vw, 6px);
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.3s ease;
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .user-btn:hover {
@@ -448,7 +459,7 @@ main {
 }
 
 .user-icon {
-  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-size: 1.1rem;
 }
 
 .dropdown-arrow {
@@ -604,10 +615,61 @@ main {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Mobile Responsive */
+/* Tablet & Mobile Responsive */
+@media (max-width: 1100px) {
+  .nav-container {
+    max-width: 100%;
+  }
+  
+  .logo {
+    font-size: 1rem;
+  }
+  
+  .logo-img {
+    height: 40px;
+    width: 40px;
+  }
+  
+  .nav-links a,
+  .btn-login,
+  .btn-register,
+  .user-btn {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.85rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .logo {
+    font-size: 0.95rem;
+    gap: 0.5rem;
+  }
+  
+  .logo-img {
+    height: 38px;
+    width: 38px;
+  }
+  
+  .nav-links {
+    gap: 0.35rem;
+  }
+  
+  .nav-links a,
+  .btn-login,
+  .btn-register,
+  .user-btn {
+    font-size: 0.85rem;
+    padding: 0.45rem 0.75rem;
+  }
+}
+
 @media (max-width: 768px) {
   .mobile-menu-btn {
     display: block;
+  }
+  
+  .logo {
+    font-size: 0.9rem;
   }
 
   .nav-links {
@@ -622,15 +684,21 @@ main {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
   }
 
   .nav-links.mobile-open {
     transform: translateX(0);
   }
 
-  .nav-links a {
+  .nav-links a,
+  .btn-login,
+  .btn-register {
     width: 100%;
     text-align: center;
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
   }
 
   .user-menu {
@@ -640,6 +708,7 @@ main {
   .user-btn {
     width: 100%;
     justify-content: center;
+    font-size: 0.95rem;
   }
 
   .user-dropdown {
@@ -650,6 +719,35 @@ main {
 
   .footer-content {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-container {
+    height: 60px;
+    padding: 0 1rem;
+  }
+  
+  .logo {
+    font-size: 0.85rem;
+    gap: 0.4rem;
+  }
+  
+  .logo-img {
+    height: 35px;
+    width: 35px;
+  }
+  
+  .logo-text {
+    font-size: 0.85rem;
+  }
+  
+  .logo-sub {
+    font-size: 0.7rem;
+  }
+  
+  .nav-links {
+    top: 60px;
   }
 }
 </style>

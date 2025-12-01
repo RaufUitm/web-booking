@@ -39,6 +39,23 @@ export const formatCurrency = (amount, currency = 'USD') => {
   }).format(amount)
 }
 
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return '/images/placeholder.jpg'
+  
+  // If it's already a full URL, return it
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath
+  }
+  
+  // If it starts with /storage/, prepend the backend URL
+  if (imagePath.startsWith('/storage/')) {
+    return `http://localhost:8000${imagePath}`
+  }
+  
+  // If it's a relative path, prepend the backend URL
+  return `http://localhost:8000/storage/${imagePath}`
+}
+
 export const formatTime = (time) => {
   if (!time) return ''
 

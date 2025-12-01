@@ -46,6 +46,7 @@
         <thead>
           <tr>
             <th>ID</th>
+            <th>Gambar</th>
             <th>Nama</th>
             <th>Kategori</th>
             <th>Lokasi</th>
@@ -59,6 +60,10 @@
         <tbody>
           <tr v-for="facility in filteredFacilities" :key="facility.id">
             <td>{{ facility.id }}</td>
+            <td>
+              <img v-if="facility.image" :src="getImageUrl(facility.image)" :alt="facility.name" class="facility-thumbnail" @error="handleImageError" />
+              <span v-else class="no-image">📷</span>
+            </td>
             <td><strong>{{ facility.name }}</strong></td>
             <td>{{ facility.category?.name || '-' }}</td>
             <td>{{ facility.location || '-' }}</td>
@@ -148,14 +153,16 @@
 
           <div class="form-group">
             <label>Gambar Kemudahan</label>
-            <input id="facility-image-input" ref="imageInput" @change="handleImageChange" type="file" accept="image/*" />
+            <input id="facility-image-input" ref="imageInput" @change="handleImageChange" type="file" accept="image/jpeg,image/png,image/jpg,image/webp" />
             <div v-if="imagePreview" class="image-preview">
               <img :src="imagePreview" alt="Preview" />
+              <small class="hint" style="display: block; margin-top: 0.5rem;">Pratonton imej baru</small>
             </div>
-            <div v-else-if="formData.image" class="image-preview">
+            <div v-else-if="formData.image && showEditModal" class="image-preview">
               <img :src="formData.image" alt="Current" />
+              <small class="hint" style="display: block; margin-top: 0.5rem;">Imej semasa</small>
             </div>
-            <small class="hint">Muat naik imej (.jpg, .png). Saiz maksimum 2MB.</small>
+            <small class="hint">Muat naik imej (.jpg, .png, .webp). Saiz maksimum 2MB.</small>
           </div>
 
           <div class="form-group">
@@ -210,6 +217,7 @@ import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
 import { useAuthStore } from '@/stores/auth'
 import { useDistrictStore } from '@/stores/district'
+import { getImageUrl } from '@/utils/helpers'
 
 const facilities = ref([])
 const categories = ref([])
@@ -358,10 +366,14 @@ const saveFacility = async () => {
       fd.append('image', imageFile.value)
 
       if (showEditModal.value) {
-        // Some servers don't accept PUT with multipart easily; use POST + _method=PUT
-        await api.post(`/admin/facilities/${editingFacilityId.value}?_method=PUT`, fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+        // Use PUT with FormData directly
+        await api.put(`/admin/facilities/${editingFacilityId.value}`, fd, { 
+          headers: { 'Content-Type': 'multipart/form-data' } 
+        })
       } else {
-        await api.post('/admin/facilities', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+        await api.post('/admin/facilities', fd, { 
+          headers: { 'Content-Type': 'multipart/form-data' } 
+        })
       }
     } else {
       // No new file - send JSON
@@ -510,6 +522,10 @@ const resetImageState = () => {
   } catch (e) {
     // ignore
   }
+}
+
+const handleImageError = (e) => {
+  e.target.src = '/images/placeholder.jpg'
 }
 
 // Return whether current user can modify/delete a facility
@@ -910,6 +926,75 @@ h1 {
 .btn-danger:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.btn-ghost {
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  color: #2d5f2e;
+  border: 1px solid #2d5f2e;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-ghost:hover {
+  background: rgba(45, 95, 46, 0.1);
+}
+
+.suggestion-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+}
+
+.hint {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.image-preview {
+  margin-top: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.text-muted {
+  color: #999;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.facility-thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+}
+
+.no-image {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  background: #f5f5f5;
+  border-radius: 8px;
+  font-size: 1.5rem;
 }
 
 @media (max-width: 768px) {

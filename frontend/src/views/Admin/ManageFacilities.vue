@@ -532,6 +532,9 @@ const resetImageState = () => {
 }
 
 const handleImageError = (e) => {
+  // Prevent infinite loop if placeholder also fails
+  if (e.target.getAttribute('data-error') === 'true') return
+  e.target.setAttribute('data-error', 'true')
   e.target.src = '/images/placeholder.jpg'
 }
 

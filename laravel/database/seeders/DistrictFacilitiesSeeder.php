@@ -135,8 +135,8 @@ class DistrictFacilitiesSeeder extends Seeder
         // SETIU Facilities
         $setiuFacilities = [
             [
-                'name' => 'Dewan Serbaguna MDS Permaisuri',
-                'description' => 'Dewan serbaguna Majlis Daerah Setiu dengan kapasiti 200 orang dan sistem audio visual.',
+                'name' => 'Dewan Tertutup Sungai Tarom',
+                'description' => 'Dewan serbaguna dengan kapasiti 300 orang.',
                 'category_id' => $dewan->id ?? 1,
                 'price_per_hour' => 90,
                 'price_per_day' => 600,
@@ -144,44 +144,26 @@ class DistrictFacilitiesSeeder extends Seeder
                 'location' => 'Permaisuri, Setiu',
                 'is_available' => true,
             ],
+            
             [
-                'name' => 'Kompleks Sukan Setiu',
-                'description' => 'Kompleks sukan dengan gelanggang badminton indoor 4 court dan padang futsal.',
-                'category_id' => $sukan->id ?? 2,
-                'price_per_hour' => 40,
-                'price_per_day' => 250,
-                'capacity' => 40,
-                'location' => 'Permaisuri, Setiu',
-                'is_available' => true,
-            ],
-            [
-                'name' => 'Padang Bola Sepak Setiu',
+                'name' => 'Padang Bola Sungai Tarom',
                 'description' => 'Padang bola sepak dengan rumput semula jadi dan lampu malam.',
                 'category_id' => $sukan->id ?? 2,
                 'price_per_hour' => 70,
                 'price_per_day' => 450,
-                'capacity' => 50,
+                'capacity' => 22,
                 'location' => 'Permaisuri, Setiu',
                 'is_available' => true,
             ],
+        
             [
-                'name' => 'Bilik Mesyuarat MDS',
-                'description' => 'Bilik mesyuarat dengan kemudahan projektor LCD.',
-                'category_id' => $bilik->id ?? 3,
-                'price_per_hour' => 50,
-                'price_per_day' => 300,
-                'capacity' => 25,
-                'location' => 'Pejabat MDS, Permaisuri',
-                'is_available' => true,
-            ],
-            [
-                'name' => 'Dewan Chalok',
-                'description' => 'Dewan komuniti di kawasan Chalok untuk aktiviti masyarakat.',
+                'name' => '	Dewan Terbuka Sungai Tarom',
+                'description' => 'Dewan komuniti di kawasan Sungai Tarom untuk aktiviti masyarakat.',
                 'category_id' => $dewan->id ?? 1,
                 'price_per_hour' => 60,
                 'price_per_day' => 400,
                 'capacity' => 100,
-                'location' => 'Chalok, Setiu',
+                'location' => 'Sungai Tarom, Setiu',
                 'is_available' => true,
             ],
         ];

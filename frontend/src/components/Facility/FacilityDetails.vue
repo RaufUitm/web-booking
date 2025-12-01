@@ -79,6 +79,9 @@ const currencyFormatter = new Intl.NumberFormat('ms-MY', { style: 'currency', cu
 const formattedPricePerHour = computed(() => currencyFormatter.format(Number((props.facility && (props.facility.price_per_hour ?? 0)) || 0)))
 
 const handleImageError = (e) => {
+  // Prevent infinite loop if placeholder also fails
+  if (e.target.getAttribute('data-error') === 'true') return
+  e.target.setAttribute('data-error', 'true')
   e.target.src = '/images/placeholder.jpg'
 }
 </script>

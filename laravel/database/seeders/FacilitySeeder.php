@@ -17,8 +17,8 @@ class FacilitySeeder extends Seeder
         // Create categories for MDHT
         $categories = [
             [
-                'name' => 'Dewan & Panggung',
-                'description' => 'Dewan dan panggung untuk pelbagai majlis dan acara',
+                'name' => 'Dewan',
+                'description' => 'Dewan untuk pelbagai majlis dan acara',
                 'icon' => 'hall-icon'
             ],
             [

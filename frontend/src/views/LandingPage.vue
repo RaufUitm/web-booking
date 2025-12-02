@@ -21,9 +21,96 @@
       <!-- Introduction -->
 
 
-      <!-- Daerah Cards Grid (4 columns with centered second row) -->
+      <!-- Daerah Cards Grid (3 cards first row, 4 cards second row ) -->
       <div class="w-full max-w-7xl px-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-6 md:gap-8">
+          <!-- First Row: 3 cards (MBKT, MPK, MPD) centered -->
+          <!-- Kuala Terengganu (MBKT) -->
+          <div
+            @click="navigateToDaerah('kuala-terengganu')"
+            class="w-full bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden lg:col-span-2 lg:col-start-2 border-t-4 border-yellow-400"
+          >
+
+            <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-mbkt">
+              <div class="absolute top-3 left-3 z-10">
+                <img src="/images/derekt.png" alt="Kuala Terengganu" class="w-10 h-7 object-contain rounded shadow" />
+              </div>
+              <div class="text-center w-full px-4 relative z-10">
+                <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Kuala Terengganu</h3>
+                <div class="flex justify-center mb-2">
+                  <img src="/images/MBKT.png" alt="Logo MBKT" class="w-32 h-32 object-contain">
+                </div>
+                <p class="text-base md:text-lg font-semibold text-white">Majlis Bandaraya Kuala Terengganu</p>
+              </div>
+              <div class="absolute inset-0 bg-black/40 z-0"></div>
+            </div>
+            <div class="p-6 bg-white">
+              <p class="text-sm text-white-600 text-center mb-2">
+                Tempahan kemudahan awam di Kuala Terengganu
+              </p>
+              <div class="flex items-center justify-center text-yellow-600 font-medium text-sm hover:text-yellow-700">
+                <span>Klik untuk masuk →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kemaman (MPK) -->
+          <div
+            @click="navigateToDaerah('kemaman')"
+            class="w-full bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden lg:col-span-2 border-t-4 border-blue-900"
+          >
+            <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-kemaman">
+              <div class="absolute top-3 left-3 z-10">
+                <img src="/images/derekemaman.png" alt="Kemaman" class="w-10 h-7 object-contain rounded shadow" />
+              </div>
+              <div class="text-center w-full px-4 relative z-10">
+                <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Kemaman</h3>
+                <div class="flex justify-center mb-2">
+                  <img src="/images/MPK.png" alt="Logo MPK" class="w-32 h-32 object-contain">
+                </div>
+                <p class="text-base md:text-lg font-semibold text-white">Majlis Perbandaran Kemaman</p>
+              </div>
+              <div class="absolute inset-0 bg-black/40 z-0"></div>
+            </div>
+            <div class="p-6 bg-white">
+              <p class="text-sm text-white-600 text-center mb-2">
+                Tempahan kemudahan awam di Kemaman
+              </p>
+              <div class="flex items-center justify-center text-blue-900 font-medium text-sm hover:text-blue-800">
+                <span>Klik untuk masuk →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dungun (MPD) -->
+          <div
+            @click="navigateToDaerah('dungun')"
+            class="w-full bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden lg:col-span-2 border-t-4 border-cyan-600"
+          >
+            <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-dungun">
+              <div class="absolute top-3 left-3 z-10">
+                <img src="/images/deredungun.png" alt="Dungun" class="w-10 h-7 object-contain rounded shadow" />
+              </div>
+              <div class="text-center w-full px-4 relative z-10">
+                <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Dungun</h3>
+                <div class="flex justify-center mb-2">
+                  <img src="/images/MPD.png" alt="Logo MPD" class="w-32 h-32 object-contain">
+                </div>
+                <p class="text-base md:text-lg font-semibold text-white">Majlis Perbandaran Dungun</p>
+              </div>
+              <div class="absolute inset-0 bg-black/40 z-0"></div>
+            </div>
+            <div class="p-6 bg-white">
+              <p class="text-sm text-white-600 text-center mb-2">
+                Tempahan kemudahan awam di Dungun
+              </p>
+              <div class="flex items-center justify-center text-cyan-700 font-medium text-sm hover:text-cyan-800">
+                <span>Klik untuk masuk →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Second Row: 4 cards (Besut, Marang, Setiu, Hulu Terengganu) -->
           <!-- Besut -->
           <div
             @click="navigateToDaerah('besut')"
@@ -131,89 +218,6 @@
                 Tempahan kemudahan awam di Hulu Terengganu
               </p>
               <div class="flex items-center justify-center text-orange-600 font-medium text-sm hover:text-orange-700">
-                <span>Klik untuk masuk →</span>
-              </div>
-            </div>
-          </div>
-          <!-- Kuala Terengganu (MBKT) -->
-          <div
-            @click="navigateToDaerah('kuala-terengganu')"
-            class="w-full bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden lg:col-span-2 lg:col-start-2 border-t-4 border-yellow-400"
-          >
-            <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-mbkt">
-              <div class="absolute top-3 left-3 z-10">
-                <img src="/images/derekt.png" alt="Kuala Terengganu" class="w-10 h-7 object-contain rounded shadow" />
-              </div>
-              <div class="text-center w-full px-4 relative z-10">
-                <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Kuala Terengganu</h3>
-                <div class="flex justify-center mb-2">
-                  <img src="/images/MBKT.png" alt="Logo MBKT" class="w-32 h-32 object-contain">
-                </div>
-                <p class="text-base md:text-lg font-semibold text-white">Majlis Bandaraya Kuala Terengganu</p>
-              </div>
-              <div class="absolute inset-0 bg-black/40 z-0"></div>
-            </div>
-            <div class="p-6 bg-white">
-              <p class="text-sm text-white-600 text-center mb-2">
-                Tempahan kemudahan awam di Kuala Terengganu
-              </p>
-              <div class="flex items-center justify-center text-yellow-600 font-medium text-sm hover:text-yellow-700">
-                <span>Klik untuk masuk →</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Kemaman (MPK) -->
-          <div
-            @click="navigateToDaerah('kemaman')"
-            class="w-full bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden lg:col-span-2 border-t-4 border-blue-900"
-          >
-            <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-kemaman">
-              <div class="absolute top-3 left-3 z-10">
-                <img src="/images/derekemaman.png" alt="Kemaman" class="w-10 h-7 object-contain rounded shadow" />
-              </div>
-              <div class="text-center w-full px-4 relative z-10">
-                <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Kemaman</h3>
-                <div class="flex justify-center mb-2">
-                  <img src="/images/MPK.png" alt="Logo MPK" class="w-32 h-32 object-contain">
-                </div>
-                <p class="text-base md:text-lg font-semibold text-white">Majlis Perbandaran Kemaman</p>
-              </div>
-              <div class="absolute inset-0 bg-black/40 z-0"></div>
-            </div>
-            <div class="p-6 bg-white">
-              <p class="text-sm text-white-600 text-center mb-2">
-                Tempahan kemudahan awam di Kemaman
-              </p>
-              <div class="flex items-center justify-center text-blue-900 font-medium text-sm hover:text-blue-800">
-                <span>Klik untuk masuk →</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Dungun (MPD) -->
-          <div
-            @click="navigateToDaerah('dungun')"
-            class="w-full bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden lg:col-span-2 border-t-4 border-cyan-600"
-          >
-            <div class="h-80 flex items-center justify-center relative daerah-bg daerah-bg-dungun">
-              <div class="absolute top-3 left-3 z-10">
-                <img src="/images/deredungun.png" alt="Dungun" class="w-10 h-7 object-contain rounded shadow" />
-              </div>
-              <div class="text-center w-full px-4 relative z-10">
-                <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">Dungun</h3>
-                <div class="flex justify-center mb-2">
-                  <img src="/images/MPD.png" alt="Logo MPD" class="w-32 h-32 object-contain">
-                </div>
-                <p class="text-base md:text-lg font-semibold text-white">Majlis Perbandaran Dungun</p>
-              </div>
-              <div class="absolute inset-0 bg-black/40 z-0"></div>
-            </div>
-            <div class="p-6 bg-white">
-              <p class="text-sm text-white-600 text-center mb-2">
-                Tempahan kemudahan awam di Dungun
-              </p>
-              <div class="flex items-center justify-center text-cyan-700 font-medium text-sm hover:text-cyan-800">
                 <span>Klik untuk masuk →</span>
               </div>
             </div>

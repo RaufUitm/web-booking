@@ -42,6 +42,21 @@
 
     <!-- Facilities Table -->
     <div v-else class="table-container">
+      <div class="table-header">
+        <div class="results-info">
+          Menunjukkan {{ filteredFacilities.length > 0 ? ((currentPage - 1) * itemsPerPage + 1) : 0 }} - {{ Math.min(currentPage * itemsPerPage, totalItems) }} daripada {{ totalItems }} kemudahan
+        </div>
+        <div class="items-per-page">
+          <label>Papar:</label>
+          <select v-model.number="itemsPerPage" @change="changeItemsPerPage">
+            <option :value="10">10</option>
+            <option :value="25">25</option>
+            <option :value="50">50</option>
+            <option :value="100">100</option>
+          </select>
+        </div>
+      </div>
+
       <table class="facilities-table">
         <thead>
           <tr>
@@ -91,8 +106,50 @@
         </tbody>
       </table>
 
-      <div v-if="filteredFacilities.length === 0" class="no-data">
+      <div v-if="filteredFacilities.length === 0 && totalItems === 0" class="no-data">
         Tiada kemudahan dijumpai
+      </div>
+
+      <!-- Pagination Controls -->
+      <div v-if="totalPages > 1" class="pagination">
+        <button 
+          @click="goToPage(1)" 
+          :disabled="currentPage === 1"
+          class="pagination-btn"
+        >
+          ⟪
+        </button>
+        <button 
+          @click="goToPage(currentPage - 1)" 
+          :disabled="currentPage === 1"
+          class="pagination-btn"
+        >
+          ‹
+        </button>
+        
+        <button
+          v-for="page in visiblePages"
+          :key="page"
+          @click="goToPage(page)"
+          :class="['pagination-btn', { active: currentPage === page }]"
+        >
+          {{ page }}
+        </button>
+
+        <button 
+          @click="goToPage(currentPage + 1)" 
+          :disabled="currentPage === totalPages"
+          class="pagination-btn"
+        >
+          ›
+        </button>
+        <button 
+          @click="goToPage(totalPages)" 
+          :disabled="currentPage === totalPages"
+          class="pagination-btn"
+        >
+          ⟫
+        </button>
       </div>
     </div>
 
@@ -243,6 +300,11 @@ const showAddModal = ref(false)
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
 
+// Pagination
+const currentPage = ref(1)
+const itemsPerPage = ref(10)
+const totalItems = ref(0)
+
 // Auth store (used to restrict district-admins)
 const authStore = useAuthStore()
 
@@ -306,8 +368,26 @@ const filteredFacilities = computed(() => {
     })
   }
 
-  return filtered
+  // Update total items for pagination
+  totalItems.value = filtered.length
+
+  // Apply pagination
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return filtered.slice(start, end)
 })
+
+const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value))
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
+
+const changeItemsPerPage = () => {
+  currentPage.value = 1 // Reset to first page when changing items per page
+}
 
 onMounted(() => {
   loadFacilities()
@@ -317,7 +397,9 @@ onMounted(() => {
 const loadFacilities = async () => {
   loading.value = true
   try {
-    const params = {}
+    const params = {
+      per_page: 1000 // Request a large number to get all facilities
+    }
     if (categoryFilter.value) {
       params.category_id = categoryFilter.value
     }
@@ -334,6 +416,7 @@ const loadFacilities = async () => {
     const data = response.data.data
     // Handle paginated response (data.data) or direct array
     facilities.value = data?.data || data || []
+    console.log('Loaded facilities count:', facilities.value.length)
   } catch (err) {
     console.error('Failed to load facilities:', err)
     error.value = 'Gagal memuatkan kemudahan'
@@ -558,6 +641,24 @@ const canModify = (facility) => {
   const norm = vals.map(v => v.toString().trim().toLowerCase()).filter(Boolean)
   return norm.includes(myDistrict)
 }
+
+// Visible page numbers for pagination
+const visiblePages = computed(() => {
+  const pages = []
+  const maxVisible = 5
+  let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2))
+  let end = Math.min(totalPages.value, start + maxVisible - 1)
+  
+  if (end - start + 1 < maxVisible) {
+    start = Math.max(1, end - maxVisible + 1)
+  }
+  
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+  
+  return pages
+})
 </script>
 
 <style scoped>
@@ -656,6 +757,45 @@ h1 {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 2px solid #f0f0f0;
+  background: #f8f9fa;
+}
+
+.results-info {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.items-per-page label {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.items-per-page select {
+  padding: 0.4rem 0.6rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.items-per-page select:focus {
+  outline: none;
+  border-color: #2d5f2e;
 }
 
 .facilities-table {
@@ -1007,6 +1147,47 @@ h1 {
   font-size: 1.5rem;
 }
 
+/* Pagination Styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border-top: 2px solid #f0f0f0;
+}
+
+.pagination-btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0.5rem 0.75rem;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #2d5f2e;
+  color: #2d5f2e;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-btn.active {
+  background: #2d5f2e;
+  color: white;
+  border-color: #2d5f2e;
+}
+
 @media (max-width: 768px) {
   .manage-facilities {
     padding: clamp(0.75rem, 1.5vw, 1rem);
@@ -1032,6 +1213,24 @@ h1 {
 
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .table-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .pagination {
+    gap: 0.25rem;
+    padding: 1rem;
+  }
+
+  .pagination-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
   }
 }
 </style>

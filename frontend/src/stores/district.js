@@ -27,8 +27,8 @@ export const useDistrictStore = defineStore('district', {
         email: 'info@mdm.terengganu.gov.my',
         address: 'Majlis Daerah Marang, 21600 Marang, Terengganu',
         website: 'https://mdm.terengganu.gov.my',
-        facebook: 'https://www.facebook.com/MDMarang',
-        instagram: 'https://www.instagram.com/mdmarang'
+        facebook: 'https://www.facebook.com/profile.php?id=100081313411458',
+        instagram: ''
       },
       {
         name: 'Setiu',
@@ -41,7 +41,7 @@ export const useDistrictStore = defineStore('district', {
         address: 'Majlis Daerah Setiu, 22100 Permaisuri, Terengganu',
         website: 'https://mds.terengganu.gov.my',
         facebook: 'https://www.facebook.com/MDSetiu',
-        instagram: 'https://www.instagram.com/mdsetiu'
+        instagram: ''
       },
       {
         name: 'Hulu Terengganu',
@@ -54,7 +54,7 @@ export const useDistrictStore = defineStore('district', {
         address: 'Majlis Daerah Hulu Terengganu, 21700 Kuala Berang, Terengganu',
         website: 'https://mdht.terengganu.gov.my',
         facebook: 'https://www.facebook.com/MDHuluTerengganu',
-        instagram: 'https://www.instagram.com/mdhuluterengganu'
+        instagram: ''
       }
       ,
       // New PBTs
@@ -68,8 +68,8 @@ export const useDistrictStore = defineStore('district', {
         email: 'info@mbkt.terengganu.gov.my',
         address: 'Majlis Bandaraya Kuala Terengganu, 20000 Kuala Terengganu, Terengganu',
         website: 'https://mbkt.terengganu.gov.my',
-        facebook: 'https://www.facebook.com/MBKTOfficial',
-        instagram: 'https://www.instagram.com/mbkt_official'
+        facebook: 'https://www.facebook.com/mbktrg',
+        instagram: ''
       },
       {
         name: 'Kemaman',
@@ -81,7 +81,7 @@ export const useDistrictStore = defineStore('district', {
         email: 'info@mpk.terengganu.gov.my',
         address: 'Majlis Perbandaran Kemaman, 24000 Kemaman, Terengganu',
         website: 'https://mpk.terengganu.gov.my',
-        facebook: 'https://www.facebook.com/MPKemaman',
+        facebook: 'https://www.facebook.com/MPKemaman.02',
         instagram: 'https://www.instagram.com/mpkemaman'
       },
       {

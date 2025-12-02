@@ -226,6 +226,17 @@ const navbarStyle = computed(() => {
     }
   }
 
+  // For admin pages, if no district is selected (clicked from landing), keep black
+  // If district is selected (clicked from district home), use district color
+  if (route.path.includes('/admin')) {
+    if (!districtStore.currentDistrict) {
+      return {
+        backgroundColor: '#111',
+        color: '#fff'
+      }
+    }
+  }
+
   const main = districtStore.districtColor || '#111'
   return {
     backgroundColor: main,

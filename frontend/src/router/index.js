@@ -109,6 +109,18 @@ const router = createRouter({
       component: () => import('../views/Booking/BookingConfirmationView.vue'),
       meta: { requiresAuth: true }
     },
+    {
+      path: '/:district/payment/success',
+      name: 'district-payment-success',
+      component: () => import('../views/Payment/PaymentSuccess.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/:district/payment/failed',
+      name: 'district-payment-failed',
+      component: () => import('../views/Payment/PaymentFailed.vue'),
+      meta: { requiresAuth: false }
+    },
     // Legacy routes (redirect to MDHT for backward compatibility)
     {
       path: '/login',

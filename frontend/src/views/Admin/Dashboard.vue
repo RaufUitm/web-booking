@@ -15,8 +15,11 @@
         <select v-model="selectedDistrict" @change="loadDashboardData">
           <option value="">Semua Daerah</option>
           <option value="Besut">Besut</option>
-          <option value="Marang">Marang</option>
           <option value="Setiu">Setiu</option>
+          <option value="Kuala Terengganu">Kuala Terengganu</option>
+          <option value="Marang">Marang</option>
+          <option value="Dungun">Dungun</option>
+          <option value="Kemaman">Kemaman</option>
           <option value="Hulu Terengganu">Hulu Terengganu</option>
         </select>
       </div>

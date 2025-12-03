@@ -3,24 +3,29 @@
 namespace App\Mail;
 
 use App\Models\Booking;
+use App\Services\InvoiceService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class BookingConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $booking;
+    private $invoicePath;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Booking $booking)
+    public function __construct(Booking $booking, ?string $invoicePath = null)
     {
         $this->booking = $booking->load(['facility', 'user']);
+        $this->invoicePath = $invoicePath;
     }
 
     /**
@@ -56,6 +61,15 @@ class BookingConfirmation extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        $attachments = [];
+
+        // Attach invoice PDF if path is provided
+        if ($this->invoicePath && Storage::exists($this->invoicePath)) {
+            $attachments[] = Attachment::fromStorage($this->invoicePath)
+                ->as('invoice-' . $this->booking->booking_reference . '.pdf')
+                ->withMime('application/pdf');
+        }
+
+        return $attachments;
     }
 }

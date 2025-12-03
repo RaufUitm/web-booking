@@ -13,7 +13,7 @@ class BookingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Booking::with(['user', 'facility']);
+        $query = Booking::with(['user', 'facility', 'payment']);
 
         // Always filter by user_id - users (including admin) only see their own bookings
         // Admins can see all bookings through the admin/bookings endpoint

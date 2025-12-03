@@ -35,4 +35,19 @@ return [
         ],
     ],
 
+    // Removed toyyibPay configuration
+
+        // Billplz configuration
+        'billplz' => [
+            'enabled' => env('BILLPLZ_API_KEY') ? true : false,
+            'api_key' => env('BILLPLZ_API_KEY'),
+            'x_signature' => env('BILLPLZ_X_SIGNATURE'),
+            'collection_id' => env('BILLPLZ_COLLECTION_ID'),
+            'sandbox' => env('BILLPLZ_SANDBOX', true),
+            // Billplz v3 REST API base URL (required for /bills)
+            'api_url' => env('BILLPLZ_SANDBOX', true)
+                ? 'https://www.billplz-sandbox.com/api/v3'
+                : 'https://www.billplz.com/api/v3',
+        ],
+
 ];

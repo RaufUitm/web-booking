@@ -333,7 +333,7 @@ class AdminController extends Controller
                 });
             }
 
-            $bookings = $query->latest()->paginate($request->get('per_page', 20));
+            $bookings = $query->with(['payment'])->latest()->paginate($request->get('per_page', 20));
 
             return response()->json([
                 'success' => true,
@@ -413,18 +413,19 @@ class AdminController extends Controller
             $type = $request->get('type', 'monthly');
             $year = $request->get('year', now()->year);
             $month = $request->get('month', now()->month);
+            $district = $request->get('district');
 
             $data = [];
 
             switch ($type) {
                 case 'monthly':
-                    $data = $this->getMonthlyReport($year, $month);
+                    $data = $this->getMonthlyReport($year, $month, $district);
                     break;
                 case 'yearly':
-                    $data = $this->getYearlyReport($year);
+                    $data = $this->getYearlyReport($year, $district);
                     break;
                 case 'facility':
-                    $data = $this->getFacilityReport($year, $month);
+                    $data = $this->getFacilityReport($year, $month, $district);
                     break;
             }
 
@@ -441,24 +442,41 @@ class AdminController extends Controller
         }
     }
 
-    private function getMonthlyReport($year, $month)
+    private function getMonthlyReport($year, $month, $district = null)
     {
-        $bookings = Booking::whereYear('booking_date', $year)
-            ->whereMonth('booking_date', $month)
-            ->selectRaw('DATE(booking_date) as date, COUNT(*) as total')
+        $query = Booking::whereYear('booking_date', $year)
+            ->whereMonth('booking_date', $month);
+
+        // Apply district filter
+        if ($district) {
+            $query->whereHas('facility', function($q) use ($district) {
+                $q->where('district', $district);
+            });
+        }
+
+        $bookings = $query->selectRaw('DATE(booking_date) as date, COUNT(*) as total')
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
-        // Calculate revenue from payments
-        $bookingIds = Booking::whereYear('booking_date', $year)
-            ->whereMonth('booking_date', $month)
-            ->pluck('id');
-        
-        $totalRevenue = DB::table('payments')
-            ->whereIn('booking_id', $bookingIds)
-            ->where('payment_status', 'completed')
-            ->sum('amount');
+        // Calculate revenue per date
+        foreach ($bookings as $booking) {
+            $dateQuery = Booking::whereDate('booking_date', $booking->date);
+            
+            if ($district) {
+                $dateQuery->whereHas('facility', function($q) use ($district) {
+                    $q->where('district', $district);
+                });
+            }
+            
+            $dateBookingIds = $dateQuery->pluck('id');
+            $booking->revenue = DB::table('payments')
+                ->whereIn('booking_id', $dateBookingIds)
+                ->where('payment_status', 'completed')
+                ->sum('amount');
+        }
+
+        $totalRevenue = $bookings->sum('revenue');
 
         return [
             'bookings' => $bookings,
@@ -467,21 +485,42 @@ class AdminController extends Controller
         ];
     }
 
-    private function getYearlyReport($year)
+    private function getYearlyReport($year, $district = null)
     {
-        $bookings = Booking::whereYear('booking_date', $year)
-            ->selectRaw('MONTH(booking_date) as month, COUNT(*) as total')
+        $query = Booking::whereYear('booking_date', $year);
+
+        // Apply district filter
+        if ($district) {
+            $query->whereHas('facility', function($q) use ($district) {
+                $q->where('district', $district);
+            });
+        }
+
+        $bookings = $query->selectRaw('MONTH(booking_date) as month, COUNT(*) as total')
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
-        // Calculate revenue from payments
-        $bookingIds = Booking::whereYear('booking_date', $year)->pluck('id');
-        
-        $totalRevenue = DB::table('payments')
-            ->whereIn('booking_id', $bookingIds)
-            ->where('payment_status', 'completed')
-            ->sum('amount');
+        // Calculate revenue per month
+        foreach ($bookings as $booking) {
+            $monthQuery = Booking::whereYear('booking_date', $year)
+                ->whereMonth('booking_date', $booking->month);
+            
+            if ($district) {
+                $monthQuery->whereHas('facility', function($q) use ($district) {
+                    $q->where('district', $district);
+                });
+            }
+            
+            $monthBookingIds = $monthQuery->pluck('id');
+            
+            $booking->revenue = DB::table('payments')
+                ->whereIn('booking_id', $monthBookingIds)
+                ->where('payment_status', 'completed')
+                ->sum('amount');
+        }
+
+        $totalRevenue = $bookings->sum('revenue');
 
         return [
             'bookings' => $bookings,
@@ -490,22 +529,37 @@ class AdminController extends Controller
         ];
     }
 
-    private function getFacilityReport($year, $month)
+    private function getFacilityReport($year, $month, $district = null)
     {
-        $bookings = Booking::with('facility')
+        $query = Booking::with('facility')
             ->whereYear('booking_date', $year)
-            ->whereMonth('booking_date', $month)
-            ->selectRaw('facility_id, COUNT(*) as total')
+            ->whereMonth('booking_date', $month);
+
+        // Apply district filter
+        if ($district) {
+            $query->whereHas('facility', function($q) use ($district) {
+                $q->where('district', $district);
+            });
+        }
+
+        $bookings = $query->selectRaw('facility_id, COUNT(*) as total')
             ->groupBy('facility_id')
             ->orderByDesc('total')
             ->get();
 
         // Calculate revenue from payments for each facility
         foreach ($bookings as $booking) {
-            $facilityBookingIds = Booking::where('facility_id', $booking->facility_id)
+            $facilityQuery = Booking::where('facility_id', $booking->facility_id)
                 ->whereYear('booking_date', $year)
-                ->whereMonth('booking_date', $month)
-                ->pluck('id');
+                ->whereMonth('booking_date', $month);
+            
+            if ($district) {
+                $facilityQuery->whereHas('facility', function($q) use ($district) {
+                    $q->where('district', $district);
+                });
+            }
+            
+            $facilityBookingIds = $facilityQuery->pluck('id');
             
             $booking->revenue = DB::table('payments')
                 ->whereIn('booking_id', $facilityBookingIds)

@@ -65,12 +65,12 @@
 
     <div v-if="showActions" class="summary-actions">
       <button
-        v-if="canCancel"
-        @click="$emit('cancel')"
-        class="btn-cancel"
+        v-if="showPayButton"
+        @click="$emit('payment')"
+        class="btn-payment"
         :style="{ backgroundColor: districtColor, borderColor: districtColor }"
       >
-        Batal Tempahan
+        Sahkan Pembayaran
       </button>
       <button
         v-if="canEdit"
@@ -79,6 +79,13 @@
         :style="{ backgroundColor: districtColor, borderColor: districtColor }"
       >
         Edit Tempahan
+      </button>
+      <button
+        v-if="canCancel"
+        @click="$emit('cancel')"
+        class="btn-cancel"
+      >
+        Batal Tempahan
       </button>
     </div>
   </div>
@@ -99,10 +106,14 @@ const props = defineProps({
   }
 })
 
-defineEmits(['cancel', 'edit'])
+defineEmits(['cancel', 'edit', 'payment'])
 
 const districtStore = useDistrictStore()
 const districtColor = computed(() => districtStore.districtColor)
+
+const showPayButton = computed(() => {
+  return props.booking.status === 'pending' && props.booking.payment_status !== 'PAID'
+})
 
 const duration = computed(() => {
   if (props.booking.booking_type === 'per_day') return 24
@@ -284,14 +295,28 @@ h3 {
 }
 
 .btn-cancel,
-.btn-edit {
+.btn-edit,
+.btn-payment {
   flex: 1;
   padding: 12px;
   border: none;
   border-radius: 4px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
+}
+
+.btn-payment {
+  background-color: #4CAF50;
+  color: white;
+  flex: 2;
+}
+
+.btn-payment:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
 }
 
 .btn-cancel {

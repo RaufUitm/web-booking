@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\FacilityController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\TimeSlotController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,10 @@ Route::get('/facilities/{id}/bookings', [FacilityController::class, 'bookings'])
 // Allow public access to available time slots so guests can view slot availability
 Route::get('/time-slots/available', [TimeSlotController::class, 'available']);
 
+// Payment callback - Must be public for toyyibPay webhook
+Route::post('/payment/callback', [PaymentController::class, 'handleCallback']);
+Route::get('/payment/return', [PaymentController::class, 'handleReturn']);
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
@@ -37,6 +42,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/bookings', [BookingController::class, 'store']);
     Route::put('/bookings/{id}', [BookingController::class, 'update']);
     Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
+
+    // Payment routes - Require authentication
+    Route::post('/payment/create', [PaymentController::class, 'createPayment']);
+    Route::get('/payment/verify', [PaymentController::class, 'verifyPayment']);
+    Route::post('/payment/check-status', [PaymentController::class, 'checkPaymentStatus']);
+    // Invoice download
+    Route::get('/bookings/{id}/invoice', [PaymentController::class, 'downloadInvoice']);
 
     // Admin routes - All admin roles can access
     Route::middleware('admin.role')->prefix('admin')->group(function () {

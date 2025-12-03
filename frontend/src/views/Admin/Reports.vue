@@ -14,6 +14,20 @@
         </select>
       </div>
 
+      <div v-if="canFilterDistrict" class="control-group">
+        <label>Daerah:</label>
+        <select v-model="selectedDistrict" @change="loadReport">
+          <option value="">Semua Daerah</option>
+          <option value="Besut">Besut</option>
+          <option value="Setiu">Setiu</option>
+          <option value="Kuala Terengganu">Kuala Terengganu</option>
+          <option value="Marang">Marang</option>
+          <option value="Dungun">Dungun</option>
+          <option value="Kemaman">Kemaman</option>
+          <option value="Hulu Terengganu">Hulu Terengganu</option>
+        </select>
+      </div>
+
       <div v-if="reportType !== 'yearly'" class="control-group">
         <label>Bulan:</label>
         <select v-model="selectedMonth" @change="loadReport">
@@ -53,7 +67,7 @@
         <div class="summary-card">
           <div class="card-icon">💰</div>
           <div class="card-content">
-            <div class="card-value">RM {{ (reportData.total_revenue || 0).toFixed(2) }}</div>
+            <div class="card-value">RM {{ Number(reportData.total_revenue || 0).toFixed(2) }}</div>
             <div class="card-label">Jumlah Pendapatan</div>
           </div>
         </div>
@@ -85,14 +99,14 @@
                 </span>
               </td>
               <td>{{ item.total }}</td>
-              <td>RM {{ (item.revenue || 0).toFixed(2) }}</td>
+              <td>RM {{ Number(item.revenue || 0).toFixed(2) }}</td>
             </tr>
           </tbody>
           <tfoot>
             <tr class="total-row">
               <td><strong>Jumlah</strong></td>
               <td><strong>{{ reportData.total_bookings || 0 }}</strong></td>
-              <td><strong>RM {{ (reportData.total_revenue || 0).toFixed(2) }}</strong></td>
+              <td><strong>RM {{ Number(reportData.total_revenue || 0).toFixed(2) }}</strong></td>
             </tr>
           </tfoot>
         </table>
@@ -113,17 +127,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import api from '@/api/axios'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
 
 const reportType = ref('monthly')
 const selectedMonth = ref(new Date().getMonth() + 1)
 const selectedYear = ref(new Date().getFullYear())
+const selectedDistrict = ref('')
 const loading = ref(false)
 const reportData = ref({
   bookings: [],
   total_bookings: 0,
   total_revenue: 0
+})
+
+const canFilterDistrict = computed(() => {
+  return authStore.isMasterAdmin || authStore.isStateAdmin
 })
 
 const months = [
@@ -145,14 +167,14 @@ const loadReport = async () => {
       year: selectedYear.value,
       month: selectedMonth.value
     }
-    // If district admin, restrict reports to their district
-    try {
-      const authStore = (await import('@/stores/auth')).useAuthStore()
-      if (authStore.isDistrictAdmin) {
-        params.district = authStore.userDistrict
-      }
-    } catch {
-      // ignore import errors; auth filter is best-effort in frontend
+    
+    // Apply district filter based on role
+    if (authStore.isDistrictAdmin) {
+      // District admin: always filter by their district
+      params.district = authStore.userDistrict
+    } else if (selectedDistrict.value) {
+      // Master/State admin: filter by selected district
+      params.district = selectedDistrict.value
     }
 
     const response = await api.get('/admin/reports', { params })
@@ -198,7 +220,7 @@ const exportToCSV = () => {
       row.push(item.facility?.name || 'N/A')
     }
     row.push(item.total)
-    row.push((item.revenue || 0).toFixed(2))
+    row.push(Number(item.revenue || 0).toFixed(2))
     csvContent += row.join(',') + '\n'
   })
 

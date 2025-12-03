@@ -170,9 +170,14 @@
           </div>
 
           <div class="modal-actions">
-            <button @click="showDetailsModal = false" class="btn-secondary">
-              Tutup
+            <button
+              v-if="selectedBooking?.payment?.payment_status === 'completed'"
+              @click="downloadInvoice(selectedBooking.id)"
+              class="btn-secondary"
+            >
+              Muat Turun Invois
             </button>
+            <button @click="showDetailsModal = false" class="btn-secondary">Tutup</button>
           </div>
         </div>
       </div>
@@ -184,6 +189,7 @@
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
 import { useAuthStore } from '@/stores/auth'
+import api from '@/api/axios'
 
 const bookings = ref([])
 const loading = ref(false)
@@ -294,6 +300,23 @@ const getStatusText = (status) => {
     cancelled: 'Dibatal'
   }
   return texts[status] || status
+}
+
+const downloadInvoice = async (bookingId) => {
+  try {
+    const response = await api.get(`/bookings/${bookingId}/invoice`, { responseType: 'blob' })
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `invoice-${bookingId}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    window.URL.revokeObjectURL(url)
+  } catch (e) {
+    alert('Gagal memuat turun invois.')
+  }
 }
 </script>
 

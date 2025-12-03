@@ -1,33 +1,33 @@
 <template>
   <div class="payment-form">
-    <h2>Payment Details</h2>
+    <h2>Butiran Pembayaran</h2>
 
     <div class="payment-summary">
-      <h3>Order Summary</h3>
+      <h3>Ringkasan Pesanan</h3>
       <div class="summary-row">
-        <span>Facility:</span>
+        <span>Kemudahan:</span>
         <strong>{{ booking.facility?.name }}</strong>
       </div>
       <div class="summary-row">
-        <span>Date:</span>
+        <span>Tarikh:</span>
         <strong>{{ formatDate(booking.booking_date) }}</strong>
       </div>
       <div class="summary-row">
-        <span>Time:</span>
+        <span>Masa:</span>
         <strong>
           <template v-if="booking.booking_type === 'per_day'">Sepanjang Hari</template>
           <template v-else>{{ booking.start_time || '' }} - {{ booking.end_time || '' }}</template>
         </strong>
       </div>
       <div class="summary-row total">
-        <span>Total Amount:</span>
-        <strong>${{ amount }}</strong>
+        <span>Jumlah Bayaran:</span>
+        <strong>RM{{ amount }}</strong>
       </div>
     </div>
 
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label>Payment Method</label>
+        <label>Kaedah Pembayaran</label>
         <div class="payment-methods">
           <label
             v-for="method in paymentMethods"
@@ -102,10 +102,10 @@
 
       <div class="form-actions">
         <button type="button" @click="$emit('cancel')" class="btn-cancel">
-          Cancel
+          Batal
         </button>
         <button type="submit" :disabled="loading" class="btn-submit">
-          {{ loading ? 'Processing...' : `Pay $${amount}` }}
+          {{ loading ? 'Memproses...' : `Bayar RM${amount}` }}
         </button>
       </div>
     </form>
@@ -114,6 +114,7 @@
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue'
+import api from '@/api/axios'
 
 const props = defineProps({
   booking: {
@@ -129,7 +130,7 @@ const props = defineProps({
 const emit = defineEmits(['cancel', 'success'])
 
 const form = ref({
-  payment_method: 'cash',
+  payment_method: 'online_banking',
   card_number: '',
   expiry: '',
   cvv: '',
@@ -137,11 +138,10 @@ const form = ref({
 })
 
 const paymentMethods = [
-  { value: 'cash', label: 'Cash', icon: '💵' },
-  { value: 'credit_card', label: 'Credit Card', icon: '💳' },
-  { value: 'debit_card', label: 'Debit Card', icon: '💳' },
-  { value: 'online_banking', label: 'Online Banking', icon: '🏦' },
-  { value: 'e-wallet', label: 'E-Wallet', icon: '📱' }
+  { value: 'online_banking', label: 'Perbankan Online (FPX)', icon: '🏦' },
+  { value: 'credit_card', label: 'Kad Kredit', icon: '💳' },
+  { value: 'debit_card', label: 'Kad Debit', icon: '💳' },
+  { value: 'e-wallet', label: 'E-Dompet', icon: '📱' }
 ]
 
 const loading = ref(false)
@@ -161,21 +161,21 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    // Create payment via toyyibPay
+    const response = await api.post('/payment/create', {
+      booking_id: props.booking.id
+    })
 
-    const paymentData = {
-      booking_id: props.booking.id,
-      amount: props.amount,
-      payment_method: form.value.payment_method,
-      payment_status: 'completed',
-      transaction_id: 'TXN' + Date.now()
+    if (response.data.success && response.data.payment_url) {
+      // Redirect to toyyibPay payment page
+      window.location.href = response.data.payment_url
+    } else {
+      throw new Error('Failed to create payment')
     }
 
-    emit('success', paymentData)
-  } catch {
-    error.value = 'Payment failed. Please try again.'
-  } finally {
+  } catch (err) {
+    console.error('Payment creation error:', err)
+    error.value = err.response?.data?.error || 'Payment failed. Please try again.'
     loading.value = false
   }
 }

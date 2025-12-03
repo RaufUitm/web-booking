@@ -142,7 +142,7 @@ const districtBackgrounds = {
   'Marang': '/image/daerah/marangmain.jpg',
   'Setiu': '/image/daerah/setiumain.jpg',
   'Hulu Terengganu': '/image/daerah/hulumain.jpg',
-  'Kuala Terengganu': '/image/daerah/ktmain.jpg',
+  'Kuala Terengganu': '/image/daerah/ktmain.jpeg',
   'Kemaman': '/image/daerah/kemamanmain.jpg',
   'Dungun': '/image/daerah/dungunmain.jpg',
 }

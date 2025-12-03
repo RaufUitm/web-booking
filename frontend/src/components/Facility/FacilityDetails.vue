@@ -10,7 +10,8 @@
           <div class="facility-meta">
             <span class="location">📍 {{ facility.location }}</span>
             <span class="capacity">👥 Kapasiti: {{ facility.capacity }} orang</span>
-            <span class="price">💰 {{ formattedPricePerHour }} / jam</span>
+            < 
+            <span class="price-day">💵 {{ formattedPricePerDay }} / hari</span>
           </div>
           <div class="availability">
             <span :class="['status', facility.is_available ? 'available' : 'unavailable']">
@@ -80,6 +81,7 @@ const districtColors = {
 const currentDistrictColor = computed(() => districtColors[districtStore.districtName] || districtColors['Hulu Terengganu'])
 const currencyFormatter = new Intl.NumberFormat('ms-MY', { style: 'currency', currency: 'MYR' })
 const formattedPricePerHour = computed(() => currencyFormatter.format(Number((props.facility && (props.facility.price_per_hour ?? 0)) || 0)))
+const formattedPricePerDay = computed(() => currencyFormatter.format(Number((props.facility && (props.facility.price_per_day ?? 0)) || 0)))
 
 const handleImageError = (e) => {
   // Prevent infinite loop if placeholder also fails

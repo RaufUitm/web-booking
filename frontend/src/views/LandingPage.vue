@@ -397,7 +397,7 @@ const navigateToDaerah = (daerah) => {
   background-image: url('/image/daerah/kt1.jpg'), url('/image/d.png');
 }
 .daerah-bg-kemaman {
-  background-image: url('/image/daerah/kemaman1.jpg'), url('/image/d.png');
+  background-image: url('/image/daerah/kemaman1.jpeg'), url('/image/d.png');
 }
 .daerah-bg-dungun {
   background-image: url('/image/daerah/dungun1.jpg'), url('/image/d.png');
@@ -424,7 +424,8 @@ const navigateToDaerah = (daerah) => {
 
 /* Small gap below the hero before the next section */
 .after-hero {
-  margin-top: clamp(1rem, 3vw, 2.5rem);
+  margin: clamp(1rem, 3vw, 2.5rem);
+  
 }
 
 /* Top-right auth CTAs */

@@ -67,6 +67,13 @@
               Lihat Butiran
             </button>
             <button
+              v-if="booking.status === 'confirmed' && booking.payment?.payment_status === 'completed'"
+              @click="viewInvoice(booking.id)"
+              class="btn-invoice"
+            >
+              📄 Invois
+            </button>
+            <button
               v-if="canCancel(booking)"
               @click="cancelBooking(booking.id)"
               class="btn-cancel"
@@ -172,6 +179,22 @@ const cancelBooking = async (id) => {
   } catch (error) {
     console.error('Failed to cancel booking:', error)
     alert('Gagal membatalkan tempahan. Sila cuba lagi.')
+  }
+}
+
+const viewInvoice = async (bookingId) => {
+  try {
+    const api = (await import('@/api/axios')).default
+    const response = await api.get(`/bookings/${bookingId}/invoice`, { responseType: 'blob' })
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+    // Open PDF in new tab
+    window.open(url, '_blank')
+    // Clean up after a delay
+    setTimeout(() => window.URL.revokeObjectURL(url), 100)
+  } catch (error) {
+    console.error('Failed to view invoice:', error)
+    alert('Gagal memaparkan invois. Sila cuba lagi.')
   }
 }
 </script>
@@ -324,13 +347,14 @@ h1 {
 }
 
 .btn-view,
+.btn-invoice,
 .btn-cancel {
   padding: 8px 20px;
   border: none;
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
 }
 
 .btn-view {
@@ -340,6 +364,17 @@ h1 {
 
 .btn-view:hover {
   background-color: #1976D2;
+  transform: translateY(-2px);
+}
+
+.btn-invoice {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.btn-invoice:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
 }
 
 .btn-cancel {

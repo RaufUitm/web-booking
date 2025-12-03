@@ -1,6 +1,7 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useDistrictStore } from '@/stores/district'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -274,9 +275,18 @@ const router = createRouter({
 // Navigation guard
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
+  const districtStore = useDistrictStore()
   const isAuthenticated = authStore.isAuthenticated
   const isAdmin = authStore.isAdmin
   const isDistrictAdmin = authStore.isDistrictAdmin
+
+  // Auto-set district for district admins accessing admin pages
+  if (isAuthenticated && isDistrictAdmin && to.meta.requiresAdmin) {
+    const userDistrict = authStore.userDistrict
+    if (userDistrict && (!districtStore.currentDistrict || districtStore.currentDistrict !== userDistrict)) {
+      districtStore.setDistrict(userDistrict)
+    }
+  }
 
   // Redirect authenticated users away from guest-only pages
   if (to.meta.guestOnly && isAuthenticated) {

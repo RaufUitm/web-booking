@@ -41,11 +41,17 @@
         </div>
 
         <div class="action-buttons">
-          <button @click="viewBooking" class="btn-primary">
-            Lihat Butiran Tempahan
+          <button @click="viewInvoice" class="btn-primary">
+            📄 Lihat Invois
           </button>
-          <button @click="downloadInvoice" class="btn-secondary">
-            Muat Turun Invois
+          <button @click="downloadInvoice" class="btn-primary">
+            ⬇️ Muat Turun Invois
+          </button>
+        </div>
+
+        <div class="action-buttons secondary-actions">
+          <button @click="viewBooking" class="btn-secondary">
+            Lihat Butiran Tempahan
           </button>
           <button @click="goToHome" class="btn-secondary">
             Kembali ke Laman Utama
@@ -204,6 +210,23 @@ onMounted(() => {
   verifyPayment()
 })
 
+// View invoice in new window/tab
+const viewInvoice = async () => {
+  try {
+    if (!bookingDetails.value?.id) return
+    const response = await api.get(`/bookings/${bookingDetails.value.id}/invoice`, { responseType: 'blob' })
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+    // Open in new window
+    window.open(url, '_blank')
+    // Clean up after a delay
+    setTimeout(() => window.URL.revokeObjectURL(url), 100)
+  } catch (e) {
+    console.error('Failed to view invoice:', e)
+    alert('Gagal memaparkan invois. Sila cuba lagi.')
+  }
+}
+
 // Download invoice helper
 const downloadInvoice = async () => {
   try {
@@ -219,6 +242,7 @@ const downloadInvoice = async () => {
     a.remove()
     window.URL.revokeObjectURL(url)
   } catch (e) {
+    console.error('Failed to download invoice:', e)
     alert('Gagal memuat turun invois. Sila cuba lagi.')
   }
 }
@@ -360,6 +384,10 @@ h2 {
   display: flex;
   gap: 12px;
   margin-top: 24px;
+}
+
+.action-buttons.secondary-actions {
+  margin-top: 12px;
 }
 
 .btn-primary,

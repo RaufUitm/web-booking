@@ -4,7 +4,7 @@ import api from '@/api/axios'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null,
+    user: JSON.parse(localStorage.getItem('user')) || null,
     token: localStorage.getItem('token') || null,
     loading: false,
     error: null
@@ -61,6 +61,7 @@ export const useAuthStore = defineStore('auth', {
         this.token = response.data.data?.token || response.data.token
         this.user = response.data.data?.user || response.data.user
         localStorage.setItem('token', this.token)
+        localStorage.setItem('user', JSON.stringify(this.user))
         api.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
 
         return response.data
@@ -85,6 +86,7 @@ export const useAuthStore = defineStore('auth', {
         this.token = response.data.data?.token || response.data.token
         this.user = response.data.data?.user || response.data.user
         localStorage.setItem('token', this.token)
+        localStorage.setItem('user', JSON.stringify(this.user))
         api.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
 
         return response.data
@@ -105,6 +107,7 @@ export const useAuthStore = defineStore('auth', {
         this.token = null
         this.user = null
         localStorage.removeItem('token')
+        localStorage.removeItem('user')
         delete api.defaults.headers.common['Authorization']
       }
     },
@@ -114,7 +117,8 @@ export const useAuthStore = defineStore('auth', {
 
       try {
         const response = await api.get('/me')
-        this.user = response.data
+        this.user = response.data.data || response.data
+        localStorage.setItem('user', JSON.stringify(this.user))
       } catch (error) {
         console.error('Fetch user error:', error)
         this.logout()

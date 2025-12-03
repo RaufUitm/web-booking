@@ -189,7 +189,6 @@
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
 import { useAuthStore } from '@/stores/auth'
-import api from '@/api/axios'
 
 const bookings = ref([])
 const loading = ref(false)

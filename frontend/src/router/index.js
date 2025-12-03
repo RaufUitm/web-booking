@@ -60,6 +60,12 @@ const router = createRouter({
       component: () => import('../views/Booking/BookingConfirmationView.vue'),
       meta: { requiresAuth: true }
     },
+    {
+      path: '/mdht/profile',
+      name: 'mdht-profile',
+      component: () => import('../views/Auth/ProfileView.vue'),
+      meta: { requiresAuth: true }
+    },
     // Generic district-prefixed routes (multi-tenancy)
     {
       path: '/:district',
@@ -101,6 +107,12 @@ const router = createRouter({
       path: '/:district/my-bookings',
       name: 'district-my-bookings',
       component: () => import('../views/Booking/MyBookingsView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/:district/profile',
+      name: 'district-profile',
+      component: () => import('../views/Auth/ProfileView.vue'),
       meta: { requiresAuth: true }
     },
     {

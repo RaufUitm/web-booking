@@ -50,7 +50,7 @@
                   📋 Tempahan Saya
                 </router-link>
                 <router-link :to="prefixPath('/profile')" class="dropdown-item" @click="closeUserMenu">
-                  ⚙️ Tetapan Profil
+                  ⚙️ Tetapan
                 </router-link>
                 <div class="dropdown-divider"></div>
                 <button @click="handleLogout" class="dropdown-item logout-btn">
@@ -226,9 +226,9 @@ const navbarStyle = computed(() => {
     }
   }
 
-  // For admin pages, if no district is selected (clicked from landing), keep black
+  // For admin pages and profile, if no district is selected (clicked from landing), keep black
   // If district is selected (clicked from district home), use district color
-  if (route.path.includes('/admin')) {
+  if (route.path.includes('/admin') || route.path.includes('/profile')) {
     if (!districtStore.currentDistrict) {
       return {
         backgroundColor: '#111',
@@ -541,12 +541,11 @@ main {
   background: none;
   border: none;
   text-align: left;
-  color: #2c3e50;
+  color: #000 !important;
   text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
   font-size: clamp(0.85rem, 1.1vw, 0.95rem);
-  color: rgba(255,255,255,0.85);
 }
 
 .dropdown-item:hover {
@@ -554,7 +553,7 @@ main {
 }
 
 .logout-btn {
-  color: #e74c3c;
+  color: #e74c3c !important;
   font-weight: 600;
 }
 

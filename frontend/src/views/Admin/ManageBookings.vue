@@ -43,6 +43,7 @@
             <th>Tarikh Tempahan</th>
             <th>Masa</th>
             <th>Bilangan Orang</th>
+            <th>Tarikh Ditempah</th>
             <th>Status</th>
             <th>Tindakan</th>
           </tr>
@@ -63,6 +64,7 @@
               <template v-else>{{ booking.start_time || '-' }} - {{ booking.end_time || '-' }}</template>
             </td>
             <td>{{ booking.number_of_people }}</td>
+            <td>{{ formatDateTime(booking.created_at) }}</td>
             <td>
               <span :class="['status-badge', getStatusClass(booking.status)]">
                 {{ getStatusText(booking.status) }}
@@ -161,6 +163,10 @@
               <span :class="['status-badge', getStatusClass(selectedBooking?.status)]">
                 {{ getStatusText(selectedBooking?.status) }}
               </span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Tarikh Ditempah:</span>
+              <span class="value">{{ formatDateTime(selectedBooking?.created_at) }}</span>
             </div>
           </div>
 
@@ -278,6 +284,17 @@ const formatDate = (dateStr) => {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
+  })
+}
+
+const formatDateTime = (dateTimeStr) => {
+  if (!dateTimeStr) return '-'
+  return new Date(dateTimeStr).toLocaleString('ms-MY', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   })
 }
 
@@ -399,8 +416,8 @@ h1 {
 }
 
 .bookings-table thead {
-  background: var(--theme-primary);
-  color: var(--theme-primary-contrast, #fff);
+  background: #000000;
+  color: white;
 }
 
 .bookings-table th {

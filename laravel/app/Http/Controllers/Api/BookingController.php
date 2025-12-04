@@ -64,6 +64,7 @@ class BookingController extends Controller
             'facility_id' => 'required|exists:facilities,id',
             'booking_type' => 'required|in:per_day,per_hour',
             'booking_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'nullable|date|after_or_equal:booking_date',
             'number_of_people' => 'required|integer|min:1',
             'notes' => 'nullable|string',
         ]);
@@ -139,6 +140,7 @@ class BookingController extends Controller
                 'facility_id' => $request->facility_id,
                 'booking_type' => 'per_day',
                 'booking_date' => $request->booking_date,
+                'end_date' => $request->end_date,
                 'number_of_people' => $request->number_of_people,
                 'notes' => $request->notes,
                 'status' => 'pending',
@@ -183,6 +185,7 @@ class BookingController extends Controller
         $validator = Validator::make($request->all(), [
             'status' => 'sometimes|in:pending,confirmed,cancelled,completed',
             'booking_date' => 'sometimes|date|after_or_equal:today',
+            'end_date' => 'nullable|date|after_or_equal:booking_date',
             'number_of_people' => 'sometimes|integer|min:1',
             'notes' => 'nullable|string',
         ]);

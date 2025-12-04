@@ -305,7 +305,7 @@
                         <td>
                             @php
                                 $typeMap = [
-                                    'per_day' => 'Sehari',
+                                    'per_day' => 'Per Hari',
                                     'per_hour' => 'Per Jam',
                                 ];
                                 $typeMalay = $typeMap[$booking->booking_type] ?? ucfirst(str_replace('_', ' ', $booking->booking_type));

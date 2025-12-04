@@ -36,7 +36,15 @@ class PaymentController extends Controller
             $pricePerDay = floatval($booking->facility->price_per_day ?? 0);
             if ($totalAmount <= 0) {
                 if ($booking->booking_type === 'per_day') {
-                    $totalAmount = $pricePerDay > 0 ? $pricePerDay : ($pricePerHour * 24);
+                    // Calculate number of days
+                    $dayCount = 1;
+                    if ($booking->end_date && $booking->booking_date) {
+                        $start = strtotime($booking->booking_date);
+                        $end = strtotime($booking->end_date);
+                        $dayCount = max(1, round(($end - $start) / 86400) + 1);
+                    }
+                    $perDayPrice = $pricePerDay > 0 ? $pricePerDay : ($pricePerHour * 24);
+                    $totalAmount = $perDayPrice * $dayCount;
                 } else {
                     if ($booking->start_time && $booking->end_time) {
                         $start = strtotime('2000-01-01 ' . $booking->start_time);

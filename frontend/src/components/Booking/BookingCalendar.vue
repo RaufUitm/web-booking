@@ -38,13 +38,22 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  // Optional range selection support
+  selectedStartDate: {
+    type: String,
+    default: ''
+  },
+  selectedEndDate: {
+    type: String,
+    default: ''
+  },
   bookings: {
     type: Array,
     default: () => []
   }
 })
 
-const emit = defineEmits(['date-selected'])
+const emit = defineEmits(['date-selected', 'range-selected'])
 
 const currentDate = ref(new Date())
 const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -99,21 +108,51 @@ const createDayObject = (date, isCurrentMonth) => {
 
   const dateStr = date.toISOString().split('T')[0]
 
+  // Range selection helpers
+  const inRange = () => {
+    if (!props.selectedStartDate || !props.selectedEndDate) return false
+    const start = new Date(props.selectedStartDate)
+    const end = new Date(props.selectedEndDate)
+    start.setHours(0,0,0,0)
+    end.setHours(0,0,0,0)
+    return date >= start && date <= end
+  }
+
   return {
     day: date.getDate(),
     date: dateStr,
     key: dateStr,
     isCurrentMonth,
     isToday: date.getTime() === today.getTime(),
-    isSelected: dateStr === props.selectedDate,
+    isSelected: (dateStr === props.selectedDate) || inRange(),
     isPast: date < today,
     hasBooking: props.bookings.some(b => b.booking_date === dateStr)
   }
 }
 
+// Range selection state (local for interaction)
+const rangeStart = ref(props.selectedStartDate || '')
+const rangeEnd = ref(props.selectedEndDate || '')
+
 const selectDate = (date) => {
   if (date.isPast || !date.isCurrentMonth) return
-  emit('date-selected', date.date)
+  // If no start, set start
+  if (!rangeStart.value || (rangeStart.value && rangeEnd.value)) {
+    rangeStart.value = date.date
+    rangeEnd.value = ''
+    emit('date-selected', date.date)
+    return
+  }
+  // If start set but no end, define end (ensure chronological order)
+  const start = new Date(rangeStart.value)
+  const chosen = new Date(date.date)
+  if (chosen < start) {
+    rangeEnd.value = rangeStart.value
+    rangeStart.value = date.date
+  } else {
+    rangeEnd.value = date.date
+  }
+  emit('range-selected', { startDate: rangeStart.value, endDate: rangeEnd.value })
 }
 
 const previousMonth = () => {

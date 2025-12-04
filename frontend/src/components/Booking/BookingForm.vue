@@ -4,7 +4,7 @@
 
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label for="booking_date">Tarikh Tempahan</label>
+        <label for="booking_date">Tarikh Masuk</label>
         <input
           id="booking_date"
           v-model="form.booking_date"
@@ -15,26 +15,51 @@
         />
       </div>
 
+      <!-- Optional end date for per-day bookings -->
+      <div class="form-group" v-if="form.booking_type === 'per_day'">
+        <label for="end_date">Tarikh Keluar (Pilihan)</label>
+        <input
+          id="end_date"
+          v-model="form.end_date"
+          type="date"
+          :min="form.booking_date || minDate"
+        />
+      </div>
+
       <div class="form-group">
           <label>Jenis Tempahan</label>
           <div class="radio-group">
             <label><input type="radio" value="per_day" v-model="form.booking_type" /> Per Hari</label>
             <label><input type="radio" value="per_hour" v-model="form.booking_type" /> Per Jam</label>
           </div>
-
           <!-- Per-hour inputs -->
           <div v-if="form.booking_type === 'per_hour'" class="per-hour">
-            <label>Mulai (jam)</label>
-            <select v-model="form.start_time">
-              <option value="">Pilih mula</option>
-              <option v-for="t in hourOptions" :key="t" :value="t">{{ t }}</option>
-            </select>
-
-            <label>Tamat (jam)</label>
-            <select v-model="form.end_time">
-              <option value="">Pilih tamat</option>
-              <option v-for="t in hourOptions" :key="t" :value="t">{{ t }}</option>
-            </select>
+            <div class="time-row">
+              <div class="time-group">
+                <label>Mulai</label>
+                <div class="time-inline">
+                  <select v-model.number="startHour" aria-label="Mulai Jam">
+                    <option value="">Jam</option>
+                    <option v-for="h in hourOptions12" :key="h.value" :value="h.value">{{ h.label }}</option>
+                  </select>
+                  <select v-model="startPeriod" aria-label="Mulai AM/PM">
+                    <option v-for="p in periodOptions" :key="p" :value="p">{{ p }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="time-group">
+                <label>Tamat</label>
+                <div class="time-inline">
+                  <select v-model.number="endHour" aria-label="Tamat Jam">
+                    <option value="">Jam</option>
+                    <option v-for="h in hourOptions12" :key="h.value" :value="h.value">{{ h.label }}</option>
+                  </select>
+                  <select v-model="endPeriod" aria-label="Tamat AM/PM">
+                    <option v-for="p in periodOptions" :key="p" :value="p">{{ p }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
       </div>
 
@@ -67,13 +92,18 @@
           <span>Kemudahan:</span>
           <strong>{{ facility?.name }}</strong>
         </div>
-        <div class="summary-row">
+        <div class="summary-row" v-if="form.booking_type === 'per_hour'">
           <span>Harga sejam:</span>
           <strong>RM {{ facility?.price_per_hour }}</strong>
         </div>
+        <div class="summary-row" v-else>
+          <span>Harga sehari:</span>
+          <strong>RM {{ facility?.price_per_day || (facility?.price_per_hour * 24) }}</strong>
+        </div>
         <div class="summary-row">
           <span>Tempoh:</span>
-          <strong>{{ duration }} jam</strong>
+          <strong v-if="form.booking_type === 'per_hour'">{{ duration }} jam</strong>
+          <strong v-else>{{ dayCount }} hari</strong>
         </div>
         <div class="summary-row total">
           <span>Jumlah:</span>
@@ -132,6 +162,7 @@ const form = ref({
   booking_type: 'per_hour',
   start_time: '',
   end_time: '',
+  end_date: '',
   number_of_people: 1,
   notes: ''
 })
@@ -162,13 +193,24 @@ const duration = computed(() => {
   return 0
 })
 
+// Number of days for per-day bookings (1 if end_date not set)
+const dayCount = computed(() => {
+  if (form.value.booking_type !== 'per_day' || !form.value.booking_date) return 0
+  if (!form.value.end_date) return 1
+  const start = new Date(form.value.booking_date)
+  const end = new Date(form.value.end_date)
+  const diff = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1
+  return diff > 0 ? diff : 1
+})
+
 const totalPrice = computed(() => {
   if (!props.facility || !duration.value) return 0
   if (form.value.booking_type === 'per_day') {
     // use price_per_day if available, otherwise fall back to price_per_hour * 24
     const perDay = parseFloat(props.facility.price_per_day || 0)
-    if (perDay > 0) return perDay.toFixed(2)
-    return (props.facility.price_per_hour * duration.value).toFixed(2)
+    const days = dayCount.value || 1
+    if (perDay > 0) return (perDay * days).toFixed(2)
+    return (props.facility.price_per_hour * 24 * days).toFixed(2)
   }
   return (props.facility.price_per_hour * duration.value).toFixed(2)
 })
@@ -181,12 +223,57 @@ watch(() => form.value.booking_date, (newDate) => {
 
 // loadAvailableSlots removed: per-slot flow is no longer supported
 
-// generate hour options from 07:00 to 24:00 in 1-hour steps
-const hourOptions = []
-for (let h = 7; h <= 24; h++) {
-  const label = h === 24 ? '24:00' : (h < 10 ? `0${h}:00` : `${h}:00`)
-  hourOptions.push(label)
+// 12-hour selection model with AM/PM, internally convert to 24-hour HH:00 values
+const hourOptions12 = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: `${i + 1}:00` })) // 1..12
+const periodOptions = ['am', 'pm']
+const startHour = ref('')
+const startPeriod = ref('am')
+const endHour = ref('')
+const endPeriod = ref('am')
+
+function to24HourString(hour12, period) {
+  if (!hour12 || !period) return ''
+  let h = Number(hour12)
+  if (period.toLowerCase() === 'am') {
+    h = h % 12 // 12 AM -> 0
+  } else {
+    h = (h % 12) + 12 // 12 PM -> 12
+  }
+  const hh = h.toString().padStart(2, '0')
+  return `${hh}:00`
 }
+
+watch([startHour, startPeriod], ([h, p]) => {
+  form.value.start_time = to24HourString(h, p)
+})
+
+watch([endHour, endPeriod], ([h, p]) => {
+  form.value.end_time = to24HourString(h, p)
+})
+
+// Initialize selects if form has existing 24-hour values (edit or revisit)
+function from24HourString(hhmm) {
+  if (!hhmm) return { h: '', p: 'AM' }
+  const [hh] = hhmm.split(':')
+  let h24 = Number(hh)
+  let p = h24 < 12 ? 'am' : 'pm'
+  let h12 = h24 % 12
+  if (h12 === 0) h12 = 12
+  return { h: h12, p }
+}
+
+onMounted(() => {
+  if (form.value.start_time) {
+    const { h, p } = from24HourString(form.value.start_time)
+    startHour.value = h
+    startPeriod.value = p
+  }
+  if (form.value.end_time) {
+    const { h, p } = from24HourString(form.value.end_time)
+    endHour.value = h
+    endPeriod.value = p
+  }
+})
 
 const handleSubmit = async () => {
   loading.value = true
@@ -198,6 +285,7 @@ const handleSubmit = async () => {
       facility_id: props.facility.id,
       booking_type: form.value.booking_type,
       booking_date: form.value.booking_date,
+      end_date: form.value.booking_type === 'per_day' ? (form.value.end_date || null) : null,
       number_of_people: form.value.number_of_people,
       notes: form.value.notes
     }
@@ -370,5 +458,46 @@ small {
 .btn-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Inline time selection */
+.time-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.time-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.time-inline {
+  display: flex;
+  gap: 8px;
+}
+
+.time-inline select {
+  width: clamp(100px, 6vw, 120px);
+}
+
+/* Radio group inline alignment */
+.radio-group {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.radio-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+  width: 16px;
+  height: 16px;
 }
 </style>

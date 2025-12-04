@@ -71,7 +71,14 @@ const totalAmount = computed(() => {
   const pricePerDay = parseNum(booking.value.facility.price_per_day)
   
   if (booking.value.booking_type === 'per_day') {
-    return pricePerDay || (pricePerHour * 24)
+    let dayCount = 1
+    if (booking.value.end_date && booking.value.booking_date) {
+      const start = new Date(booking.value.booking_date)
+      const end = new Date(booking.value.end_date)
+      const diff = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1
+      dayCount = diff > 0 ? diff : 1
+    }
+    return (pricePerDay || (pricePerHour * 24)) * dayCount
   }
   
   // Calculate duration for per_hour

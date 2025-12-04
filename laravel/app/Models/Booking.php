@@ -14,6 +14,7 @@ class Booking extends Model
         'start_time',
         'end_time',
         'booking_date',
+        'end_date',
         'number_of_people',
         'status',
         'total_amount',
@@ -22,6 +23,7 @@ class Booking extends Model
 
     protected $casts = [
         'booking_date' => 'date',
+        'end_date' => 'date',
     ];
 
     public function user()

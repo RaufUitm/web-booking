@@ -21,8 +21,12 @@
     <div class="summary-section">
       <h3>Maklumat Tempahan</h3>
       <div class="detail-row">
-        <span class="label">Tarikh:</span>
+        <span class="label">Tarikh{{ booking.booking_type === 'per_day' && booking.end_date ? ' Masuk' : '' }}:</span>
         <span class="value">{{ formatDate(booking.booking_date) }}</span>
+      </div>
+      <div class="detail-row" v-if="booking.booking_type === 'per_day' && booking.end_date">
+        <span class="label">Tarikh Keluar:</span>
+        <span class="value">{{ formatDate(booking.end_date) }}</span>
       </div>
       <div class="detail-row">
         <span class="label">Masa:</span>
@@ -41,6 +45,10 @@
           {{ formatStatus(booking.status) }}
         </span>
       </div>
+      <div class="detail-row">
+        <span class="label">Tarikh Ditempah:</span>
+        <span class="value">{{ formatDateTime(booking.created_at) }}</span>
+      </div>
       <div v-if="booking.notes" class="detail-row notes">
         <span class="label">Catatan:</span>
         <span class="value">{{ booking.notes }}</span>
@@ -49,13 +57,20 @@
 
     <div class="summary-section pricing">
       <h3>Harga</h3>
-      <div class="detail-row">
+      <div class="detail-row" v-if="booking.booking_type === 'per_hour'">
         <span class="label">Harga setiap jam:</span>
         <span class="value">{{ formattedPricePerHour }}</span>
       </div>
+      <div class="detail-row" v-else>
+        <span class="label">Harga setiap hari:</span>
+        <span class="value">{{ currencyFormatter.format(pricePerDay || (pricePerHour * 24)) }}</span>
+      </div>
       <div class="detail-row">
         <span class="label">Tempoh:</span>
-        <span class="value">{{ duration }} jam</span>
+        <span class="value">
+          <template v-if="booking.booking_type === 'per_hour'">{{ duration }} jam</template>
+          <template v-else>{{ dayCount }} hari</template>
+        </span>
       </div>
       <div class="detail-row total">
         <span class="label">Jumlah:</span>
@@ -115,8 +130,17 @@ const showPayButton = computed(() => {
   return props.booking.status === 'pending' && props.booking.payment_status !== 'PAID'
 })
 
+const dayCount = computed(() => {
+  if (props.booking.booking_type !== 'per_day' || !props.booking.booking_date) return 0
+  if (!props.booking.end_date) return 1
+  const start = new Date(props.booking.booking_date)
+  const end = new Date(props.booking.end_date)
+  const diff = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1
+  return diff > 0 ? diff : 1
+})
+
 const duration = computed(() => {
-  if (props.booking.booking_type === 'per_day') return 24
+  if (props.booking.booking_type === 'per_day') return 24 * dayCount.value
 
   const startStr = props.booking.start_time || ''
   const endStr = props.booking.end_time || ''
@@ -138,7 +162,10 @@ const pricePerDay = computed(() => parseNumber(props.booking.facility?.price_per
 // Numeric total (used for calculations) and formatted currency strings
 const totalPriceNumber = computed(() => {
   if (!props.booking.facility) return 0
-  if (props.booking.booking_type === 'per_day') return pricePerDay.value
+  if (props.booking.booking_type === 'per_day') {
+    const days = dayCount.value || 1
+    return (pricePerDay.value || (pricePerHour.value * 24)) * days
+  }
   if (!duration.value) return 0
   return pricePerHour.value * duration.value
 })
@@ -163,6 +190,17 @@ const formatDate = (date) => {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
+  })
+}
+
+const formatDateTime = (dateTime) => {
+  if (!dateTime) return '-'
+  return new Date(dateTime).toLocaleString('ms-MY', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   })
 }
 

@@ -29,18 +29,25 @@
             'past-date': date.isPast,
             'selected': date.isSelected,
             'has-bookings': date.bookingCount > 0,
+            'has-full-day': date.hasPerDay,
             'today': date.isToday
           }
         ]"
         @click="selectDate(date)"
       >
         <div class="date-number">{{ date.day }}</div>
-        <div v-if="date.bookingCount > 0" class="booking-dots">
+        <!-- Full day indicator -->
+        <div v-if="date.hasPerDay" class="full-day-indicator"></div>
+        <!-- Per-hour bookings with dots and times -->
+        <div v-else-if="date.bookingCount > 0" class="booking-dots">
           <span
             v-for="i in Math.min(date.bookingCount, 3)"
             :key="i"
             class="dot"
           ></span>
+        </div>
+        <div v-if="date.perHourTimes.length > 0" class="time-labels">
+          <span v-for="time in date.perHourTimes.slice(0, 2)" :key="time" class="time-label">{{ time }}</span>
         </div>
       </div>
     </div>
@@ -113,6 +120,7 @@ const currentDate = ref(new Date())
 const selectedDate = ref(null)
 const bookingsByDate = ref({})
 const loading = ref(false)
+const loadedMonths = ref(new Set())
 
 const daysOfWeek = ['Ahd', 'Isn', 'Sel', 'Rab', 'Kha', 'Jum', 'Sab']
 
@@ -171,6 +179,14 @@ const createDayObject = (date, isCurrentMonth) => {
   const dayDate = new Date(date)
   dayDate.setHours(0, 0, 0, 0)
 
+  // Check if any booking is per_day
+  const hasPerDay = bookings.some(b => b.booking_type === 'per_day')
+  
+  // Extract per-hour times for display
+  const perHourTimes = bookings
+    .filter(b => b.booking_type === 'per_hour' && b.start_time)
+    .map(b => b.start_time.substring(0, 5)) // Get HH:MM format
+
   return {
     date: dateStr,
     day: date.getDate(),
@@ -179,6 +195,8 @@ const createDayObject = (date, isCurrentMonth) => {
     isToday: dayDate.getTime() === today.getTime(),
     isSelected: selectedDate.value === dateStr,
     bookingCount: bookings.length,
+    hasPerDay: hasPerDay,
+    perHourTimes: perHourTimes,
     bookings
   }
 }
@@ -230,33 +248,77 @@ const selectDate = (date) => {
 }
 
 const loadBookings = async () => {
+  // Don't reset bookingsByDate immediately to prevent flickering
+  const year = currentDate.value.getFullYear()
+  const month = currentDate.value.getMonth() + 1
+  const monthKey = `${year}-${month}`
+  
+  // Check if we've already loaded this month
+  if (loadedMonths.value.has(monthKey)) {
+    return // Already loaded
+  }
+  
   loading.value = true
   try {
     const response = await api.get(`/facilities/${props.facilityId}/bookings`, {
       params: {
-        year: currentDate.value.getFullYear(),
-        month: currentDate.value.getMonth() + 1
+        year: year,
+        month: month
       }
     })
 
     const bookings = response.data.data || response.data
     console.log('Loaded bookings:', bookings)
 
-    // Group bookings by date
-    bookingsByDate.value = {}
+    // Group bookings by date (preserve existing data)
+    const newBookingsByDate = { ...bookingsByDate.value }
+    
     if (Array.isArray(bookings)) {
       bookings.forEach(booking => {
         // Convert booking_date to YYYY-MM-DD format
-        let date = booking.booking_date
-        if (date.includes('T')) {
-          date = date.split('T')[0]
+        let startDate = booking.booking_date
+        if (startDate.includes('T')) {
+          startDate = startDate.split('T')[0]
         }
-        if (!bookingsByDate.value[date]) {
-          bookingsByDate.value[date] = []
+        
+        // For per_day bookings with end_date, mark all days in the range
+        if (booking.booking_type === 'per_day' && booking.end_date) {
+          let endDate = booking.end_date
+          if (endDate.includes('T')) {
+            endDate = endDate.split('T')[0]
+          }
+          
+          // Generate all dates in the range
+          const start = new Date(startDate)
+          const end = new Date(endDate)
+          const currentDateInRange = new Date(start)
+          
+          while (currentDateInRange <= end) {
+            const dateStr = formatDateStr(currentDateInRange)
+            if (!newBookingsByDate[dateStr]) {
+              newBookingsByDate[dateStr] = []
+            }
+            // Avoid duplicates
+            if (!newBookingsByDate[dateStr].find(b => b.id === booking.id)) {
+              newBookingsByDate[dateStr].push(booking)
+            }
+            currentDateInRange.setDate(currentDateInRange.getDate() + 1)
+          }
+        } else {
+          // Single day booking or per_hour
+          if (!newBookingsByDate[startDate]) {
+            newBookingsByDate[startDate] = []
+          }
+          // Avoid duplicates
+          if (!newBookingsByDate[startDate].find(b => b.id === booking.id)) {
+            newBookingsByDate[startDate].push(booking)
+          }
         }
-        bookingsByDate.value[date].push(booking)
       })
     }
+    
+    bookingsByDate.value = newBookingsByDate
+    loadedMonths.value.add(monthKey)
     console.log('Bookings by date:', bookingsByDate.value)
   } catch (error) {
     console.error('Failed to load bookings:', error)
@@ -456,6 +518,64 @@ const currentDistrictColor = computed(() => districtColors[districtStore.distric
 
 .calendar-day.selected .dot {
   background: #ffd54f;
+}
+
+/* Full day indicator - fills the entire box */
+.full-day-indicator {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--mdht-light-green) 0%, var(--mdht-green) 100%);
+  opacity: 0.25;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.calendar-day.has-full-day {
+  border: 3px solid var(--mdht-green);
+  background: rgba(45, 95, 46, 0.08);
+  box-shadow: inset 0 0 0 1px var(--mdht-light-green);
+}
+
+.calendar-day.has-full-day .date-number {
+  font-weight: 800;
+  color: var(--mdht-dark-green);
+  position: relative;
+  z-index: 1;
+}
+
+.calendar-day.selected.has-full-day {
+  border-color: var(--mdht-dark-green);
+  background: var(--mdht-green);
+}
+
+.calendar-day.selected.has-full-day .date-number {
+  color: white;
+}
+
+/* Time labels for per-hour bookings */
+.time-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: 2px;
+  font-size: 0.65rem;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.time-label {
+  background: var(--mdht-green);
+  color: white;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.calendar-day.selected .time-label {
+  background: #ffd54f;
+  color: #333;
 }
 
 /* Bookings Section */

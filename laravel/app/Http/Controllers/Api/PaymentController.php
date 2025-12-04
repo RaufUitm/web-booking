@@ -3,18 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\BookingConfirmation;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Services\ToyyibpayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\BookingConfirmation;
 
 class PaymentController extends Controller
 {
     /**
-     * Create a payment bill via toyyibPay
+     * Create a payment bill via ToyyibPay only
      */
     public function createPayment(Request $request)
     {
@@ -25,139 +26,134 @@ class PaymentController extends Controller
         try {
             $booking = Booking::with(['facility', 'user'])->findOrFail($request->booking_id);
 
-            // Check if booking already paid
-            if ($booking->status === 'CONFIRMED') {
-                return response()->json([
-                    'error' => 'Booking already confirmed'
-                ], 400);
+            if (strtolower($booking->status) === 'confirmed') {
+                return response()->json(['error' => 'Booking already confirmed'], 400);
             }
 
-            // Calculate total amount
-            $totalAmount = 0;
+            // Prefer stored total if available
+            $totalAmount = floatval($booking->total_amount ?? 0);
             $pricePerHour = floatval($booking->facility->price_per_hour ?? 0);
             $pricePerDay = floatval($booking->facility->price_per_day ?? 0);
-            
-            if ($booking->booking_type === 'per_day') {
-                $totalAmount = $pricePerDay > 0 ? $pricePerDay : ($pricePerHour * 24);
-            } else {
-                // Calculate hours from start_time to end_time
-                if ($booking->start_time && $booking->end_time) {
-                    $start = strtotime($booking->start_time);
-                    $end = strtotime($booking->end_time);
-                    $hours = ($end - $start) / 3600;
-                    $totalAmount = $pricePerHour * $hours;
+            if ($totalAmount <= 0) {
+                if ($booking->booking_type === 'per_day') {
+                    $totalAmount = $pricePerDay > 0 ? $pricePerDay : ($pricePerHour * 24);
+                } else {
+                    if ($booking->start_time && $booking->end_time) {
+                        $start = strtotime('2000-01-01 ' . $booking->start_time);
+                        $end = strtotime('2000-01-01 ' . $booking->end_time);
+                        $hours = max(0, ($end - $start) / 3600);
+                        $totalAmount = $pricePerHour * $hours;
+                    }
                 }
             }
 
-            // Persist computed total on the booking for consistent invoice display
+            if ($totalAmount <= 0) {
+                Log::warning('Computed totalAmount invalid', [
+                    'booking_id' => $booking->id,
+                    'type' => $booking->booking_type,
+                    'price_per_hour' => $pricePerHour,
+                    'price_per_day' => $pricePerDay,
+                    'start_time' => $booking->start_time,
+                    'end_time' => $booking->end_time,
+                ]);
+                return response()->json(['error' => 'Jumlah bayaran tidak sah untuk tempahan ini.'], 422);
+            }
+
             if (empty($booking->total_amount) || $booking->total_amount != $totalAmount) {
                 $booking->total_amount = $totalAmount;
                 $booking->save();
             }
 
-            // Use Billplz gateway
-            if (config('services.billplz.enabled')) {
-                $billplz = app(\App\Services\BillplzService::class);
-                $amountCents = max(0, intval($totalAmount * 100));
-                if ($amountCents < 100) {
-                    // Billplz requires minimum amount of RM1.00 (100 cents)
-                    return response()->json(['error' => 'Jumlah pembayaran minimum ialah RM1.00'], 422);
-                }
-                $bill = $billplz->createBill([
-                    'email' => $booking->user->email,
-                    'mobile' => $booking->user->phone ?? $booking->phone ?? '0123456789',
-                    'name' => $booking->user->name,
-                    'amount' => $amountCents,
-                    'callback_url' => config('app.url') . '/api/payment/callback',
-                    'redirect_url' => config('app.url') . '/api/payment/return',
-                    'reference_1' => $booking->booking_reference,
-                    'description' => 'Facility Booking - ' . $booking->facility->district . ' - Ref: ' . $booking->booking_reference,
-                ]);
-
-                $billId = $bill['id'] ?? null;
-                $paymentUrl = $bill['url'] ?? null;
-                if (!$billId || !$paymentUrl) {
-                    Log::error('Billplz createBill invalid response', ['bill' => $bill]);
-                    return response()->json(['error' => 'Invalid payment response'], 500);
-                }
-
-                Payment::create([
-                    'booking_id' => $booking->id,
-                    'amount' => $totalAmount,
-                    'payment_method' => 'online_banking',
-                    'transaction_id' => $billId,
-                    'payment_status' => 'pending',
-                ]);
-
-                return response()->json([
-                    'success' => true,
-                    'payment_url' => $paymentUrl,
-                    'bill_code' => $billId,
-                ]);
-            } else {
-                return response()->json(['error' => 'Billplz is not configured'], 500);
+            if (!config('services.toyyibpay.enabled')) {
+                return response()->json(['error' => 'ToyyibPay is not configured'], 500);
             }
 
+            $toyyib = app(ToyyibpayService::class);
+            $amountCents = max(0, intval(round($totalAmount * 100)));
+            if ($amountCents < 100) {
+                return response()->json(['error' => 'Jumlah pembayaran minimum ialah RM1.00'], 422);
+            }
+
+            $bill = $toyyib->createBill([
+                'billName' => 'Tempahan ' . ($booking->facility->name ?? 'Kemudahan'),
+                'billDescription' => 'Tempahan Ref: ' . ($booking->booking_reference ?? $booking->id),
+                'billAmount' => $amountCents,
+                'customerName' => $booking->user->name,
+                'customerEmail' => $booking->user->email,
+                'customerPhone' => $booking->user->phone ?? $booking->phone ?? '0123456789',
+            ]);
+
+            $billCode = $bill['billCode'] ?? null;
+            $paymentUrl = $bill['payment_url'] ?? null;
+            if (!$billCode || !$paymentUrl) {
+                Log::error('ToyyibPay createBill invalid response', ['bill' => $bill]);
+                return response()->json(['error' => 'Invalid payment response'], 500);
+            }
+
+            Payment::create([
+                'booking_id' => $booking->id,
+                'amount' => $totalAmount,
+                'payment_method' => 'toyyibpay',
+                'transaction_id' => $billCode,
+                'payment_status' => 'pending',
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'payment_url' => $paymentUrl,
+                'bill_code' => $billCode,
+            ]);
         } catch (\Exception $e) {
             Log::error('Payment creation error', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            // Bubble up more helpful message to frontend while keeping 500
             return response()->json([
                 'error' => 'Failed to process payment',
-                'details' => $e->getMessage()
+                'details' => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
-     * Handle payment callback from toyyibPay
+     * Handle payment callback (ToyyibPay)
      */
     public function handleCallback(Request $request)
     {
-        Log::info('Payment callback received', $request->all());
+        Log::info('ToyyibPay callback received', $request->all());
 
         try {
-            if (config('services.billplz.enabled')) {
-                // Billplz callback
-                $xSignature = $request->header('x-signature') ?? '';
-                $payload = $request->all();
-                if (!\App\Services\BillplzService::verifySignature($xSignature, $payload)) {
-                    return response()->json(['error' => 'Invalid signature'], 403);
-                }
-
-                $billId = $payload['id'] ?? null;
-                $paid = filter_var($payload['paid'] ?? false, FILTER_VALIDATE_BOOLEAN);
-                $payment = Payment::where('transaction_id', $billId)->first();
-                if (!$payment) return response()->json(['error' => 'Payment not found'], 404);
-                $booking = $payment->booking;
-
-                if ($paid) {
-                    // Ensure payment amount mirrors booking total
-                    $amount = $booking->total_amount ?: $payment->amount;
-                    $payment->update(['payment_status' => 'completed', 'paid_at' => now(), 'amount' => $amount]);
-                    if ($booking->status !== 'confirmed') $booking->update(['status' => 'confirmed']);
-                    // Invoice + email
-                    try {
-                        $invoiceService = app(\App\Services\InvoiceService::class);
-                        $path = $invoiceService->getInvoicePath($booking) ?? $invoiceService->generateInvoice($booking);
-                        Mail::to($booking->user->email)->send(new BookingConfirmation($booking, $path));
-                    } catch (\Exception $e) { Log::error('Invoice/email failed', ['error' => $e->getMessage()]); }
-                } else {
-                    $payment->update(['payment_status' => 'failed']);
-                }
-
-                return response()->json(['success' => true]);
+            if (!config('services.toyyibpay.enabled')) {
+                return response()->json(['error' => 'ToyyibPay not configured'], 500);
             }
 
-                // No legacy gateway; only Billplz supported
-                return response()->json(['error' => 'Gateway not configured'], 500);
+            $payload = $request->all();
+            $billCode = $payload['billcode'] ?? $payload['bill_code'] ?? null;
+            $statusId = $payload['status_id'] ?? $payload['status'] ?? null; // 1=success
+            $payment = $billCode ? Payment::where('transaction_id', $billCode)->first() : null;
+            if (!$payment) return response()->json(['error' => 'Payment not found'], 404);
+            $booking = $payment->booking;
 
+            if ($statusId == 1 || $statusId === '1') {
+                $amount = $booking->total_amount ?: $payment->amount;
+                $payment->update(['payment_status' => 'completed', 'paid_at' => now(), 'amount' => $amount]);
+                if ($booking->status !== 'confirmed') $booking->update(['status' => 'confirmed']);
+                try {
+                    $invoiceService = app(\App\Services\InvoiceService::class);
+                    $path = $invoiceService->getInvoicePath($booking) ?? $invoiceService->generateInvoice($booking);
+                    Mail::to($booking->user->email)->send(new BookingConfirmation($booking, $path));
+                } catch (\Exception $e) {
+                    Log::error('Invoice/email failed', ['error' => $e->getMessage()]);
+                }
+            } else {
+                $payment->update(['payment_status' => 'failed']);
+            }
+
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
             Log::error('Callback processing error', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
             return response()->json(['error' => 'Callback processing failed'], 500);
         }
@@ -168,34 +164,7 @@ class PaymentController extends Controller
      */
     public function handleReturn(Request $request)
     {
-        // Billplz return uses GET redirect to our return URL with status in query sometimes, otherwise rely on callback
-        if (config('services.billplz.enabled')) {
-            // Billplz return sends nested query params: billplz[id], billplz[paid], billplz[paid_at]
-            $billId = $request->input('bill_id')
-                ?? $request->input('billplz.id')
-                ?? $request->input('id');
-            $paid = $request->input('billplz.paid') ?? $request->input('paid');
-            $payment = $billId ? Payment::where('transaction_id', $billId)->first() : null;
-            if (!$payment) {
-                return redirect(env('FRONTEND_URL', 'http://localhost:5173') . '/payment/failed?error=payment_not_found');
-            }
-            $booking = $payment->booking;
-            $district = strtolower($booking->facility->district);
-            if ($paid === 'true' || $payment->payment_status === 'completed') {
-                // Fallback finalize (local dev)
-                if ($payment->payment_status !== 'completed') {
-                    $payment->update(['payment_status' => 'completed', 'paid_at' => now()]);
-                    if ($booking->status !== 'confirmed') $booking->update(['status' => 'confirmed']);
-                }
-                $ref = $booking->booking_reference ?: $booking->id;
-                return redirect(env('FRONTEND_URL', 'http://localhost:5173') . '/' . $district . '/payment/success?booking=' . $ref);
-            } else {
-                $ref = $booking->booking_reference ?: $booking->id;
-                return redirect(env('FRONTEND_URL', 'http://localhost:5173') . '/' . $district . '/payment/failed?booking=' . $ref);
-            }
-        }
-
-        // No legacy return handler; Billplz handled above
+        // ToyyibPay return handler
         $billCode = $request->input('billcode');
         $statusId = $request->input('status_id');
 
@@ -311,10 +280,10 @@ class PaymentController extends Controller
         try {
             $billCode = $request->bill_code;
             $secretKey = config('services.toyyibpay.secret_key');
-            $apiUrl = config('services.toyyibpay.api_url');
+            $baseUrl = rtrim(config('services.toyyibpay.base_url'), '/');
 
             // Call toyyibPay API to get bill transactions
-            $response = Http::asForm()->post($apiUrl . '/index.php/api/getBillTransactions', [
+            $response = Http::asForm()->post($baseUrl . '/index.php/api/getBillTransactions', [
                 'billCode' => $billCode,
                 'userSecretKey' => $secretKey,
             ]);

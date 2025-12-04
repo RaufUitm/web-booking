@@ -25,7 +25,7 @@ class BillplzService
             'email' => $data['email'] ?? null,
             'mobile' => $data['mobile'] ?? null,
             'name' => $data['name'] ?? null,
-            'amount' => (int) $data['amount'], // in cents
+            'amount' => (int) $data['amount'],
             'callback_url' => $data['callback_url'],
             'redirect_url' => $data['redirect_url'],
             'reference_1' => $data['reference_1'] ?? null,
@@ -57,9 +57,6 @@ class BillplzService
         $secret = (string) (config('services.billplz.x_signature') ?? '');
         if (!$secret) return false;
 
-        // Billplz signature: HMAC SHA256 of ordered parameters
-        // Common payload keys include: id, paid_at, paid, transaction_id, amount, etc.
-        // We'll sign based on raw body (recommended) if available; here reconstruct minimal set.
         $keys = ['id', 'paid', 'paid_at', 'amount', 'transaction_id'];
         $signedString = '';
         foreach ($keys as $k) {

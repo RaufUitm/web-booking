@@ -53,6 +53,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payment/check-status', [PaymentController::class, 'checkPaymentStatus']);
     // Invoice download
     Route::get('/bookings/{id}/invoice', [PaymentController::class, 'downloadInvoice']);
+    
+    // ToyyibPay specific routes (optional if using same handlers)
+    Route::post('/payment/toyyibpay/create', [PaymentController::class, 'createToyyibpayPayment']);
 
     // Admin routes - All admin roles can access
     Route::middleware('admin.role')->prefix('admin')->group(function () {

@@ -50,4 +50,17 @@ return [
                 : 'https://www.billplz.com/api/v3',
         ],
 
+        // ToyyibPay configuration
+        'toyyibpay' => [
+            'enabled' => env('TOYYIBPAY_SECRET_KEY') ? true : false,
+            'secret_key' => env('TOYYIBPAY_SECRET_KEY'),
+            'category_code' => env('TOYYIBPAY_CATEGORY_CODE'),
+            'sandbox' => env('TOYYIBPAY_SANDBOX', true),
+            'base_url' => env('TOYYIBPAY_BASE_URL') ?: (env('TOYYIBPAY_SANDBOX', true)
+                ? 'https://dev.toyyibpay.com'
+                : 'https://toyyibpay.com'),
+            'callback_url' => env('TOYYIBPAY_CALLBACK_URL'),
+            'return_url' => env('TOYYIBPAY_RETURN_URL'),
+        ],
+
 ];

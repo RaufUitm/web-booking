@@ -518,7 +518,7 @@ onUnmounted(() => {
   .navbar-menu {
     position: fixed;
     top: clamp(54px, 7vh, 64px);
-    left: -100%;
+    right: -100%;
     width: 100%;
     height: calc(100vh - clamp(54px, 7vh, 64px));
     background-color: white;
@@ -531,7 +531,8 @@ onUnmounted(() => {
   }
 
   .navbar-menu.active {
-    left: 0;
+    right: 0;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .navbar-links {

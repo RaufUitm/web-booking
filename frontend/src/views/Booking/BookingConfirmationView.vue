@@ -159,11 +159,11 @@ const handlePayment = async () => {
   if (!booking.value) return
   try {
     // Create payment directly and redirect to gateway
-    const amount = Math.round(Number(totalAmount.value) * 100) // cents
-    const { data } = await api.post('/payment/create', {
-      booking_id: booking.value.id,
-      amount
-    })
+    if (Number(totalAmount.value) < 1) {
+      alert('Jumlah pembayaran kurang daripada RM1.00. Sila semak tempahan.');
+      return
+    }
+    const { data } = await api.post('/payment/create', { booking_id: booking.value.id })
     const paymentUrl = data?.payment_url
     if (paymentUrl) {
       window.location.href = paymentUrl
@@ -172,7 +172,8 @@ const handlePayment = async () => {
     }
   } catch (error) {
     console.error('Failed to create payment:', error)
-    alert('Gagal menjana pembayaran. Sila cuba lagi atau hubungi sokongan.')
+    const serverMsg = error?.response?.data?.details || error?.response?.data?.error || error?.message
+    alert(`Gagal menjana pembayaran. ${serverMsg ? 'Butiran: ' + serverMsg : 'Sila cuba lagi atau hubungi sokongan.'}`)
   }
 }
 

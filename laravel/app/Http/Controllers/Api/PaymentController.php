@@ -49,6 +49,12 @@ class PaymentController extends Controller
                 }
             }
 
+            // Persist computed total on the booking for consistent invoice display
+            if (empty($booking->total_amount) || $booking->total_amount != $totalAmount) {
+                $booking->total_amount = $totalAmount;
+                $booking->save();
+            }
+
             // Use Billplz gateway
             if (config('services.billplz.enabled')) {
                 $billplz = app(\App\Services\BillplzService::class);
@@ -128,7 +134,9 @@ class PaymentController extends Controller
                 $booking = $payment->booking;
 
                 if ($paid) {
-                    $payment->update(['payment_status' => 'completed', 'paid_at' => now()]);
+                    // Ensure payment amount mirrors booking total
+                    $amount = $booking->total_amount ?: $payment->amount;
+                    $payment->update(['payment_status' => 'completed', 'paid_at' => now(), 'amount' => $amount]);
                     if ($booking->status !== 'confirmed') $booking->update(['status' => 'confirmed']);
                     // Invoice + email
                     try {
@@ -207,9 +215,11 @@ class PaymentController extends Controller
             // Mark as completed here as a fallback (idempotent).
             if ($payment->payment_status !== 'completed') {
                 try {
+                    $amount = $booking->total_amount ?: $payment->amount;
                     $payment->update([
                         'payment_status' => 'completed',
                         'paid_at' => now(),
+                        'amount' => $amount,
                     ]);
                     if ($booking->status !== 'confirmed') {
                         $booking->update(['status' => 'confirmed']);

@@ -247,7 +247,7 @@
                     <h3>Bil Kepada / Bill To</h3>
                     <p><strong>{{ $booking->user->name }}</strong></p>
                     <p>{{ $booking->user->email }}</p>
-                    <p>{{ $booking->phone ?? 'Tiada / N/A' }}</p>
+                    <p>{{ $booking->user->phone ?? 'Tiada / N/A' }}</p>
                 </div>
             </div>
 
@@ -302,11 +302,31 @@
                     </tr>
                     <tr>
                         <td>Jenis Tempahan / Booking Type</td>
-                        <td>{{ ucfirst(str_replace('_', ' ', $booking->booking_type)) }}</td>
+                        <td>
+                            @php
+                                $typeMap = [
+                                    'per_day' => 'Sehari',
+                                    'per_hour' => 'Per Jam',
+                                ];
+                                $typeMalay = $typeMap[$booking->booking_type] ?? ucfirst(str_replace('_', ' ', $booking->booking_type));
+                            @endphp
+                            {{ $typeMalay }}
+                        </td>
                     </tr>
                     <tr>
                         <td>Status</td>
-                        <td><strong style="color: #4CAF50;">{{ $booking->status }}</strong></td>
+                        <td>
+                            @php
+                                $statusMap = [
+                                    'confirmed' => 'Disahkan',
+                                    'pending' => 'Menunggu',
+                                    'failed' => 'Gagal',
+                                    'cancelled' => 'Dibatalkan',
+                                ];
+                                $statusMalay = $statusMap[strtolower($booking->status)] ?? $booking->status;
+                            @endphp
+                            <strong style="color: #4CAF50;">{{ $statusMalay }}</strong>
+                        </td>
                     </tr>
                 </tbody>
             </table>

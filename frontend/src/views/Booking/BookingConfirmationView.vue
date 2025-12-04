@@ -1,10 +1,15 @@
 <template>
   <div class="booking-confirmation-view">
     <div class="container">
+      <div class="top-actions">
+        <router-link :to="prefixPath('/my-bookings')" class="btn-back" :style="{ background: currentDistrictColor.main, color: '#fff' }">
+          Kembali
+        </router-link>
+      </div>
       <div v-if="loading" class="loading">Memuatkan butiran tempahan...</div>
 
       <BookingSummary
-        v-else-if="booking"
+        v-else-if="hasBooking"
         :booking="booking"
         :show-actions="true"
         @cancel="handleCancel"
@@ -13,17 +18,20 @@
       />
 
       <EditBookingForm
-        v-if="showEdit && booking"
+        v-if="!loading && showEdit && hasBooking"
         :booking="booking"
         @saved="handleEditSaved"
         @cancel="handleEditCancel"
       />
 
-      <div v-else class="error">
-        <p>Tempahan tidak ditemui.</p>
-        <router-link :to="prefixPath('/my-bookings')" class="btn-back" :style="{ background: currentDistrictColor.main, color: '#fff' }">
-          Kembali ke Tempahan Saya
-        </router-link>
+      <div v-else-if="!hasBooking" class="error">
+        <p>{{ errorMessage || 'Tempahan tidak ditemui.' }}</p>
+        <div style="margin-top:16px; display:flex; gap:12px; justify-content:center;">
+          <button @click="reload" class="btn-back" :style="{ background: currentDistrictColor.main, color: '#fff' }">Cuba Lagi</button>
+          <router-link :to="prefixPath('/my-bookings')" class="btn-back" :style="{ background: currentDistrictColor.main, color: '#fff' }">
+            Kembali ke Tempahan Saya
+          </router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -48,6 +56,8 @@ const booking = ref(null)
 const loading = ref(false)
 const showEdit = ref(false)
 const showPayment = ref(false) // kept for compatibility but no PaymentForm UI
+const errorMessage = ref('')
+const hasBooking = computed(() => !!(booking.value && booking.value.id))
 
 const totalAmount = computed(() => {
   if (!booking.value?.facility) return 0
@@ -94,12 +104,28 @@ onMounted(async () => {
 const loadBooking = async () => {
   loading.value = true
   try {
-    booking.value = await bookingStore.fetchBookingById(route.params.id)
+    errorMessage.value = ''
+    const id = route.params.id
+    if (!id) {
+      errorMessage.value = 'ID tempahan tiada dalam pautan.'
+      booking.value = null
+      return
+    }
+    booking.value = await bookingStore.fetchBookingById(id)
+    if (!booking.value || !booking.value.id) {
+      errorMessage.value = 'Tempahan tidak ditemui atau telah dibatalkan.'
+    }
   } catch (error) {
     console.error('Failed to load booking:', error)
+    errorMessage.value = error?.response?.data?.message || 'Gagal memuatkan tempahan. Cuba lagi.'
+    booking.value = null
   } finally {
     loading.value = false
   }
+}
+
+const reload = async () => {
+  await loadBooking()
 }
 
 const handleCancel = async () => {
@@ -165,6 +191,8 @@ const handlePayment = async () => {
   margin: 0 auto;
   padding: 0 20px;
 }
+
+.top-actions { display:flex; justify-content:flex-start; margin-bottom: 16px; }
 
 .loading,
 .error {

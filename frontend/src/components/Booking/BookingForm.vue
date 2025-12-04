@@ -248,9 +248,6 @@ h2 {
   color: #333;
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
 
 label {
   display: block;

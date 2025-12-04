@@ -226,8 +226,8 @@
       </div>
 
       <!-- Copyright -->
-      <div class="mt-8 text-center">
-        <p class="text-xs text-gray-500">© 2025 T-Smart Booking. Hak Cipta Terpelihara. Kerajaan Negeri Terengganu.</p>
+      <div class="text-center" style="margin: 2rem auto 2rem auto !important; padding: 0 1rem;">
+        <p class="text-xs text-gray-500">Terengganu Smart Booking © 2025 Hak Cipta Terpelihara Kerajaan Negeri Terengganu. Powered by TAJDID Corporation Sdn Bhd</p>
       </div>
     </main>
   </div>

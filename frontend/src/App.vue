@@ -9,7 +9,6 @@
                  class="logo-img">
             <div>
               <span class="logo-text">{{ districtStore.pbtName }}</span>
-              <div class="logo-sub">({{ districtStore.districtAbbreviation }} Booking)</div>
             </div>
           </template>
           <template v-else>
@@ -125,7 +124,7 @@
         </div>
 
         <div class="footer-bottom">
-          <p>&copy; {{ currentYear }} {{ districtStore.pbtName }}. Hak Cipta Terpelihara.</p>
+          <p>&copy; {{ currentYear }} {{ districtStore.pbtName }}. Hak Cipta Terpelihara. Powered by TAJDID Corporation Sdn Bhd</p>
         </div>
       </div>
     </footer>
@@ -212,9 +211,11 @@ function hexToRgb(hex) {
 }
 
 function getContrastColor(hex) {
+  if (!hex) return '#fff'
   const { r, g, b } = hexToRgb(hex)
   const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-  return lum > 0.6 ? '#111' : '#fff'
+  // Use black text for bright backgrounds (luminance > 0.5)
+  return lum > 0.5 ? '#000' : '#fff'
 }
 
 const navbarStyle = computed(() => {

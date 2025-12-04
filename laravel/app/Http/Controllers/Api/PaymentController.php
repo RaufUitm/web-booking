@@ -332,7 +332,7 @@ class PaymentController extends Controller
     public function downloadInvoice(Request $request, $id)
     {
         try {
-            $booking = Booking::with(['user', 'facility', 'payment'])->find($id);
+            $booking = Booking::with(['user', 'facility.category', 'payment'])->find($id);
 
             if (!$booking) {
                 return response()->json(['error' => 'Booking not found'], 404);
@@ -352,22 +352,23 @@ class PaymentController extends Controller
             }
 
             $invoiceService = app(\App\Services\InvoiceService::class);
-            $path = $invoiceService->getInvoicePath($booking);
-
-            if (!$path) {
-                // Regenerate if missing
-                $path = $invoiceService->generateInvoice($booking);
-            }
+            
+            // Always regenerate invoice to ensure it's up to date with district styling
+            $path = $invoiceService->generateInvoice($booking);
 
             $absolute = storage_path('app/' . $path);
             if (!file_exists($absolute)) {
                 return response()->json(['error' => 'Invoice file not found'], 404);
             }
 
-            return response()->download($absolute, 'invoice-' . ($booking->booking_reference ?: $booking->id) . '.pdf');
+            // Return as inline PDF for viewing in browser
+            return response()->file($absolute, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="invoice-' . ($booking->booking_reference ?: $booking->id) . '.pdf"'
+            ]);
         } catch (\Exception $e) {
-            \Log::error('Invoice download failed', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Failed to download invoice'], 500);
+            \Log::error('Invoice download failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Failed to download invoice: ' . $e->getMessage()], 500);
         }
     }
 }
